@@ -13,6 +13,8 @@ export interface AuthProviderClient {
     password: string,
   ) => Promise<AuthProviderLoginSuccessResponse | AuthProviderLoginErrorResponse>;
   logout: () => void;
+  userIsAuthenticated: () => boolean;
+  verifyTokenValidity: () => void;
   isAuthenticated: boolean;
   token: Token | null;
   rawToken: string | null;
