@@ -6,7 +6,7 @@ import clsx from "clsx";
 
 type TextInputProps = {
   label: string;
-  type?: string;
+  type?: "text" | "password";
   name: string;
   placeholder?: string;
   validate?: (value: string) => boolean;
