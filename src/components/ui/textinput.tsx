@@ -10,6 +10,7 @@ type TextInputProps = {
   name: string;
   placeholder?: string;
   validate?: (value: string) => boolean;
+  validationErrorMessage?: string;
 };
 
 export default function TextInput({
@@ -17,6 +18,7 @@ export default function TextInput({
   type = "text",
   name,
   placeholder,
+  validationErrorMessage,
   validate,
 }: TextInputProps) {
   const [value, setValue] = useState("");
@@ -59,7 +61,9 @@ export default function TextInput({
 
       <div className="h-5 mt-1">
         {showError && (
-          <p className="text-red-500 text-sm">Ugyldig {label.toLowerCase()}</p>
+          <p className="text-red-500 text-sm">
+            {validationErrorMessage || "Ugyldig " + label.toLowerCase()}
+          </p>
         )}
       </div>
     </div>
