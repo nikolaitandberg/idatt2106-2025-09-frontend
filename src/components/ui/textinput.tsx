@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import clsx from "clsx";
+import { cn } from "@/util/cn";
 
 type TextInputProps = {
   label: string;
@@ -43,7 +43,7 @@ export default function TextInput({
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onBlur={() => setTouched(true)}
-          className={clsx(
+          className={cn(
             "w-full px-3 py-2 border rounded-md pr-10",
             showError ? "border-red-500" : "border-gray-300",
           )}
