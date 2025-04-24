@@ -14,8 +14,10 @@ export default function LoginPage() {
             name="email"
             type="email"
             placeholder="din@epost.no"
-            validate={(value) => value.includes("@")}
-          />
+            validate={(value) =>
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+              }          
+        />
 
           <TextInput
             label="Passord"
