@@ -1,14 +1,22 @@
-import { AuthProviderLoginErrorResponse, AuthProviderLoginSuccessResponse } from "@/util/authProvider";
-
+import { API_BASE_URL } from "@/types/constants";
 // IMPORTANT: These functions do not use the overloaded "Fetch" function from
 // /util/fetch.ts. This is because we cannot attach a "auth" header to the
 // request.
+
+export type AuthProviderLoginSuccessResponse = {
+  success: true;
+  token: string;
+};
+export type AuthProviderLoginErrorResponse = {
+  success: false;
+  message: string;
+};
 
 export async function sendLoginRequest(
   username: string,
   password: string,
 ): Promise<AuthProviderLoginSuccessResponse | AuthProviderLoginErrorResponse> {
-  const res = await fetch("/api/auth/login", {
+  const res = await fetch(`${API_BASE_URL}/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -35,7 +43,7 @@ export async function sendRegisterRequest(
   username: string,
   password: string,
 ): Promise<AuthProviderLoginSuccessResponse | AuthProviderLoginErrorResponse> {
-  const res = await fetch("/api/auth/register", {
+  const res = await fetch(`${API_BASE_URL}/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

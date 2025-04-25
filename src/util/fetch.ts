@@ -1,17 +1,16 @@
 import { ApiError } from "@/types/apiResponses";
-import { useAuth } from "./authProvider";
+import { signOut, useSession } from "next-auth/react";
 
 /**
  * Sends a fetch request with the token in the Authorization header
  */
 export default async function Fetch(input: string | URL | globalThis.Request, init?: RequestInit) {
   const res = await FetchWithoutParse(input, init);
-  const auth = useAuth();
 
   if (!res.ok) {
     if (res.status === 401) {
       // The user is not authenticated, ensure that the auth state is updated
-      auth.logout();
+      signOut();
       return;
     }
 
@@ -28,12 +27,12 @@ export default async function Fetch(input: string | URL | globalThis.Request, in
 }
 
 export async function FetchWithoutParse(input: string | URL | globalThis.Request, init?: RequestInit) {
-  const auth = useAuth();
+  const auth = useSession();
 
   const headers = new Headers(init?.headers);
 
-  if (auth.userIsAuthenticated()) {
-    headers.set("Authorization", `Bearer ${auth.rawToken}`);
+  if (auth.data) {
+    headers.set("Authorization", `Bearer ${auth.data.token}`);
   }
 
   return await fetch(input, {
