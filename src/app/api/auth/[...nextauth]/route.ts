@@ -4,9 +4,25 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { jwtDecode } from "jwt-decode";
 
+const decodeToken = (token: string) => {
+  const decodedToken = jwtDecode<any>(token);
+  return {
+    userId: decodedToken.userId,
+    isAdmin: decodedToken.isAdmin,
+    isSuperAdmin: decodedToken.isSuperAdmin,
+    token: token,
+    refreshToken: decodedToken.refreshToken,
+    sub: decodedToken.sub,
+    iat: decodedToken.iat,
+    exp: decodedToken.exp,
+  };
+};
+
 const handler = NextAuth({
+  debug: true,
   providers: [
     CredentialsProvider({
+      id: "credentials",
       name: "Credentials",
       credentials: {
         username: { type: "text" },
@@ -15,51 +31,23 @@ const handler = NextAuth({
       async authorize(credentials) {
         const res = await sendLoginRequest(credentials?.username || "", credentials?.password || "");
         if (res.success) {
-          const decodedToken = jwtDecode<any>(res.token);
-          return {
-            userId: decodedToken.userId,
-            isAdmin: decodedToken.isAdmin,
-            isSuperAdmin: decodedToken.isSuperAdmin,
-            token: res.token,
-            refreshToken: decodedToken.refreshToken,
-            sub: decodedToken.sub,
-            iat: decodedToken.iat,
-            exp: decodedToken.exp,
-          };
+          return decodeToken(res.token);
         }
         return null;
       },
     }),
     CredentialsProvider({
-      name: "Register",
+      id: "token",
+      name: "Token",
       credentials: {
-        email: { type: "text" },
-        username: { type: "text" },
-        password: { type: "password" },
+        token: { type: "text" },
       },
       async authorize(credentials) {
-        const res = await sendRegisterRequest(credentials?.username || "", credentials?.password || "");
-        if (res.success) {
-          const decodedToken = jwtDecode<any>(res.token);
-          return {
-            userId: decodedToken.userId,
-            isAdmin: decodedToken.isAdmin,
-            isSuperAdmin: decodedToken.isSuperAdmin,
-            token: res.token,
-            refreshToken: decodedToken.refreshToken,
-            sub: decodedToken.sub,
-            iat: decodedToken.iat,
-            exp: decodedToken.exp,
-          };
-        }
-        return null;
+        return decodeToken(credentials?.token);
       },
     }),
   ],
-  pages: {
-    signIn: "/login",
-    error: "/login",
-  },
+  pages: {},
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
