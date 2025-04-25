@@ -1,21 +1,17 @@
 "use client"
 
 import { AlertTriangle, CheckCircle, Info } from "lucide-react";
-import Link from "next/link";
 import { cn } from "@/util/cn";
+import { ReactNode } from "react";
 
 
 type AlertPops = {
-    message: string;
-    linkText?: string;
-    linkHref?: string;
+    children: ReactNode;
     type?: "critical" | "warning" | "success" | "info";
 };
 
 export default function Alert({
-    message,
-    linkText,
-    linkHref,
+    children,    
     type = "info",
 }: AlertPops) {
     const baseStyles = "rounded-lg p-4 flex items-center gap-3";
@@ -32,20 +28,11 @@ export default function Alert({
     else if (type === "warning") Icon = AlertTriangle;
     else if (type === "critical") Icon = AlertTriangle;
 
-
     return (
         <div className={cn(baseStyles, typeStyles[type])}>
             <Icon className="w-6 h-6" />
-            <p className="text-base">
-                {message}
-                {linkText && linkHref && (
-                    <>
-                    {" "}
-                    <Link href={linkHref} className="underline underline-offset-2">
-                    {linkText}
-                    </Link>
-                    </>
-                )}
+            <p className="text-base text-black">
+                {children && <span className="ml-1">{children}</span>}
                 </p>
         </div>
     );
