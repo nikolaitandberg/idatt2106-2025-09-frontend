@@ -4,11 +4,10 @@ import TextInput from "@/components/ui/textinput";
 import { Button } from "@/components/ui/button";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import Link from "next/link";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [isSigningIn, setIsSigningIn] = useState(false);
 
   const handleLogin = async (event: React.FormEvent) => {
@@ -26,8 +25,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6">
+    <div className="flex items-center justify-center bg-background px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl p-8 space-y-6">
         <h1 className="text-2xl font-bold text-center">Logg inn</h1>
         <form onSubmit={handleLogin} className="space-y-4">
           <TextInput
@@ -51,6 +50,14 @@ export default function LoginPage() {
             {isSigningIn ? <LoadingSpinner /> : "Logg inn"}
           </Button>
         </form>
+        <div className="flex justify-center">
+          <p className="text-sm text-gray-500">
+            Har du ikke en konto?{" "}
+            <Link href="/register" className="text-blue-500 hover:underline">
+              Registrer deg
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
