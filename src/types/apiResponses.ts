@@ -1,8 +1,21 @@
+import { MapObject } from "./map";
+
 /**
  * Error response returned from the API
  */
 export class ApiError extends Error {
-  constructor(public message: string) {
+  public code?: number;
+
+  constructor(
+    public message: string,
+    code?: number,
+  ) {
     super(message);
+    this.code = code;
   }
 }
+
+/**
+ * Response from the API when fetching map objects
+ */
+export type MapObjectsResponse = MapObject[];
