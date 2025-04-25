@@ -1,38 +1,35 @@
 "use client";
 
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { Button } from "./ui/button";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { TopbarCard } from "@/components/ui/topbarCard";
+import { CircleUserRound, ShieldUser, MapPin, GraduationCap, House, Users } from "lucide-react"; // or any icon library you prefer
 
 export default function Topbar() {
-  const auth = useSession();
-  const router = useRouter();
+  const session = useSession();
 
   return (
-    <div className="flex items-center justify-between bg-white p-4 shadow-md">
+    <div className="flex items-center justify-between bg-white py-2 px-10 shadow-md">
       <Link href="/" className="text-2xl font-bold">
-        Hjem
+        <Image src="/logo.svg" alt="Logo" width={50} height={50} priority />
       </Link>
-      <div className="flex items-center space-x-4">
-        {auth.status === "authenticated" && (
-          <div className="text-gray-700">
-            <span>Brukernavn: {auth.data?.sub}</span>
-          </div>
-        )}
-        {auth.status !== "authenticated" ? (
-          <Link href="/login" className="text-gray-700 hover:text-gray-900">
-            Logg inn
-          </Link>
+      <div className="flex items-center justify-end w-1/3">
+        {session?.data?.user?.isAdmin && <TopbarCard icon={ShieldUser} text="Admin" href="/admin" />}
+        <TopbarCard icon={MapPin} text="Kart" href="/map" />
+        <TopbarCard icon={GraduationCap} text="Læring" href="/learning" />
+        {session?.status === "authenticated" ? (
+          <>
+            <TopbarCard icon={House} text="Husholdning" href="/household" />
+            <TopbarCard icon={Users} text="Beredskapsgruppe" href="/group" />
+            <Link href="/profile" className="flex flex-row items-center ml-20">
+              <CircleUserRound size={50} strokeWidth={1} />
+            </Link>
+          </>
         ) : (
-          <Button
-            variant="ghost"
-            onClick={() => {
-              signOut({ redirect: false });
-              router.push("/login");
-            }}>
-            Logg ut
-          </Button>
+          <Link href="/login" className="flex flex-row items-center ml-20">
+            <CircleUserRound size={50} strokeWidth={1} />
+          </Link>
         )}
       </div>
     </div>
