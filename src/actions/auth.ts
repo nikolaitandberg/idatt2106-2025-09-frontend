@@ -52,16 +52,17 @@ export async function sendRegisterRequest(
   });
 
   if (!res.ok) {
+    const errorMessage = await res.text();
+
     const errorResponse: LoginErrorResponse = {
       success: false,
-      message: "Kunne ikke registrere deg. Prøv igjen senere",
+      message: errorMessage ?? "Kunne ikke registrere deg. Prøv igjen senere",
     };
     throw new ApiError(errorResponse.message);
   }
 
   const data = await res.json();
   return {
-    success: true,
     token: data.token,
   };
 }

@@ -5,11 +5,22 @@ import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
 import { useMutation } from "@tanstack/react-query";
 import { sendRegisterRequest } from "@/actions/auth";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import LoadingSpinner from "@/components/ui/loadingSpinner";
+import { ApiError } from "@/types/apiResponses";
 
 export default function () {
-  const { isPending, mutate: register } = useMutation({
-    mutationFn: async ({ username, password, email }: { username: string; password: string; email: string }) => {
-      return await sendRegisterRequest(username, password, email);
+  const router = useRouter();
+
+  const {
+    isPending,
+    isError,
+    error,
+    mutate: register,
+  } = useMutation({
+    mutationFn: async ({ email, username, password }: { email: string; username: string; password: string }) => {
+      return await sendRegisterRequest(email, username, password);
     },
   });
 
@@ -25,8 +36,9 @@ export default function () {
         onSuccess: (data) => {
           signIn("token", {
             token: data.token,
-            redirect: true,
-            callbackUrl: "/",
+            redirect: false,
+          }).then(() => {
+            router.push("/");
           });
         },
       },
@@ -52,13 +64,7 @@ export default function () {
             placeholder="brukernavn"
             validate={(value) => value.length > 0}
           />
-          <TextInput
-            label="Passord"
-            name="password"
-            type="password"
-            placeholder="passord"
-            validate={(value) => value.length >= 6}
-          />
+          <TextInput label="Passord" name="password" type="password" placeholder="passord" />
           <TextInput
             label="Bekreft passord"
             name="confirmPassword"
@@ -67,9 +73,22 @@ export default function () {
             validate={(value) => value.length >= 6}
           />
           <Button className="size-full h-12 text-md" type="submit">
-            Registrer
+            {isPending ? <LoadingSpinner /> : "Registrer deg"}
           </Button>
         </form>
+        {isError && (
+          <div className="text-red-500 text-sm text-center">
+            {error instanceof ApiError ? error.message : "Noe gikk galt. Vennligst prøv igjen."}
+          </div>
+        )}
+        <div className="flex justify-center">
+          <p className="text-sm text-gray-500">
+            Har du allerede en konto?{" "}
+            <Link href="/login" className="text-blue-500 hover:underline">
+              Logg inn
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
