@@ -3,7 +3,7 @@ import { CircleUserRound, ShieldUser, MapPin, CircleAlert, GraduationCap, House,
 
 export function AdminMenu() {
   return (
-    <div className="border-r-2 border-black divide-y-2 divide-black h-full">
+    <div className="border-r-1 border-black divide-y-1 divide-black h-full">
       <AdminMenuCard icon={Newspaper} text="Nyheter" href="/admin/news" />
       <AdminMenuCard icon={MapPin} text="Kart" href="/admin/map" />
       <AdminMenuCard icon={CircleAlert} text="Scenario" href="/admin/scenario" />
