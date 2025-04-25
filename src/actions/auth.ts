@@ -1,21 +1,13 @@
+import { LoginErrorResponse, LoginSuccessResponse } from "@/types";
 import { API_BASE_URL } from "@/types/constants";
 // IMPORTANT: These functions do not use the overloaded "Fetch" function from
 // /util/fetch.ts. This is because we cannot attach a "auth" header to the
 // request.
 
-export type AuthProviderLoginSuccessResponse = {
-  success: true;
-  token: string;
-};
-export type AuthProviderLoginErrorResponse = {
-  success: false;
-  message: string;
-};
-
 export async function sendLoginRequest(
   username: string,
   password: string,
-): Promise<AuthProviderLoginSuccessResponse | AuthProviderLoginErrorResponse> {
+): Promise<LoginSuccessResponse | LoginErrorResponse> {
   const res = await fetch(`${API_BASE_URL}/auth/login`, {
     method: "POST",
     headers: {
@@ -25,7 +17,7 @@ export async function sendLoginRequest(
   });
 
   if (!res.ok) {
-    const errorResponse: AuthProviderLoginErrorResponse = {
+    const errorResponse: LoginErrorResponse = {
       success: false,
       message: "Kunne ikke logge deg inn. Prøv igjen senere",
     };
@@ -42,7 +34,7 @@ export async function sendLoginRequest(
 export async function sendRegisterRequest(
   username: string,
   password: string,
-): Promise<AuthProviderLoginSuccessResponse | AuthProviderLoginErrorResponse> {
+): Promise<LoginSuccessResponse | LoginErrorResponse> {
   const res = await fetch(`${API_BASE_URL}/auth/register`, {
     method: "POST",
     headers: {
@@ -52,7 +44,7 @@ export async function sendRegisterRequest(
   });
 
   if (!res.ok) {
-    const errorResponse: AuthProviderLoginErrorResponse = {
+    const errorResponse: LoginErrorResponse = {
       success: false,
       message: "Kunne ikke logge deg inn. Prøv igjen senere",
     };

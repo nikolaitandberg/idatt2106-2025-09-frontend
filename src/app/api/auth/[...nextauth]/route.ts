@@ -30,7 +30,9 @@ const handler = NextAuth({
         return null;
       },
     }),
+    //TODO: add register provider
   ],
+  pages: {},
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
