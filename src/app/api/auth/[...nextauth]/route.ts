@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { sendLoginRequest } from "@/actions/auth";
+import { sendLoginRequest, sendRegisterRequest } from "@/actions/auth";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { jwtDecode } from "jwt-decode";
@@ -30,9 +30,36 @@ const handler = NextAuth({
         return null;
       },
     }),
-    //TODO: add register provider
+    CredentialsProvider({
+      name: "Register",
+      credentials: {
+        email: { type: "text" },
+        username: { type: "text" },
+        password: { type: "password" },
+      },
+      async authorize(credentials) {
+        const res = await sendRegisterRequest(credentials?.username || "", credentials?.password || "");
+        if (res.success) {
+          const decodedToken = jwtDecode<any>(res.token);
+          return {
+            userId: decodedToken.userId,
+            isAdmin: decodedToken.isAdmin,
+            isSuperAdmin: decodedToken.isSuperAdmin,
+            token: res.token,
+            refreshToken: decodedToken.refreshToken,
+            sub: decodedToken.sub,
+            iat: decodedToken.iat,
+            exp: decodedToken.exp,
+          };
+        }
+        return null;
+      },
+    }),
   ],
-  pages: {},
+  pages: {
+    signIn: "/login",
+    error: "/login",
+  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -50,7 +77,6 @@ const handler = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      // Return only the custom session object
       return {
         user: token.user,
         token: token.token,

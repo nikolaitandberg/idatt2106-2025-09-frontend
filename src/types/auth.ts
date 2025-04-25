@@ -27,3 +27,11 @@ export type LoginErrorResponse = {
   success: false;
   message: string;
 };
+
+/**
+ * Success response from the Auth action when logging in
+ */
+export type RegisterSuccessRespnse = {
+  success: true;
+  token: string;
+};
