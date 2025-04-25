@@ -19,6 +19,10 @@
   --input: #e5e5e5;
   --ring: #1f2a44;
 
+  --progress-low: #f87171;
+  --progress-medium: #facc15;
+  --progress-high: #4ade80;
+
   --font-geist-sans: Arial, Helvetica, sans-serif;
   --font-geist-mono: monospace;
 }
@@ -41,6 +45,10 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  --color-progress-low: var(--progress-low);
+  --color-progress-medium: var(--progress-medium);
+  --color-progress-high: var(--progress-high);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
