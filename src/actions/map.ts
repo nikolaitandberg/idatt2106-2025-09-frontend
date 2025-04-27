@@ -5,6 +5,11 @@ import { MapBounds, MapObjectType } from "@/types/map";
 import Fetch, { FetchFunction, useFetch } from "@/util/fetch";
 import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 
+/**
+ * Function to get map objects within the given bounds
+ * @param bounds the bounds to get map objects for
+ * @param fetcher the fetch function to use
+ */
 export const getMapObjects = async (bounds: MapBounds, fetcher: FetchFunction = Fetch): Promise<MapObjectsResponse> => {
   const searchParams = new URLSearchParams({
     minLat: bounds.minLat.toString(),
@@ -28,6 +33,10 @@ export const getMapObjects = async (bounds: MapBounds, fetcher: FetchFunction = 
   }
 };
 
+/**
+ * Client side hook to get map objects
+ * @param bounds the bounds to get map objects for
+ */
 export const useMapObjects = (bounds: MapBounds) => {
   const fetcher = useFetch();
 
@@ -38,6 +47,10 @@ export const useMapObjects = (bounds: MapBounds) => {
   });
 };
 
+/**
+ * Function to get map object types
+ * @param fetcher the fetch function to use
+ */
 export const getMapObjectTypes = async (fetcher: FetchFunction = Fetch): Promise<MapObjectsTypesResponse> => {
   try {
     const res = await fetcher<MapObjectsTypesResponse>(`${API_BASE_URL}/map-object-type`);
@@ -54,6 +67,9 @@ export const getMapObjectTypes = async (fetcher: FetchFunction = Fetch): Promise
   }
 };
 
+/**
+ * Client side hook to get map object types
+ */
 export const useMapObjectTypes = () => {
   const fetcher = useFetch();
 
@@ -64,6 +80,11 @@ export const useMapObjectTypes = () => {
   });
 };
 
+/**
+ * Function to edit a map object type
+ * @param req the map object type to edit
+ * @param fetcher the fetch function to use
+ */
 export const editMapObjectType = async (req: MapObjectType, fetcher: FetchFunction = Fetch): Promise<null> => {
   return await fetcher<null>(`${API_BASE_URL}/map-object-type/update`, {
     method: "PUT",
@@ -74,6 +95,9 @@ export const editMapObjectType = async (req: MapObjectType, fetcher: FetchFuncti
   });
 };
 
+/**
+ * Client side hook to edit a map object type
+ */
 export const useMutateMapObjectType = () => {
   const fetcher = useFetch();
 
@@ -82,6 +106,11 @@ export const useMutateMapObjectType = () => {
   });
 };
 
+/**
+ * Function to create a map object type
+ * @param req the map object type to create
+ * @param fetcher the fetch function to use
+ */
 export const createMapObjectType = async (
   req: createMapObjectTypeRequest,
   fetcher: FetchFunction = Fetch,
@@ -95,6 +124,9 @@ export const createMapObjectType = async (
   });
 };
 
+/**
+ * Client side hook to create a map object type
+ */
 export const useCreateMapObjectType = () => {
   const fetcher = useFetch();
 
@@ -105,12 +137,18 @@ export const useCreateMapObjectType = () => {
   });
 };
 
+/**
+ * Function to delete a map object type
+ */
 export const deleteMapObjectType = async (id: number, fetcher: FetchFunction = Fetch): Promise<null> => {
   return await fetcher<null>(`${API_BASE_URL}/map-object-type/${id}`, {
     method: "DELETE",
   });
 };
 
+/**
+ * Client side hook to delete a map object type
+ */
 export const useDeleteMapObjectType = () => {
   const fetcher = useFetch();
 

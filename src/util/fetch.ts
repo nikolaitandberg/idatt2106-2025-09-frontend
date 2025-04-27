@@ -3,6 +3,9 @@ import { signOut, useSession } from "next-auth/react";
 import { auth } from "./auth";
 import { Token } from "@/types";
 
+/**
+ * A function that can be used to fetch data with the token in the Authorization header.
+ */
 export type FetchFunction = <T>(input: string | URL | globalThis.Request, init?: RequestInit) => Promise<T | null>;
 
 /**
@@ -72,10 +75,7 @@ export async function FetchWithoutParse(
 }
 
 /**
- * Returns a function that can be used to fetch data with the token in the Authorization header.
- * @param input
- * @param init
- * @returns
+ * Returns a function that can be used on the client-side to fetch data with the token in the Authorization header.
  */
 export function useFetch() {
   const session = useSession();
