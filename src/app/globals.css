@@ -50,6 +50,8 @@
   --color-progress-medium: var(--progress-medium);
   --color-progress-high: var(--progress-high);
 
+  --color-destructive: var(--color-red-500);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 

@@ -9,6 +9,7 @@ type TextInputProps = {
   type?: "text" | "password" | "email";
   name: string;
   placeholder?: string;
+  initialValue?: string;
   validate?: (value: string) => boolean;
   validationErrorMessage?: string;
 };
@@ -19,9 +20,10 @@ export default function TextInput({
   name,
   placeholder,
   validationErrorMessage,
+  initialValue,
   validate,
 }: TextInputProps) {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(initialValue ?? "");
   const [touched, setTouched] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 

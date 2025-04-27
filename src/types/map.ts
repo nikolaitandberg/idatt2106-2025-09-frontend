@@ -3,7 +3,7 @@
  */
 export type MapObject = {
   id: number;
-  type: number;
+  typeId: number;
   latitude: number;
   longitude: number;
   opening?: Date;
@@ -30,4 +30,10 @@ export const MAP_BOUNDS_MAX: MapBounds = {
   maxLat: 90,
   minLong: -180,
   maxLong: 180,
+};
+
+export type MapObjectType = {
+  id: number;
+  name: string;
+  icon: string;
 };

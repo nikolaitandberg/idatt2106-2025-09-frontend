@@ -21,7 +21,7 @@ export default function MapObject({ object }: { object: MapObject }) {
             <X onClick={() => setOpen(false)} className="cursor-pointer" />
           </div>
           <div className="flex flex-col">
-            <div className="text-gray-500 text-sm">{object.type}</div>
+            <div className="text-gray-500 text-sm">{object.typeId}</div>
             <div className="text-gray-500 text-sm">{object.contactEmail}</div>
             <div className="text-gray-500 text-sm">{object.contactName}</div>
           </div>

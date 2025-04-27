@@ -1,4 +1,4 @@
-import { ApiError, MapObjectsResponse } from "@/types/apiResponses";
+import { ApiError, MapObjectsResponse, MapObjectsTypesResponse } from "@/types/apiResponses";
 import { API_BASE_URL } from "@/types/constants";
 import { MapBounds } from "@/types/map";
 import Fetch, { FetchFunction, useFetch } from "@/util/fetch";
@@ -33,6 +33,32 @@ export const useMapObjects = (bounds: MapBounds) => {
   return useQuery({
     queryKey: ["map", "mapObjects", bounds],
     queryFn: () => getMapObjects(bounds, fetcher),
+    placeholderData: keepPreviousData,
+  });
+};
+
+export const getMapObjectTypes = async (fetcher: FetchFunction = Fetch): Promise<MapObjectsTypesResponse> => {
+  try {
+    const res = await fetcher<MapObjectsTypesResponse>(`${API_BASE_URL}/map-object-type`);
+
+    if (!res) {
+      return [];
+    }
+    return res;
+  } catch (error) {
+    if (error instanceof ApiError && error.code === 404) {
+      return [];
+    }
+    throw error;
+  }
+};
+
+export const useMapObjectTypes = () => {
+  const fetcher = useFetch();
+
+  return useQuery({
+    queryKey: ["map", "mapObjectTypes"],
+    queryFn: () => getMapObjectTypes(fetcher),
     placeholderData: keepPreviousData,
   });
 };
