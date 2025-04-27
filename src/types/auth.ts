@@ -2,14 +2,16 @@
  * JWT Token
  */
 export type Token = {
-  exp: number;
-  iat: number;
-  sub: string;
+  user: {
+    userId: number;
+    isAdmin: boolean;
+    isSuperAdmin: boolean;
+  };
+  token: string;
   refreshToken: string;
-  userId: number;
-  username: string;
-  isAdmin: boolean;
-  isSuperAdmin: boolean;
+  sub: string;
+  iat: number;
+  exp: number;
 };
 
 /**

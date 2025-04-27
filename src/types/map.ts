@@ -24,3 +24,10 @@ export type MapBounds = {
   minLong: number;
   maxLong: number;
 };
+
+export const MAP_BOUNDS_MAX: MapBounds = {
+  minLat: -90,
+  maxLat: 90,
+  minLong: -180,
+  maxLong: 180,
+};
