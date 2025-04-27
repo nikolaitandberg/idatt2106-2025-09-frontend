@@ -27,9 +27,7 @@ export default function Alert({ children, type = "info" }: AlertPops) {
   return (
     <div className={cn(baseStyles, typeStyles[type])}>
       <Icon className="w-6 h-6" />
-      <p className="text-base text-black">
-        {children && <span className="ml-1">{children}</span>}
-      </p>
+      <p className="text-base text-black">{children && <span className="ml-1">{children}</span>}</p>
     </div>
   );
 }

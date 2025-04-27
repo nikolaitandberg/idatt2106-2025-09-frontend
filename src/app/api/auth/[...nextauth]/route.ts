@@ -1,11 +1,14 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import { sendLoginRequest, sendRegisterRequest } from "@/actions/auth";
+import { sendLoginRequest } from "@/actions/auth";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { jwtDecode } from "jwt-decode";
+import { Token } from "@/types";
+import { API_BASE_URL } from "@/types/constants";
 
 const decodeToken = (token: string) => {
-  const decodedToken = jwtDecode<any>(token);
+  const decodedToken = jwtDecode<Token>(token);
   return {
     userId: decodedToken.userId,
     isAdmin: decodedToken.isAdmin,
@@ -16,6 +19,27 @@ const decodeToken = (token: string) => {
     iat: decodedToken.iat,
     exp: decodedToken.exp,
   };
+};
+
+const verifyToken = async (token: string) => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/test`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      return false;
+    }
+
+    return true;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
 };
 
 const handler = NextAuth({
@@ -43,6 +67,13 @@ const handler = NextAuth({
         token: { type: "text" },
       },
       async authorize(credentials) {
+        if (!credentials?.token) {
+          return null;
+        }
+
+        if (!(await verifyToken(credentials.token))) {
+          return null;
+        }
         return decodeToken(credentials?.token);
       },
     }),
@@ -64,7 +95,7 @@ const handler = NextAuth({
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ token }) {
       return {
         user: token.user,
         token: token.token,
