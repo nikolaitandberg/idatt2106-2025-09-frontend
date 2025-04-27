@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "./popover";
 import { ScrollArea } from "./scrollArea";
+import { cn } from "@/util/cn";
 
 interface ComboBoxProps<T> {
   placeholder?: string;
@@ -21,6 +22,22 @@ export default function ComboBox<T>({
 }: ComboBoxProps<T>) {
   const [selectedOption, setSelectedOption] = useState<T | null>(initialValue ?? null);
   const [open, setOpen] = useState(false);
+  const [selectedElement, setSelectedElement] = useState<HTMLButtonElement | null>(null);
+
+  const buttonRef = (el: HTMLButtonElement | null, option: T) => {
+    if (selectedOption === option) {
+      setSelectedElement(el);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedElement) {
+      selectedElement.scrollIntoView({
+        block: "center",
+        inline: "nearest",
+      });
+    }
+  }, [selectedElement]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -38,17 +55,20 @@ export default function ComboBox<T>({
           onWheel={(e) => {
             e.stopPropagation();
           }}
-          className="w-full flex flex-col max-h-60"
-          style={{ width: "var(--radix-popover-trigger-width)", overscrollBehavior: "contain" }}>
+          className="w-full flex flex-col max-h-60 p-0"
+          style={{ width: "var(--radix-popover-trigger-width)" }}>
           {options.map((option, idx) => (
             <button
+              ref={(el) => buttonRef(el, option)}
               key={idx}
               onClick={() => {
                 setSelectedOption(option);
-                onSelect(option);
                 setOpen(false);
+                onSelect(option);
               }}
-              className="w-full cursor-pointer p-2">
+              className={cn("w-full cursor-pointer p-4 hover:bg-gray-100", {
+                "bg-green-100 hover:bg-green-100": selectedOption === option,
+              })}>
               {renderOption(option)}
             </button>
           ))}

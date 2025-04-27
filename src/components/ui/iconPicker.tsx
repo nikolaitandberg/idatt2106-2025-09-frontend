@@ -1,12 +1,17 @@
 import { mapIcons } from "@/util/icons";
 import ComboBox from "./comboBox";
 
-export default function IconPicker() {
-  const iconList = Object.keys(mapIcons).map((icon) => ({
-    name: icon,
-    icon: mapIcons[icon as keyof typeof mapIcons],
-  }));
+interface IconPickerProps {
+  initialValue?: string | null;
+  onSelect?: (icon: keyof typeof mapIcons) => void;
+}
 
+const iconList = Object.keys(mapIcons).map((icon) => ({
+  name: icon,
+  icon: mapIcons[icon as keyof typeof mapIcons],
+}));
+
+export default function IconPicker({ initialValue, onSelect }: IconPickerProps) {
   function RenderIcon(item: (typeof iconList)[number]) {
     return (
       <div className="flex items-center">
@@ -16,12 +21,18 @@ export default function IconPicker() {
     );
   }
   return (
-    <ComboBox
-      options={iconList}
-      placeholder="velg ikon"
-      renderOption={RenderIcon}
-      renderSelected={RenderIcon}
-      onSelect={(item) => console.log(item)}
-    />
+    <div>
+      <div className="block text-m font-medium mb-1">Velg ikon</div>
+      <ComboBox
+        options={iconList}
+        initialValue={initialValue ? iconList.find((icon) => icon.name === initialValue) : null}
+        placeholder="velg ikon"
+        renderOption={RenderIcon}
+        renderSelected={RenderIcon}
+        onSelect={(option) => {
+          onSelect?.(option.name as keyof typeof mapIcons);
+        }}
+      />
+    </div>
   );
 }

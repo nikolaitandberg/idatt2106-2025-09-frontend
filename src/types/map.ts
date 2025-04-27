@@ -1,3 +1,5 @@
+import { mapIcons } from "@/util/icons";
+
 /**
  * A map object
  */
@@ -6,8 +8,8 @@ export type MapObject = {
   typeId: number;
   latitude: number;
   longitude: number;
-  opening?: Date;
-  closing?: Date;
+  opening?: string;
+  closing?: string;
   contactPhone?: string;
   contactEmail?: string;
   contactName?: string;
@@ -35,5 +37,5 @@ export const MAP_BOUNDS_MAX: MapBounds = {
 export type MapObjectType = {
   id: number;
   name: string;
-  icon: string;
+  icon: keyof typeof mapIcons;
 };
