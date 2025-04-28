@@ -1,17 +1,45 @@
 import { ApiError } from "@/types/apiResponses";
-import { getSession, signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { auth } from "./auth";
+import { Token } from "@/types";
 
 /**
- * Sends a fetch request with the token in the Authorization header
+ * A function that can be used to fetch data with the token in the Authorization header.
  */
-export default async function Fetch<T>(input: string | URL | globalThis.Request, init?: RequestInit) {
-  const res = await FetchWithoutParse(input, init);
+export type FetchFunction = <T>(input: string | URL | globalThis.Request, init?: RequestInit) => Promise<T | null>;
+
+/**
+ * Sends a fetch request with the token in the Authorization header.
+ * NOTE: This function is only ever meant to be used on server-side.
+ * It will not work on the client-side.
+ */
+export const Fetch: FetchFunction = async <T>(
+  input: string | URL | globalThis.Request,
+  init?: RequestInit,
+): Promise<T | null> => {
+  return await FetchParse<T>(input, init, await auth());
+};
+export default Fetch;
+
+/**
+ * Sends a fetch request with the token in the Authorization header.
+ * @param input
+ * @param init
+ * @param session
+ * @returns
+ */
+export async function FetchParse<T>(
+  input: string | URL | globalThis.Request,
+  init?: RequestInit,
+  session?: Token | null,
+) {
+  const res = await FetchWithoutParse(input, init, session);
 
   if (!res.ok) {
     if (res.status === 401) {
       // The user is not authenticated, ensure that the auth state is updated
       signOut();
-      return;
+      throw new ApiError("Unauthorized", res.status);
     }
 
     if (res.status === 404) {
@@ -29,8 +57,11 @@ export default async function Fetch<T>(input: string | URL | globalThis.Request,
   return res.json() as T;
 }
 
-export async function FetchWithoutParse(input: string | URL | globalThis.Request, init?: RequestInit) {
-  const session = await getSession();
+export async function FetchWithoutParse(
+  input: string | URL | globalThis.Request,
+  init?: RequestInit,
+  session?: Token | null,
+) {
   const headers = new Headers(init?.headers);
 
   if (session) {
@@ -41,4 +72,17 @@ export async function FetchWithoutParse(input: string | URL | globalThis.Request
     ...(init || {}),
     headers: headers,
   });
+}
+
+/**
+ * Returns a function that can be used on the client-side to fetch data with the token in the Authorization header.
+ */
+export function useFetch() {
+  const session = useSession();
+
+  const fetcher: FetchFunction = async <T>(input: string | URL | globalThis.Request, init?: RequestInit) => {
+    return await FetchParse<T>(input, init, session.data);
+  };
+
+  return fetcher;
 }

@@ -2,7 +2,7 @@
 
 import Map, { MapRef } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useMapObjects } from "@/actions/map";
+import { useMapObjects, useMapObjectTypes } from "@/actions/map";
 import MapObject from "@/components/map/mapObject";
 import { useDebounce } from "use-debounce";
 import { useMemo, useRef, useState } from "react";
@@ -13,10 +13,17 @@ export default function Home() {
   const [debouncedBounds] = useDebounce(bounds, 100);
 
   const { data: mapObjects } = useMapObjects(debouncedBounds);
+  const { data: mapObjectTypes } = useMapObjectTypes();
   const mapRef = useRef<MapRef>(null);
 
   const renderedMapObjects = useMemo(() => {
-    return mapObjects?.map((object) => <MapObject key={object.id} object={object} />);
+    return mapObjects?.map((object) => (
+      <MapObject
+        key={object.id}
+        object={object}
+        icon={mapObjectTypes?.find((type) => type.id === object.typeId)?.icon ?? "house"}
+      />
+    ));
   }, [JSON.stringify(mapObjects)]);
 
   const handleMove = () => {

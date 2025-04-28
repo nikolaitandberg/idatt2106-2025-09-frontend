@@ -1,4 +1,4 @@
-import { MapObject } from "./map";
+import { MapObject, MapObjectType } from "./map";
 
 /**
  * Error response returned from the API
@@ -19,3 +19,8 @@ export class ApiError extends Error {
  * Response from the API when fetching map objects
  */
 export type MapObjectsResponse = MapObject[];
+
+/**
+ * Response from the API when fetching map object types
+ */
+export type MapObjectsTypesResponse = MapObjectType[];

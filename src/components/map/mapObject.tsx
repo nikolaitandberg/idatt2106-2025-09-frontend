@@ -1,10 +1,12 @@
 import type { MapObject } from "@/types/map";
 import { useClickOutside } from "@/util/hooks";
-import { House, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useRef, useState } from "react";
 import { Marker } from "react-map-gl/maplibre";
+import Icon from "../ui/icon";
+import { mapIcons } from "@/util/icons";
 
-export default function MapObject({ object }: { object: MapObject }) {
+export default function MapObject({ object, icon }: { object: MapObject; icon: keyof typeof mapIcons }) {
   const [open, setOpen] = useState(false);
   const innerRef = useRef<HTMLDivElement>(null);
 
@@ -21,14 +23,14 @@ export default function MapObject({ object }: { object: MapObject }) {
             <X onClick={() => setOpen(false)} className="cursor-pointer" />
           </div>
           <div className="flex flex-col">
-            <div className="text-gray-500 text-sm">{object.type}</div>
+            <div className="text-gray-500 text-sm">{object.typeId}</div>
             <div className="text-gray-500 text-sm">{object.contactEmail}</div>
             <div className="text-gray-500 text-sm">{object.contactName}</div>
           </div>
         </div>
       ) : (
         <div className="bg-white p-1 rounded-full shadow-md">
-          <House />
+          <Icon icon={icon} size={24} />
         </div>
       )}
     </Marker>

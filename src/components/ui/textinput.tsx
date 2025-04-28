@@ -9,6 +9,8 @@ type TextInputProps = {
   type?: "text" | "password" | "email";
   name: string;
   placeholder?: string;
+  initialValue?: string;
+  onChange?: (value: string) => void;
   validate?: (value: string) => boolean;
   validationErrorMessage?: string;
 };
@@ -19,9 +21,11 @@ export default function TextInput({
   name,
   placeholder,
   validationErrorMessage,
+  initialValue,
+  onChange,
   validate,
 }: TextInputProps) {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(initialValue ?? "");
   const [touched, setTouched] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -41,7 +45,10 @@ export default function TextInput({
           type={type === "password" && showPassword ? "text" : type}
           placeholder={placeholder}
           value={value}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => {
+            setValue(e.target.value);
+            onChange?.(e.target.value);
+          }}
           onBlur={() => setTouched(true)}
           className={cn("w-full px-3 py-2 border rounded-md pr-10", showError ? "border-red-500" : "border-gray-300")}
         />
