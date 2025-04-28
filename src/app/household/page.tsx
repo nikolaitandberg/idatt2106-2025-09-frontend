@@ -11,6 +11,7 @@ import GroupCard from "@/components/ui/groupCard";
 import { Accordion } from "@/components/ui/accordion";
 import FoodAccordionItem from "@/components/ui/itemAccordion";
 import { useSession } from "next-auth/react";
+import { AddMemberDialog } from "@/components/ui/addMemberDialog";
 
 export default function HouseholdPageWrapper() {
   const session = useSession({ required: true });
@@ -75,9 +76,7 @@ function HouseholdPage({ userId }: { userId: number }) {
           {householdUsers.map((user) => (
             <MemberCard key={user.id} name={`${user.firstName} ${user.lastName}`} />
           ))}
-          <Button variant="default" className="w-full">
-            Legg til eller inviter medlem
-          </Button>
+          <AddMemberDialog householdId={household.id} />
         </div>
 
         <hr className="border-border" />
@@ -117,8 +116,7 @@ function HouseholdPage({ userId }: { userId: number }) {
               </div>
               <div className="text-sm text-muted-foreground">
                 {Math.floor(
-                  (new Date(household.lastWaterChangeDate).getTime() - new Date().getTime()) /
-                    (1000 * 3600 * 24),
+                  (new Date(household.lastWaterChangeDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24),
                 )}{" "}
                 dager til neste vannbytte
               </div>
