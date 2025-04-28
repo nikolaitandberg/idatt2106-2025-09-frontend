@@ -21,6 +21,16 @@ export const Fetch: FetchFunction = async <T>(
 };
 export default Fetch;
 
+async function extractResponseContent<T>(res: Response): Promise<T | null> {
+  const text = await res.text();
+
+  try {
+    return JSON.parse(text) as T;
+  } catch (e) {
+    return text as T;
+  }
+}
+
 /**
  * Sends a fetch request with the token in the Authorization header.
  * @param input
@@ -46,15 +56,15 @@ export async function FetchParse<T>(
       throw new ApiError("Not found", res.status);
     }
 
-    const err = await res.json();
-    throw new ApiError(err.error, res.status);
+    const err = await extractResponseContent<{ error: string }>(res);
+    throw new ApiError(err?.error ?? "Noe gikk galt", res.status);
   }
 
   if (res.status === 204) {
     return null;
   }
 
-  return res.json() as T;
+  return extractResponseContent<T>(res);
 }
 
 export async function FetchWithoutParse(
