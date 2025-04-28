@@ -62,7 +62,7 @@ export default function TextInput({
         )}
       </div>
 
-      <div className="h-5 mt-1">
+      <div className="h-2 mt-1">
         {showError && (
           <p className="text-red-500 text-sm">{validationErrorMessage || "Ugyldig " + label.toLowerCase()}</p>
         )}

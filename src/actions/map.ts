@@ -1,4 +1,4 @@
-import { createMapObjectTypeRequest } from "@/types";
+import { CreateMapObjectRequest, CreateMapObjectTypeRequest, EditMapObjectRequest } from "@/types";
 import { ApiError, MapObjectsResponse, MapObjectsTypesResponse } from "@/types/apiResponses";
 import { API_BASE_URL } from "@/types/constants";
 import { MapBounds, MapObjectType } from "@/types/map";
@@ -112,7 +112,7 @@ export const useMutateMapObjectType = () => {
  * @param fetcher the fetch function to use
  */
 export const createMapObjectType = async (
-  req: createMapObjectTypeRequest,
+  req: CreateMapObjectTypeRequest,
   fetcher: FetchFunction = Fetch,
 ): Promise<null> => {
   return await fetcher<null>(`${API_BASE_URL}/map-object-type`, {
@@ -131,7 +131,7 @@ export const useCreateMapObjectType = () => {
   const fetcher = useFetch();
 
   return useMutation({
-    mutationFn: (req: createMapObjectTypeRequest) => {
+    mutationFn: (req: CreateMapObjectTypeRequest) => {
       return createMapObjectType(req, fetcher);
     },
   });
@@ -155,6 +155,61 @@ export const useDeleteMapObjectType = () => {
   return useMutation({
     mutationFn: (id: number) => {
       return deleteMapObjectType(id, fetcher);
+    },
+  });
+};
+
+export const createMapObject = async (req: CreateMapObjectRequest, fetcher: FetchFunction = Fetch): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/map-object`, {
+    method: "POST",
+    body: JSON.stringify(req),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+export const useCreateMapObject = () => {
+  const fetcher = useFetch();
+
+  return useMutation({
+    mutationFn: (req: CreateMapObjectRequest) => {
+      return createMapObject(req, fetcher);
+    },
+  });
+};
+
+export const deleteMapObject = async (id: number, fetcher: FetchFunction = Fetch): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/map-object/${id}`, {
+    method: "DELETE",
+  });
+};
+export const useDeleteMapObject = () => {
+  const fetcher = useFetch();
+
+  return useMutation({
+    mutationFn: (id: number) => {
+      return deleteMapObject(id, fetcher);
+    },
+  });
+};
+
+export const editMapObject = async (req: EditMapObjectRequest, fetcher: FetchFunction = Fetch): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/map-object/update`, {
+    method: "PUT",
+    body: JSON.stringify(req),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+export const useEditMapObject = () => {
+  const fetcher = useFetch();
+
+  return useMutation({
+    mutationFn: (req: EditMapObjectRequest) => {
+      return editMapObject(req, fetcher);
     },
   });
 };
