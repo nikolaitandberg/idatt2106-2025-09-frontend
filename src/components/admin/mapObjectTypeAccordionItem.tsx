@@ -10,6 +10,8 @@ import MapObjectCard from "./mapObjectCard";
 import Icon from "../ui/icon";
 import ConfirmationDialog from "../ui/confirmationDialog";
 import { useDeleteMapObjectType } from "@/actions/map";
+import CreateMapObjectForm from "./createMapObjectForm";
+import EditMapObjectForm from "./editMapObjectForm";
 
 interface MapObjectTypeAccordionItemProps {
   type: MapObjectType & { objects: MapObject[] };
@@ -19,6 +21,9 @@ export default function MapObjectTypeAccordionItem({ type }: MapObjectTypeAccord
   const queryClient = useQueryClient();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [createNewMapObjectDialogOpen, setCreateNewMapObjectDialogOpen] = useState(false);
+  const [editMapObjectDialogOpen, setEditMapObjectDialogOpen] = useState(false);
+  const [selectedMapObject, setSelectedMapObject] = useState<MapObject | null>(null);
   const { mutate: deleteMapObjectType, isPending: deleteMapObjectTypeIsPending } = useDeleteMapObjectType();
 
   return (
@@ -69,7 +74,7 @@ export default function MapObjectTypeAccordionItem({ type }: MapObjectTypeAccord
                 deleteMapObjectType(type.id, {
                   onSuccess: () => {
                     queryClient.invalidateQueries({
-                      queryKey: ["map"],
+                      queryKey: ["map", "mapObjectTypes"],
                     });
                     setDeleteDialogOpen(false);
                   },
@@ -87,13 +92,52 @@ export default function MapObjectTypeAccordionItem({ type }: MapObjectTypeAccord
       </div>
       <AccordionContent>
         <div className="flex flex-col items-center gap-2">
-          <Button size="fullWidth" className="mb-4">
-            <div>Legg til ny {type.name}</div>
-            <Plus strokeWidth={1} size={20} />
-          </Button>
+          <Dialog open={createNewMapObjectDialogOpen} onOpenChange={setCreateNewMapObjectDialogOpen}>
+            <DialogTrigger asChild>
+              <Button size="fullWidth" className="mb-4">
+                <div>Legg til ny {type.name}</div>
+                <Plus strokeWidth={1} size={20} />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="w-full max-w-2xl max-h-10/12 overflow-scroll">
+              <DialogTitle>Legg til ny {type.name.toLowerCase()}</DialogTitle>
+              <CreateMapObjectForm
+                mapObjectType={type}
+                onClose={() => {
+                  queryClient.invalidateQueries({
+                    queryKey: ["map", "mapObjects"],
+                  });
+                  setCreateNewMapObjectDialogOpen(false);
+                }}
+              />
+            </DialogContent>
+          </Dialog>
           {type.objects.map((object) => (
-            <MapObjectCard mapObject={object} key={object.id} />
+            <MapObjectCard
+              onDelete={() => {
+                queryClient.invalidateQueries({ queryKey: ["map", "mapObjects"] });
+              }}
+              mapObject={object}
+              key={object.id}
+              onClick={() => {
+                setEditMapObjectDialogOpen(true);
+                setSelectedMapObject(object);
+              }}
+            />
           ))}
+          <Dialog open={editMapObjectDialogOpen} onOpenChange={setEditMapObjectDialogOpen}>
+            <DialogContent className="w-full max-w-2xl max-h-10/12 overflow-scroll">
+              <DialogTitle>Rediger {type.name.toLowerCase()}</DialogTitle>
+              <EditMapObjectForm
+                onClose={() => {
+                  setEditMapObjectDialogOpen(false);
+                  queryClient.invalidateQueries({ queryKey: ["map", "mapObjects"] });
+                }}
+                mapObjectType={type}
+                mapObject={selectedMapObject as MapObject}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
       </AccordionContent>
     </AccordionItem>
