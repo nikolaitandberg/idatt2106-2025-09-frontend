@@ -6,19 +6,26 @@ import { Ref } from "react";
 
 interface MapComponentProps {
   ref?: Ref<MapRef | null>;
+  initialViewState?: {
+    longitude: number;
+    latitude: number;
+    zoom: number;
+  };
   onLoad?: () => void;
   children?: React.ReactNode;
 }
 
-export default function MapComponent({ ref, onLoad, children }: MapComponentProps) {
+export default function MapComponent({ ref, initialViewState, onLoad, children }: MapComponentProps) {
   return (
     <Map
       onLoad={onLoad}
-      initialViewState={{
-        longitude: 9.726463,
-        latitude: 60.931636,
-        zoom: 5,
-      }}
+      initialViewState={
+        initialViewState ?? {
+          longitude: 9.726463,
+          latitude: 60.931636,
+          zoom: 5,
+        }
+      }
       ref={ref}
       style={{ width: "100%", height: "100%" }}
       mapStyle={{
