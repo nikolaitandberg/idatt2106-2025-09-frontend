@@ -46,7 +46,10 @@ export default function PositionSelector({ initialPosition, className, icon, onC
       <DialogContent>
         <DialogTitle>Velg posisjon</DialogTitle>
         <div className="w-full h-64">
-          <MapComponent onLoad={onMapLoad} ref={mapRef} initialViewState={{ latitude, longitude, zoom: 12 }}>
+          <MapComponent
+            onLoad={onMapLoad}
+            ref={mapRef}
+            initialViewState={initialPosition && { latitude, longitude, zoom: 12 }}>
             <Marker longitude={longitude} latitude={latitude} anchor="center">
               {icon && <Icon className="bg-white rounded-full p-2" icon={icon} size={30} />}
             </Marker>
