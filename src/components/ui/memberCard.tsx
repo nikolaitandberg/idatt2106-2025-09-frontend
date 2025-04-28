@@ -1,0 +1,43 @@
+"use client";
+
+import Image from "next/image";
+import { Dog } from "lucide-react";
+
+type MemberCardProps = {
+  name: string;
+  avatarUrl?: string;
+  type?: "person" | "animal";
+};
+
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .map((word) => word[0]?.toUpperCase())
+    .slice(0, 2)
+    .join("");
+}
+
+export default function MemberCard({ name, avatarUrl, type = "person" }: MemberCardProps) {
+  const initials = getInitials(name);
+
+  let avatarContent;
+
+  if (avatarUrl) {
+    avatarContent = (
+      <Image src={avatarUrl} alt={name} width={40} height={40} className="object-cover w-full h-full rounded-full" />
+    );
+  } else if (type === "animal") {
+    avatarContent = <Dog className="w-4 h-4 text-foreground" />;
+  } else {
+    avatarContent = initials;
+  }
+
+  return (
+    <div className="flex items-center gap-3 p-2 rounded-lg shadow-sm bg-white border border-border">
+      <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-medium text-foreground overflow-hidden">
+        {avatarContent}
+      </div>
+      <span className="text-sm text-foreground">{name}</span>
+    </div>
+  );
+}
