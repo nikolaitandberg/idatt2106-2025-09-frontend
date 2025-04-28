@@ -103,10 +103,7 @@ export const useSeverities = () => {
  * @param req the event to create
  * @param fetcher the fetch function to use
  */
-export const createEvent = async (
-  req: CreateEventRequest,
-  fetcher: FetchFunction = Fetch
-): Promise<null> => {
+export const createEvent = async (req: CreateEventRequest, fetcher: FetchFunction = Fetch): Promise<null> => {
   return await fetcher<null>(`${API_BASE_URL}/event`, {
     method: "POST",
     body: JSON.stringify(req),
@@ -134,10 +131,7 @@ export const useCreateEvent = () => {
  * @param req the event to update
  * @param fetcher the fetch function to use
  */
-export const updateEvent = async (
-  req: UpdateEventRequest,
-  fetcher: FetchFunction = Fetch
-): Promise<null> => {
+export const updateEvent = async (req: UpdateEventRequest, fetcher: FetchFunction = Fetch): Promise<null> => {
   return await fetcher<null>(`${API_BASE_URL}/event/update`, {
     method: "PUT",
     body: JSON.stringify(req),
