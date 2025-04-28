@@ -1,15 +1,14 @@
 import type { Event } from "@/types/event";
 import { useClickOutside } from "@/util/hooks";
 import { AlertTriangle, Clock, X } from "lucide-react";
-import { useRef, useState, useMemo, useEffect } from "react";
-import { Marker, Layer, Source, useMap } from "react-map-gl/maplibre";
+import { useRef, useState, useMemo } from "react";
+import { Marker, Layer, Source } from "react-map-gl/maplibre";
 import type { Feature } from "geojson";
 import { point, circle } from "@turf/turf";
 
 export default function MapEvent({ event }: { event: Event }) {
   const [open, setOpen] = useState(false);
   const innerRef = useRef<HTMLDivElement>(null);
-  const { current: map } = useMap();
 
   const sourceId = useMemo(() => `event-${event.id}-radius`, [event.id]);
   const fillLayerId = useMemo(() => `event-${event.id}-radius-fill`, [event.id]);
@@ -19,24 +18,8 @@ export default function MapEvent({ event }: { event: Event }) {
     setOpen(false);
   });
 
-  // Add this effect to manage layer lifecycle
-  useEffect(() => {
-    return () => {
-      // Cleanup function to remove layers when component unmounts
-      if (map) {
-        const mapInstance = map.getMap();
-        if (mapInstance) {
-          if (mapInstance.getLayer(fillLayerId)) mapInstance.removeLayer(fillLayerId);
-          if (mapInstance.getLayer(outlineLayerId)) mapInstance.removeLayer(outlineLayerId);
-          if (mapInstance.getSource(sourceId)) mapInstance.removeSource(sourceId);
-        }
-      }
-    };
-  }, [map, sourceId, fillLayerId, outlineLayerId]);
-
   // Memoize colors based on severity to prevent recalculation
   const colors = useMemo(() => {
-    console.log(`Calculating colors for event ${event.id} with severity ${event.severityId}`);
     const getSeverityColor = (severityId: number) => {
       switch (severityId) {
         case 2:
@@ -97,7 +80,6 @@ export default function MapEvent({ event }: { event: Event }) {
   // Memoize the circle GeoJSON to prevent regeneration on every render
   const circleGeoJSON = useMemo(() => {
     const center = point([event.longitude, event.latitude]);
-    console.log("Creating circle");
     return circle(center, event.radius, { units: "kilometers" });
   }, [event.longitude, event.latitude, event.radius]);
 

@@ -2,16 +2,13 @@
 
 import { useProfile } from "@/actions/user";
 import { useHousehold, useHouseholdUsers } from "@/actions/household";
-import ProgressBar from "@/components/ui/progressbar";
-import Alert from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Home, MapPin, Pencil, ImageIcon } from "lucide-react";
+import { Home, MapPin, Pencil } from "lucide-react";
 import MemberCard from "@/components/ui/memberCard";
 import GroupCard from "@/components/ui/groupCard";
-import { Accordion } from "@/components/ui/accordion";
-import FoodAccordionItem from "@/components/ui/itemAccordion";
 import { useSession } from "next-auth/react";
 import { AddMemberDialog } from "@/components/ui/addMemberDialog";
+import HouseholdFood from "@/components/household/HouseholdFood";
 
 export default function HouseholdPageWrapper() {
   const session = useSession({ required: true });
@@ -92,47 +89,7 @@ function HouseholdPage({ userId }: { userId: number }) {
           </Button>
         </div>
       </aside>
-
-      <main className="flex-1 p-8 bg-background">
-        <div className="max-w-3xl mx-auto space-y-8">
-          <section className="space-y-4">
-            <ProgressBar value={45} label="Forberedelsesgrad" />
-            <Alert type="warning">
-              Du er ikke godt nok forberedt.{" "}
-              <a href="household" className="underline underline-offset-2">
-                Lær mer om hvordan vi beregner dette
-              </a>
-            </Alert>
-          </section>
-
-          <section className="space-y-4">
-            <h2 className="text-lg font-medium">Vann</h2>
-            <div className="flex justify-between items-center border p-4 rounded shadow-sm bg-white">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
-                  <ImageIcon className="w-4 h-4 text-muted-foreground" />
-                </div>
-                <span className="text-sm">Vann</span>
-              </div>
-              <div className="text-sm text-muted-foreground">
-                {Math.floor(
-                  (new Date(household.lastWaterChangeDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24),
-                )}{" "}
-                dager til neste vannbytte
-              </div>
-              <div className="text-sm font-medium">{household.waterAmountLiters} L</div>
-            </div>
-          </section>
-
-          <section className="space-y-4">
-            <h2 className="text-lg font-medium">Matvarer</h2>
-            <Accordion type="multiple">
-              <FoodAccordionItem id="bananer" name="Bananer" totalAmount="2 stk" units={[]} />
-              <FoodAccordionItem id="bonner" name="Bønner" totalAmount="2 pk" units={[]} />
-            </Accordion>
-          </section>
-        </div>
-      </main>
+      <HouseholdFood household={household} />
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { cn } from "@/util/cn";
 
 type TextInputProps = {
   label: string;
-  type?: "text" | "password" | "email";
+  type?: "text" | "password" | "email" | "number";
   name: string;
   placeholder?: string;
   initialValue?: string;

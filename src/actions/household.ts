@@ -1,14 +1,14 @@
-import { ApiError } from "@/types/apiResponses";
+import { ApiError, GetHouseholdFoodResponse, GetHouseholdResonse } from "@/types/apiResponses";
 import { API_BASE_URL } from "@/types/constants";
-import { HouseholdResponse, UserResponse } from "@/types/household";
+import { Food, FoodType, UserResponse } from "@/types/household";
 import Fetch, { FetchFunction, useFetch } from "@/util/fetch";
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
-import { AddUserToHouseRequest, AddExtraResidentRequest } from "@/types/apiRequests";
+import { AddUserToHouseRequest, AddExtraResidentRequest, AddHouseholdFoodRequest } from "@/types/apiRequests";
 import { useMutation } from "@tanstack/react-query";
 
-export const getHousehold = async (id: number, fetcher: FetchFunction = Fetch): Promise<HouseholdResponse | null> => {
+export const getHousehold = async (id: number, fetcher: FetchFunction = Fetch): Promise<GetHouseholdResonse | null> => {
   try {
-    const res = await fetcher<HouseholdResponse>(`${API_BASE_URL}/households/${id}`);
+    const res = await fetcher<GetHouseholdResonse>(`${API_BASE_URL}/households/${id}`);
     return res ?? null;
   } catch (error) {
     if (error instanceof ApiError && error.code === 404) {
@@ -44,10 +44,10 @@ export const getExtraResidents = async (id: number, fetcher: FetchFunction = Fet
   return res ?? [];
 };
 
-export const useHousehold = (id: number, options?: UseQueryOptions<HouseholdResponse | null, Error>) => {
+export const useHousehold = (id: number, options?: UseQueryOptions<GetHouseholdResonse | null, Error>) => {
   const fetcher = useFetch();
 
-  return useQuery<HouseholdResponse | null, Error>({
+  return useQuery<GetHouseholdResonse | null, Error>({
     queryKey: ["household", id],
     queryFn: () => getHousehold(id, fetcher),
     enabled: options?.enabled ?? true,
@@ -82,3 +82,58 @@ export const useAddExtraResident = () => {
   });
 };
 
+export const getHouseholdFood = async (
+  householdId: number,
+  fetcher: FetchFunction = Fetch,
+): Promise<GetHouseholdFoodResponse> => {
+  const foodTypes = await fetcher<FoodType[]>(`${API_BASE_URL}/food-types`);
+  const food = await fetcher<Food[]>(`${API_BASE_URL}/food/household/${householdId}`);
+
+  if (!foodTypes || !food) {
+    throw new Error("Failed to fetch food data");
+  }
+
+  return foodTypes.map((type) => ({
+    ...type,
+    food: food.filter((f) => f.typeId === type.id),
+  }));
+};
+
+export const useHouseholdFood = (householdId: number) => {
+  const fetcher = useFetch();
+
+  return useQuery<GetHouseholdFoodResponse, Error>({
+    queryKey: ["household", "food", householdId],
+    queryFn: () => getHouseholdFood(householdId, fetcher),
+  });
+};
+
+export const addHouseholdFood = async (req: AddHouseholdFoodRequest, fetcher: FetchFunction = Fetch) => {
+  await fetcher<void>(`${API_BASE_URL}/food`, {
+    method: "POST",
+    body: JSON.stringify(req),
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useAddHouseholdFood = () => {
+  const fetcher = useFetch();
+
+  return useMutation<void, Error, AddHouseholdFoodRequest>({
+    mutationFn: (data) => addHouseholdFood(data, fetcher),
+  });
+};
+
+export const deleteHouseholdFood = async (id: number, fetcher: FetchFunction = Fetch) => {
+  await fetcher<void>(`${API_BASE_URL}/food/${id}`, {
+    method: "DELETE",
+  });
+};
+
+export const useDeleteHouseholdFood = () => {
+  const fetcher = useFetch();
+
+  return useMutation<void, Error, number>({
+    mutationFn: (id) => deleteHouseholdFood(id, fetcher),
+  });
+};
