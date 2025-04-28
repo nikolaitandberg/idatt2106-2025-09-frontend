@@ -99,7 +99,7 @@ export default function MapObjectTypeAccordionItem({ type }: MapObjectTypeAccord
                 <Plus strokeWidth={1} size={20} />
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="w-full max-w-2xl max-h-10/12 overflow-scroll">
               <DialogTitle>Legg til ny {type.name.toLowerCase()}</DialogTitle>
               <CreateMapObjectForm
                 mapObjectType={type}
@@ -126,7 +126,7 @@ export default function MapObjectTypeAccordionItem({ type }: MapObjectTypeAccord
             />
           ))}
           <Dialog open={editMapObjectDialogOpen} onOpenChange={setEditMapObjectDialogOpen}>
-            <DialogContent>
+            <DialogContent className="w-full max-w-2xl max-h-10/12 overflow-scroll">
               <DialogTitle>Rediger {type.name.toLowerCase()}</DialogTitle>
               <EditMapObjectForm
                 onClose={() => {

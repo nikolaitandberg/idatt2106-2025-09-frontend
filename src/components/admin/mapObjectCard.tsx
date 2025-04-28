@@ -44,11 +44,13 @@ export default function MapObjectCard({
             <div className="flex items-center gap-1">
               <Clock size={10} />
               <div className="text-gray-500 text-sm">
-                {openDate.getHours()}:{openDate.getMinutes().toString().padStart(2, "0")}
+                {openDate.getUTCHours().toString().padStart(2, "0")}:
+                {openDate.getUTCMinutes().toString().padStart(2, "0")}
               </div>
               -
               <div className="text-gray-500 text-sm">
-                {closeDate.getHours()}:{closeDate.getMinutes().toString().padStart(2, "0")}
+                {closeDate.getUTCHours().toString().padStart(2, "0")}:
+                {closeDate.getUTCMinutes().toString().padStart(2, "0")}
               </div>
             </div>
           </>

@@ -6,6 +6,7 @@ import PositionSelector from "../ui/positionSelector";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import LoadingSpinner from "../ui/loadingSpinner";
+import TimeSelector from "../ui/timeSelector";
 
 interface CreateMapObjectFormProps {
   mapObjectType: MapObjectType;
@@ -15,6 +16,8 @@ interface CreateMapObjectFormProps {
 export default function CreateMapObjectForm({ mapObjectType, onClose }: CreateMapObjectFormProps) {
   const { mutate: createMapObject, isPending } = useCreateMapObject();
   const [position, setPosition] = useState({ latitude: 0, longitude: 0 });
+  const [opening, setOpening] = useState<Date>(new Date(0));
+  const [closing, setClosing] = useState<Date>(new Date(0));
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -34,6 +37,8 @@ export default function CreateMapObjectForm({ mapObjectType, onClose }: CreateMa
       latitude,
       longitude,
       typeId: mapObjectType.id,
+      opening: opening && opening.getTime() > 0 ? opening.getTime().toString() : undefined,
+      closing: closing && closing.getTime() > 0 ? closing.getTime().toString() : undefined,
     };
 
     createMapObject(data, {
@@ -58,6 +63,34 @@ export default function CreateMapObjectForm({ mapObjectType, onClose }: CreateMa
         <TextInput label="Navn" type="text" name="name" />
         <TextInput label="E-post" type="email" name="email" />
         <TextInput label="Telefonnummer" name="phone" type="text" />
+      </FormSection>
+      <FormSection title="Åpningstider" dividerTop>
+        <div className="flex flex-row gap-8">
+          <TimeSelector
+            initialValue={{
+              hours: opening.getUTCHours(),
+              minutes: opening.getUTCMinutes(),
+            }}
+            label="Åpner"
+            onChange={(time) => {
+              const newDate = opening;
+              newDate.setUTCHours(time.hours, time.minutes);
+              setOpening(newDate);
+            }}
+          />
+          <TimeSelector
+            initialValue={{
+              hours: closing.getUTCHours(),
+              minutes: closing.getUTCMinutes(),
+            }}
+            label="Stenger"
+            onChange={(time) => {
+              const newDate = closing;
+              newDate.setUTCHours(time.hours, time.minutes);
+              setClosing(newDate);
+            }}
+          />
+        </div>
       </FormSection>
       <Button type="submit" className="mt-4" size="fullWidth">
         {isPending ? <LoadingSpinner /> : "Opprett objekt"}
