@@ -5,6 +5,7 @@ import Fetch, { FetchFunction, useFetch } from "@/util/fetch";
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { AddUserToHouseRequest, AddExtraResidentRequest } from "@/types/apiRequests";
 import { useMutation } from "@tanstack/react-query";
+import { ExtraResidentResponse } from "@/types/extraResident";
 
 export const getHousehold = async (id: number, fetcher: FetchFunction = Fetch): Promise<HouseholdResponse | null> => {
   try {
@@ -39,9 +40,19 @@ export const addExtraResident = async (data: AddExtraResidentRequest, fetcher: F
   });
 };
 
-export const getExtraResidents = async (id: number, fetcher: FetchFunction = Fetch): Promise<UserResponse[]> => {
-  const res = await fetcher<UserResponse[]>(`${API_BASE_URL}/extra-residents/${id}`);
+export const getExtraResidents = async (fetcher: FetchFunction = Fetch): Promise<ExtraResidentResponse[]> => {
+  const res = await fetcher<ExtraResidentResponse[]>(`${API_BASE_URL}/extra-residents`);
   return res ?? [];
+};
+
+export const useExtraResidents = (options?: UseQueryOptions<ExtraResidentResponse[], Error>) => {
+  const fetcher = useFetch();
+
+  return useQuery<ExtraResidentResponse[], Error>({
+    queryKey: ["extraResidents"],
+    queryFn: () => getExtraResidents(fetcher),
+    ...options,
+  });
 };
 
 export const useHousehold = (id: number, options?: UseQueryOptions<HouseholdResponse | null, Error>) => {
