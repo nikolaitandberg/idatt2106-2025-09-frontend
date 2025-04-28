@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getHousehold } from "@/actions/household";
-import { HouseholdResponse } from "@/types/household";
+import { useProfile } from "@/actions/user";
+import { useHousehold, useHouseholdUsers } from "@/actions/household";
 import ProgressBar from "@/components/ui/progressbar";
 import Alert from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -11,25 +10,47 @@ import MemberCard from "@/components/ui/memberCard";
 import GroupCard from "@/components/ui/groupCard";
 import { Accordion } from "@/components/ui/accordion";
 import FoodAccordionItem from "@/components/ui/itemAccordion";
+import { useSession } from "next-auth/react";
 
-export default function HouseholdPage() {
-  const [household, setHousehold] = useState<HouseholdResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
+export default function HouseholdPageWrapper() {
+  const session = useSession({ required: true });
 
-  const householdId = 6;
+  if (!session.data) {
+    return <>Laster side...</>;
+  }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getHousehold(householdId);
-        setHousehold(data);
-      } catch (err) {
-        setError("Kunne ikke hente husholdningsdata");
-      }
-    };
+  return <HouseholdPage userId={session.data.user.userId} />;
+}
 
-    fetchData();
-  }, [householdId]);
+function HouseholdPage({ userId }: { userId: number }) {
+  const { data: profile, isPending: profilePending, isError: profileError } = useProfile(userId);
+  const householdId = profile?.householdId ?? -1;
+
+  const {
+    data: household,
+    isPending: householdPending,
+    isError: householdError,
+  } = useHousehold(householdId, {
+    queryKey: ["household", householdId],
+    enabled: householdId > 0,
+  });
+
+  const {
+    data: householdUsers = [],
+    isPending: usersPending,
+    isError: usersError,
+  } = useHouseholdUsers(householdId, {
+    queryKey: ["householdUsers", householdId],
+    enabled: householdId > 0,
+  });
+
+  if (profilePending || householdPending || usersPending) {
+    return <div>Loading...</div>;
+  }
+
+  if (profileError || householdError || usersError || !profile || !household) {
+    return <div>Kunne ikke hente husholdningsdata</div>;
+  }
 
   return (
     <div className="min-h-screen flex bg-white text-foreground">
@@ -37,23 +58,23 @@ export default function HouseholdPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Home className="w-5 h-5" />
-            <h1 className="text-xl font-semibold">Husholdningen</h1>
+            <h1 className="text-xl font-semibold">Din husholdning</h1>
           </div>
           <Pencil className="w-4 h-4 text-muted-foreground" />
         </div>
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <MapPin className="w-4 h-4" />
-          <span>{household?.address ?? "Laster adresse..."}</span>
+          <span>{household.address}</span>
         </div>
 
         <hr className="border-border" />
 
         <div className="space-y-4">
           <h2 className="font-medium">Medlemmer</h2>
-          <MemberCard name="Markus Madsbakken" />
-          <MemberCard name="Nikolai Tandberg" />
-          <MemberCard name="Felix" type="animal" />
+          {householdUsers.map((user) => (
+            <MemberCard key={user.id} name={`${user.firstName} ${user.lastName}`} />
+          ))}
           <Button variant="default" className="w-full">
             Legg til eller inviter medlem
           </Button>
@@ -94,8 +115,14 @@ export default function HouseholdPage() {
                 </div>
                 <span className="text-sm">Vann</span>
               </div>
-              <div className="text-sm text-muted-foreground">350 dager til neste vannbytte</div>
-              <div className="text-sm font-medium">40 L</div>
+              <div className="text-sm text-muted-foreground">
+                {Math.floor(
+                  (new Date(household.lastWaterChangeDate).getTime() - new Date().getTime()) /
+                    (1000 * 3600 * 24),
+                )}{" "}
+                dager til neste vannbytte
+              </div>
+              <div className="text-sm font-medium">{household.waterAmountLiters} L</div>
             </div>
           </section>
 
