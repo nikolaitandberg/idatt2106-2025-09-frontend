@@ -86,7 +86,7 @@ export const useMapObjectTypes = () => {
  * @param fetcher the fetch function to use
  */
 export const editMapObjectType = async (req: MapObjectType, fetcher: FetchFunction = Fetch): Promise<null> => {
-  return await fetcher<null>(`${API_BASE_URL}/map-object-type/update`, {
+  return await fetcher<null>(`${API_BASE_URL}/map-object-type`, {
     method: "PUT",
     body: JSON.stringify(req),
     headers: {
@@ -195,7 +195,7 @@ export const useDeleteMapObject = () => {
 };
 
 export const editMapObject = async (req: EditMapObjectRequest, fetcher: FetchFunction = Fetch): Promise<void> => {
-  await fetcher<void>(`${API_BASE_URL}/map-object/update`, {
+  await fetcher<void>(`${API_BASE_URL}/map-object`, {
     method: "PUT",
     body: JSON.stringify(req),
     headers: {

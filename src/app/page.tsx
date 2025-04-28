@@ -30,7 +30,6 @@ export default function Home() {
   }, [JSON.stringify(mapObjects)]);
 
   const renderedEvents = useMemo(() => {
-    console.log("rendering events");
     return events?.map((event) => <MapEvent key={event.id} event={event} />);
   }, [JSON.stringify(events)]);
 
