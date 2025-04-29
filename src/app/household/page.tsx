@@ -1,7 +1,9 @@
 "use client";
 
 import { useProfile } from "@/actions/user";
-import { useHousehold, useHouseholdUsers } from "@/actions/household";
+import { useHousehold, useHouseholdUsers, useExtraResidents } from "@/actions/household";
+import ProgressBar from "@/components/ui/progressbar";
+import Alert from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Home, MapPin, Pencil } from "lucide-react";
 import MemberCard from "@/components/ui/memberCard";
@@ -42,11 +44,20 @@ function HouseholdPage({ userId }: { userId: number }) {
     enabled: householdId > 0,
   });
 
-  if (profilePending || householdPending || usersPending) {
+  const {
+    data: extraResidents = [],
+    isPending: extraResidentsPending,
+    isError: extraResidentsError,
+  } = useExtraResidents({
+    queryKey: ["extraResidents", householdId],
+    enabled: householdId > 0,
+  });
+
+  if (profilePending || householdPending || usersPending || extraResidentsPending) {
     return <div>Loading...</div>;
   }
 
-  if (profileError || householdError || usersError || !profile || !household) {
+  if (profileError || householdError || usersError || extraResidentsError || !profile || !household) {
     return <div>Kunne ikke hente husholdningsdata</div>;
   }
 
@@ -70,9 +81,21 @@ function HouseholdPage({ userId }: { userId: number }) {
 
         <div className="space-y-4">
           <h2 className="font-medium">Medlemmer</h2>
+
           {householdUsers.map((user) => (
-            <MemberCard key={user.id} name={`${user.firstName} ${user.lastName}`} />
+            <MemberCard key={`user-${user.id}`} name={`${user.firstName} ${user.lastName}`} />
           ))}
+
+          {extraResidents
+            .filter((resident) => resident.householdId === householdId)
+            .map((resident) => (
+              <MemberCard
+                key={`resident-${resident.id}`}
+                name={resident.name}
+                type={resident.typeId === 4 ? "animal" : "person"}
+              />
+            ))}
+
           <AddMemberDialog householdId={household.id} />
         </div>
 

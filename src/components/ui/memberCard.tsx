@@ -1,12 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { Dog } from "lucide-react";
+import { Dog, X } from "lucide-react";
 
 type MemberCardProps = {
   name: string;
   avatarUrl?: string;
-  type?: "person" | "animal";
+  type?: "person" | "animal" | "child";
+  onRemove?: () => void;
 };
 
 function getInitials(name: string) {
@@ -17,7 +18,7 @@ function getInitials(name: string) {
     .join("");
 }
 
-export default function MemberCard({ name, avatarUrl, type = "person" }: MemberCardProps) {
+export default function MemberCard({ name, avatarUrl, type = "person", onRemove }: MemberCardProps) {
   const initials = getInitials(name);
 
   let avatarContent;
@@ -33,11 +34,18 @@ export default function MemberCard({ name, avatarUrl, type = "person" }: MemberC
   }
 
   return (
-    <div className="flex items-center gap-3 p-2 rounded-lg shadow-sm bg-white border border-border">
-      <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-medium text-foreground overflow-hidden">
-        {avatarContent}
+    <div className="flex items-center justify-between p-2 rounded-lg shadow-sm bg-white border border-border">
+      <div className="flex items-center gap-3">
+        <div className="w-6 h-6 rounded-full bg-muted flex items-center justify-center text-xs font-medium text-foreground overflow-hidden">
+          {avatarContent}
+        </div>
+        <span className="text-sm text-foreground">{name}</span>
       </div>
-      <span className="text-sm text-foreground">{name}</span>
+      {onRemove && (
+        <button onClick={onRemove} className="p-1 text-muted-foreground hover:text-foreground">
+          <X className="w-4 h-4" />
+        </button>
+      )}
     </div>
   );
 }
