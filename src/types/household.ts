@@ -7,7 +7,7 @@ export interface UserResponse {
 
 export type Household = {
   id: number;
-  address: string;
+  adress: string;
   longitude: number;
   latitude: number;
   waterAmountLiters: number;

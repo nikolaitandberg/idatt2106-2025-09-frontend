@@ -9,6 +9,8 @@ import GroupCard from "@/components/ui/groupCard";
 import { useSession } from "next-auth/react";
 import { AddMemberDialog } from "@/components/ui/addMemberDialog";
 import HouseholdFood from "@/components/household/HouseholdFood";
+import LoadingSpinner from "@/components/ui/loadingSpinner";
+import CreateHouseholdForm from "@/components/household/CreateJoinHouseholdForm";
 
 export default function HouseholdPageWrapper() {
   const session = useSession({ required: true });
@@ -22,7 +24,7 @@ export default function HouseholdPageWrapper() {
 
 function HouseholdPage({ userId }: { userId: number }) {
   const { data: profile, isPending: profilePending, isError: profileError } = useProfile(userId);
-  const householdId = profile?.householdId ?? -1;
+  const householdId = profile?.householdId ?? 0;
 
   const {
     data: household,
@@ -44,12 +46,33 @@ function HouseholdPage({ userId }: { userId: number }) {
 
   const deleteExtraResidentMutation = useDeleteExtraResident();
 
-  if (profilePending || householdPending || usersPending || extraResidentsPending) {
-    return <div>Loading...</div>;
+  if (profilePending) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
-  if (profileError || householdError || usersError || extraResidentsError || !profile || !household) {
-    return <div>Kunne ikke hente husholdningsdata</div>;
+  if (profileError || !profile) {
+    return <div className="text-center py-12 text-red-600">Kunne ikke hente profildata</div>;
+  }
+
+  // Show create household form if user doesn't have a household
+  if (!householdId || householdId <= 0) {
+    return <CreateHouseholdForm />;
+  }
+
+  if (householdPending || usersPending || extraResidentsPending) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (householdError || usersError || extraResidentsError || !household) {
+    return <div className="text-center py-12 text-red-600">Kunne ikke hente husholdningsdata</div>;
   }
 
   const handleRemoveExtraResident = (id: number) => {
@@ -69,7 +92,7 @@ function HouseholdPage({ userId }: { userId: number }) {
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <MapPin className="w-4 h-4" />
-          <span>{household.address}</span>
+          <span>{household.adress}</span>
         </div>
 
         <hr className="border-border" />
