@@ -1,6 +1,7 @@
-import { MapObjectType } from "./map";
+import { Food } from "./household";
+import { MapObject, MapObjectType } from "./map";
 
-export type createMapObjectTypeRequest = Omit<MapObjectType, "id">;
+export type CreateMapObjectTypeRequest = Omit<MapObjectType, "id">;
 
 export type AddUserToHouseRequest = { username: string; householdId: number };
 
@@ -9,3 +10,7 @@ export type AddExtraResidentRequest = {
   typeId: number;
   name: string;
 };
+export type CreateMapObjectRequest = Omit<MapObject, "id">;
+export type EditMapObjectRequest = MapObject;
+
+export type AddHouseholdFoodRequest = Omit<Food, "id">;
