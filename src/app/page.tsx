@@ -3,7 +3,9 @@
 import Map, { MapRef } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useMapObjects, useMapObjectTypes } from "@/actions/map";
+import { useEvents } from "@/actions/event";
 import MapObject from "@/components/map/mapObject";
+import MapEvent from "@/components/map/mapEvent";
 import { useDebounce } from "use-debounce";
 import { useMemo, useRef, useState } from "react";
 import { MapBounds } from "@/types/map";
@@ -12,6 +14,7 @@ export default function Home() {
   const [bounds, setBounds] = useState<MapBounds>({} as MapBounds);
   const [debouncedBounds] = useDebounce(bounds, 100);
 
+  const { data: events } = useEvents(debouncedBounds);
   const { data: mapObjects } = useMapObjects(debouncedBounds);
   const { data: mapObjectTypes } = useMapObjectTypes();
   const mapRef = useRef<MapRef>(null);
@@ -25,6 +28,10 @@ export default function Home() {
       />
     ));
   }, [JSON.stringify(mapObjects)]);
+
+  const renderedEvents = useMemo(() => {
+    return events?.map((event) => <MapEvent key={event.id} event={event} />);
+  }, [JSON.stringify(events)]);
 
   const handleMove = () => {
     if (mapRef.current) {
@@ -71,6 +78,7 @@ export default function Home() {
           ],
         }}>
         {renderedMapObjects}
+        {renderedEvents}
       </Map>
     </div>
   );

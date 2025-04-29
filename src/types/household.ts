@@ -5,11 +5,31 @@ export interface UserResponse {
   email?: string;
 }
 
-export interface HouseholdResponse {
+export type Household = {
   id: number;
   address: string;
   longitude: number;
   latitude: number;
   waterAmountLiters: number;
   lastWaterChangeDate: string;
-}
+};
+
+export type FoodType = {
+  id: number;
+  name: string;
+  unit: string;
+  caloriesPerUnit: number;
+  picture: string;
+};
+
+export type Food = {
+  id: number;
+  typeId: number;
+  householdId: number;
+  expirationDate: string;
+  amount: number;
+};
+
+export type FoodWithType = FoodType & {
+  food: Food[];
+};
