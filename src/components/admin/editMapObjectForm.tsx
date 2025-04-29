@@ -1,7 +1,7 @@
 import { useEditMapObject } from "@/actions/map";
 import { EditMapObjectRequest, MapObject, MapObjectType } from "@/types";
 import { useState } from "react";
-import FormSection from "../ui/formSection";
+import FormSection from "../ui/form/formSection";
 import TextInput from "../ui/textinput";
 import PositionSelector from "../ui/positionSelector";
 import { Button } from "../ui/button";
