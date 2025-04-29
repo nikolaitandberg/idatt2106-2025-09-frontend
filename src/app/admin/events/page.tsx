@@ -6,14 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { DialogContent, DialogTitle, DialogTrigger, Dialog } from "@/components/ui/dialog";
-import { useQueryClient } from "@tanstack/react-query";
 import { useEvents, useSeverities } from "@/actions/event";
+import CreateEventForm from "@/components/admin/createEventForm";
 
 export default function AdminEvents() {
   const events = useEvents(MAP_BOUNDS_MAX);
   const severities = useSeverities();
   const [newEventDialogOpen, setNewEventDialogOpen] = useState(false);
-  const queryClient = useQueryClient();
 
   if (events.isPending || severities.isPending) {
     return <div>Loading...</div>;
@@ -56,7 +55,7 @@ export default function AdminEvents() {
                 </DialogTrigger>
                 <DialogContent>
                   <DialogTitle>Legg til ny hendelse</DialogTitle>
-                  {/* Create Event Form would go here */}
+                  <CreateEventForm onClose={() => setNewEventDialogOpen(false)} />
                 </DialogContent>
               </Dialog>
             </div>
