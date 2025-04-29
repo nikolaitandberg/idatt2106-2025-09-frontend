@@ -4,15 +4,15 @@ import { Button } from "@/components/ui/button";
 
 type ScenarioCardProps = {
   title: string;
-  content: string;
+  shortDescription: string;
   onClick: () => void;
 };
 
-export default function ScenarioCard({ title, content, onClick }: ScenarioCardProps) {
+export default function ScenarioCard({ title, shortDescription, onClick }: ScenarioCardProps) {
   return (
     <div className="bg-white p-6 rounded-xl shadow-md space-y-4 max-w-md">
       <h2 className="text-xl font-bold">{title}</h2>
-      <p className="text-sm text-foreground">{content}</p>
+      <p className="text-sm text-foreground">{shortDescription}</p>
       <Button onClick={onClick} variant="default" size="lg">
         Les mer
       </Button>
