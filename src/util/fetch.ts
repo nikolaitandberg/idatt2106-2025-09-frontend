@@ -26,8 +26,7 @@ async function extractResponseContent<T>(res: Response): Promise<T | null> {
 
   try {
     return JSON.parse(text) as T;
-  } catch (e) {
-    console.error("Failed to parse JSON:", e);
+  } catch {
     return text as T;
   }
 }
