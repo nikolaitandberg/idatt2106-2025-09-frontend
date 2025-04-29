@@ -15,6 +15,7 @@ import FormSection from "@/components/ui/formSection";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { useQueryClient } from "@tanstack/react-query";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useRouter } from "next/navigation";
 
 export default function HouseholdPageWrapper() {
   const session = useSession({ required: true });
@@ -36,7 +37,8 @@ function CreateHouseholdForm() {
   const username = session.data?.sub;
   const { refetch: refetchProfile } = useProfile(session.data?.user.userId || 0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [joinCode, setJoinCode] = useState("");
+  const [inviteKey, setInviteKey] = useState("");
+  const router = useRouter();
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -80,15 +82,12 @@ function CreateHouseholdForm() {
     e.preventDefault();
     setErrorMessage(null);
 
-    if (!joinCode) {
+    if (!inviteKey) {
       setErrorMessage("Vennligst skriv inn en invitasjonskode");
       return;
     }
 
-    // Here you would call your API to join a household with the code
-    // This is a placeholder for the actual implementation
-    console.log("Joining household with code:", joinCode);
-    // TODO: Implement the actual join household functionality
+    router.push(`/household/join/${inviteKey}`);
   };
 
   return (
@@ -138,8 +137,8 @@ function CreateHouseholdForm() {
               label="Invitasjonskode"
               name="joinCode"
               placeholder="Skriv inn koden du har fått"
-              initialValue={joinCode}
-              onChange={setJoinCode}
+              initialValue={inviteKey}
+              onChange={setInviteKey}
             />
 
             {errorMessage && (
