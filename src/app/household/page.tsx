@@ -34,17 +34,19 @@ function CreateHouseholdForm() {
   const session = useSession();
   const username = session.data?.sub;
   const { refetch: refetchProfile } = useProfile(session.data?.user.userId || 0);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    setErrorMessage(null);
 
     if (!address || !postalCode || !city) {
-      alert("Vennligst fyll ut alle feltene");
+      setErrorMessage("Vennligst fyll ut alle feltene");
       return;
     }
 
     if (!username) {
-      alert("Brukernavn mangler. Prøv å logge inn på nytt.");
+      setErrorMessage("Brukernavn mangler. Prøv å logge inn på nytt.");
       return;
     }
 
@@ -52,8 +54,7 @@ function CreateHouseholdForm() {
 
     createHousehold(
       {
-        address: fullAddress,
-        // These values can be updated later or geocoded from the address
+        adress: fullAddress,
         longitude: 0,
         latitude: 0,
         waterAmountLiters: 0,
@@ -67,12 +68,11 @@ function CreateHouseholdForm() {
         },
         onError: (error) => {
           console.error("Error creating household:", error);
-          alert("Kunne ikke opprette husholdning. Prøv igjen senere.");
+          setErrorMessage("Kunne ikke opprette husholdning. Prøv igjen senere.");
         },
       },
     );
   };
-
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md mt-8">
       <div className="flex items-center gap-2 mb-6">
@@ -82,13 +82,17 @@ function CreateHouseholdForm() {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <FormSection title="Adresse">
-          <TextInput label="Gateadresse" name="address" onChange={setAddress} />
+          <TextInput label="Gateadresse" name="address" initialValue={address} onChange={setAddress} />
 
           <div className="grid grid-cols-2 gap-4">
-            <TextInput label="Postnummer" name="postalCode" onChange={setPostalCode} />
-            <TextInput label="Poststed" name="city" onChange={setCity} />
+            <TextInput label="Postnummer" name="postalCode" initialValue={postalCode} onChange={setPostalCode} />
+            <TextInput label="Poststed" name="city" initialValue={city} onChange={setCity} />
           </div>
         </FormSection>
+
+        {errorMessage && (
+          <div className="p-3 bg-red-100 border border-red-300 text-red-700 rounded-md">{errorMessage}</div>
+        )}
 
         <Button type="submit" size="fullWidth" disabled={isPending}>
           {isPending ? (
@@ -178,7 +182,7 @@ function HouseholdPage({ userId }: { userId: number }) {
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <MapPin className="w-4 h-4" />
-          <span>{household.address}</span>
+          <span>{household.adress}</span>
         </div>
 
         <hr className="border-border" />
