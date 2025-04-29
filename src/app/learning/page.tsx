@@ -10,11 +10,6 @@ export default function LearningPage() {
 
   const { data: scenarios = [], isLoading, isError } = useInfoPages();
 
-  const truncateText = (text: string, maxLength = 120) => {
-    return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
-  };
-
-
   if (isLoading) return <div>Laster inn...</div>;
   if (isError) return <div>Kunne ikke hente scenarioer</div>;
 
@@ -29,7 +24,7 @@ export default function LearningPage() {
           <ScenarioCard
             key={scenario.id}
             title={scenario.title}
-            content={truncateText(scenario.content)}
+            shortDescription={scenario.shortDescription}
             onClick={() => router.push(`/learning/${scenario.id}`)}
           />
         ))}

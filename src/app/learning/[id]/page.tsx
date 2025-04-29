@@ -1,14 +1,14 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import { BookOpen } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 import { useInfoPageById } from "@/actions/learning";
-import ReactMarkdown from "react-markdown";
+import { Button } from "@/components/ui/button";
+import MarkdownRenderer from "@/components/ui/markdownRenderer";
 
 export default function ScenarioPage() {
   const params = useParams();
   const id = parseInt(params.id as string, 10);
-  
+  const router = useRouter();
 
   const { data: infoPage, isLoading, isError } = useInfoPageById(id);
 
@@ -20,13 +20,15 @@ export default function ScenarioPage() {
       <div className="w-full max-w-5xl">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-3xl font-bold text-left">{infoPage.title}</h1>
-          <BookOpen className="w-7 h-7 text-foreground" />
+          <Button variant="default" size="lg" onClick={() => router.push(`/learning/${id}/quiz`)}>
+            Ta Quiz
+          </Button>
         </div>
 
         <hr className="border-border mb-6" />
 
         <div className="prose max-w-none text-left">
-          <ReactMarkdown>{infoPage.content}</ReactMarkdown>
+          <MarkdownRenderer content={infoPage.content} />
         </div>
       </div>
     </div>
