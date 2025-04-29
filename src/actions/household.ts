@@ -92,4 +92,3 @@ export const useAddExtraResident = () => {
     mutationFn: (data) => addExtraResident(data, fetcher),
   });
 };
-

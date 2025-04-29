@@ -1,6 +1,6 @@
 export interface ExtraResidentResponse {
-    id: number;
-    householdId: number;
-    typeId: number;
-    name: string;
-  }
+  id: number;
+  householdId: number;
+  typeId: number;
+  name: string;
+}
