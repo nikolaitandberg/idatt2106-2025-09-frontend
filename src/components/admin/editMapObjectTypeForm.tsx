@@ -1,55 +1,59 @@
 import { MapObjectType } from "@/types/map";
-import TextInput from "../ui/textinput";
-import { Button } from "../ui/button";
-import IconPicker from "../ui/iconPicker";
-import { useState } from "react";
 import { useMutateMapObjectType } from "@/actions/map";
-import LoadingSpinner from "../ui/loadingSpinner";
+import useAppForm from "@/util/formContext";
+import { z } from "zod";
+import { mapIcons } from "@/util/icons";
 
 interface EditMapObjectTypeFormProps {
   mapObjectType: MapObjectType;
   onClose?: () => void;
 }
 
+type FormValues = {
+  name: string;
+  icon: keyof typeof mapIcons;
+};
+
 export default function EditMapObjectTypeForm({ mapObjectType, onClose }: EditMapObjectTypeFormProps) {
-  const [icon, setIcon] = useState(mapObjectType.icon);
-  const [name, setName] = useState(mapObjectType.name);
-  const { mutate: updateMapObjectType, isPending } = useMutateMapObjectType();
+  const schema = z.object({
+    name: z.string().min(1, { message: "Du må skrive inn et navn" }),
+    icon: z.string().min(1, { message: "Du må velge et ikon" }),
+  }) as z.ZodType<FormValues>;
 
-  const handleSubmit = () => {
-    if (!icon || !name) {
-      return;
-    }
+  const { mutate: updateMapObjectType } = useMutateMapObjectType();
 
-    updateMapObjectType(
-      {
-        id: mapObjectType.id,
-        name,
-        icon,
-      },
-      {
-        onSuccess: onClose,
-        onError: (error) => {
-          console.error("Error updating map object type:", error);
-        },
-      },
-    );
-  };
+  const editForm = useAppForm({
+    defaultValues: {
+      name: mapObjectType.name,
+      icon: mapObjectType.icon,
+    },
+    validators: {
+      onChange: schema,
+    },
+    onSubmit: async ({ value }) => {
+      await new Promise((resolve) => {
+        updateMapObjectType(
+          {
+            id: mapObjectType.id,
+            name: value.name,
+            icon: value.icon,
+          },
+          {
+            onSuccess: onClose,
+            onSettled: resolve,
+          },
+        );
+      });
+    },
+  });
 
   return (
     <>
-      <TextInput
-        label="Navn"
-        name="name"
-        initialValue={mapObjectType.name}
-        validate={(v) => v.length > 0}
-        validationErrorMessage="Navn må være minst 1 bokstav"
-        onChange={setName}
-      />
-      <IconPicker initialValue={mapObjectType.icon} onSelect={setIcon} />
-      <Button type="submit" className="mt-4" size="fullWidth" onClick={handleSubmit}>
-        {isPending ? <LoadingSpinner /> : "Lagre endringer"}
-      </Button>
+      <editForm.AppField name="name">{(field) => <field.TextInput label="Navn" />}</editForm.AppField>
+      <editForm.AppField name="icon">{(field) => <field.IconPicker />}</editForm.AppField>
+      <editForm.AppForm>
+        <editForm.SubmitButton>Lagre</editForm.SubmitButton>
+      </editForm.AppForm>
     </>
   );
 }

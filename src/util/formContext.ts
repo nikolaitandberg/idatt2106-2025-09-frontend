@@ -1,3 +1,4 @@
+import IconPicker from "@/components/ui/form/iconPicker";
 import NumberInput from "@/components/ui/form/numberInput";
 import SubmitButton from "@/components/ui/form/submitButton";
 import TextInput from "@/components/ui/form/textInput";
@@ -11,6 +12,7 @@ const { useAppForm } = createFormHook({
   fieldComponents: {
     TextInput,
     NumberInput,
+    IconPicker,
   },
   formComponents: {
     SubmitButton,
