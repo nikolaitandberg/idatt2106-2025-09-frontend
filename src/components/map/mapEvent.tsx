@@ -3,13 +3,13 @@ import { useClickOutside } from "@/util/hooks";
 import { AlertTriangle, Clock, X } from "lucide-react";
 import { useRef, useState, useMemo } from "react";
 import { Marker, Layer, Source } from "react-map-gl/maplibre";
+
 import type { Feature } from "geojson";
 import { point, circle } from "@turf/turf";
 
 export default function MapEvent({ event }: { event: Event }) {
   const [open, setOpen] = useState(false);
   const innerRef = useRef<HTMLDivElement>(null);
-
   const sourceId = useMemo(() => `event-${event.id}-radius`, [event.id]);
   const fillLayerId = useMemo(() => `event-${event.id}-radius-fill`, [event.id]);
   const outlineLayerId = useMemo(() => `event-${event.id}-radius-outline`, [event.id]);
@@ -17,7 +17,6 @@ export default function MapEvent({ event }: { event: Event }) {
   useClickOutside(innerRef, () => {
     setOpen(false);
   });
-
   // Memoize colors based on severity to prevent recalculation
   const colors = useMemo(() => {
     const getSeverityColor = (severityId: number) => {

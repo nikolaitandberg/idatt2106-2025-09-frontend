@@ -195,6 +195,7 @@ export const useDeleteMapObject = () => {
 };
 
 export const editMapObject = async (req: EditMapObjectRequest, fetcher: FetchFunction = Fetch): Promise<void> => {
+
   await fetcher<void>(`${API_BASE_URL}/map-object`, {
     method: "PUT",
     body: JSON.stringify(req),
