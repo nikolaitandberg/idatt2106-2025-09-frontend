@@ -1,3 +1,4 @@
+import { FoodWithType, Household } from "./household";
 import { MapObject, MapObjectType } from "./map";
 
 /**
@@ -24,3 +25,6 @@ export type MapObjectsResponse = MapObject[];
  * Response from the API when fetching map object types
  */
 export type MapObjectsTypesResponse = MapObjectType[];
+
+export type GetHouseholdFoodResponse = FoodWithType[];
+export type GetHouseholdResonse = Household;
