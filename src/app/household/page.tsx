@@ -75,7 +75,12 @@ function HouseholdPage({ userId }: { userId: number }) {
         <hr className="border-border" />
 
         <div className="space-y-4">
-          <h2 className="font-medium">Medlemmer</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="font-medium">Medlemmer</h2>
+            <span className="text-sm text-muted-foreground">
+              {householdUsers.length + extraResidents.filter((r) => r.householdId === householdId).length} medlemmer
+            </span>
+          </div>
 
           {householdUsers.map((user) => (
             <MemberCard key={`user-${user.id}`} name={`${user.firstName} ${user.lastName}`} />
