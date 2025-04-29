@@ -1,9 +1,7 @@
 "use client";
 
 import { useProfile } from "@/actions/user";
-import { useHousehold, useHouseholdUsers, useExtraResidents } from "@/actions/household";
-import ProgressBar from "@/components/ui/progressbar";
-import Alert from "@/components/ui/alert";
+import { useHousehold, useHouseholdUsers, useExtraResidents, useDeleteExtraResident } from "@/actions/household";
 import { Button } from "@/components/ui/button";
 import { Home, MapPin, Pencil } from "lucide-react";
 import MemberCard from "@/components/ui/memberCard";
@@ -30,28 +28,21 @@ function HouseholdPage({ userId }: { userId: number }) {
     data: household,
     isPending: householdPending,
     isError: householdError,
-  } = useHousehold(householdId, {
-    queryKey: ["household", householdId],
-    enabled: householdId > 0,
-  });
+  } = useHousehold(householdId, { queryKey: ["household", householdId], enabled: householdId > 0 });
 
   const {
     data: householdUsers = [],
     isPending: usersPending,
     isError: usersError,
-  } = useHouseholdUsers(householdId, {
-    queryKey: ["householdUsers", householdId],
-    enabled: householdId > 0,
-  });
+  } = useHouseholdUsers(householdId, { queryKey: ["householdUsers", householdId], enabled: householdId > 0 });
 
   const {
     data: extraResidents = [],
     isPending: extraResidentsPending,
     isError: extraResidentsError,
-  } = useExtraResidents({
-    queryKey: ["extraResidents", householdId],
-    enabled: householdId > 0,
-  });
+  } = useExtraResidents({ queryKey: ["extraResidents", householdId], enabled: householdId > 0 });
+
+  const deleteExtraResidentMutation = useDeleteExtraResident();
 
   if (profilePending || householdPending || usersPending || extraResidentsPending) {
     return <div>Loading...</div>;
@@ -60,6 +51,10 @@ function HouseholdPage({ userId }: { userId: number }) {
   if (profileError || householdError || usersError || extraResidentsError || !profile || !household) {
     return <div>Kunne ikke hente husholdningsdata</div>;
   }
+
+  const handleRemoveExtraResident = (id: number) => {
+    deleteExtraResidentMutation.mutate(id);
+  };
 
   return (
     <div className="min-h-screen flex bg-white text-foreground">
@@ -80,7 +75,12 @@ function HouseholdPage({ userId }: { userId: number }) {
         <hr className="border-border" />
 
         <div className="space-y-4">
-          <h2 className="font-medium">Medlemmer</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="font-medium">Medlemmer</h2>
+            <span className="text-sm text-muted-foreground">
+              {householdUsers.length + extraResidents.filter((r) => r.householdId === householdId).length} medlemmer
+            </span>
+          </div>
 
           {householdUsers.map((user) => (
             <MemberCard key={`user-${user.id}`} name={`${user.firstName} ${user.lastName}`} />
@@ -93,6 +93,7 @@ function HouseholdPage({ userId }: { userId: number }) {
                 key={`resident-${resident.id}`}
                 name={resident.name}
                 type={resident.typeId === 4 ? "animal" : "person"}
+                onRemove={() => handleRemoveExtraResident(resident.id)}
               />
             ))}
 
@@ -112,6 +113,7 @@ function HouseholdPage({ userId }: { userId: number }) {
           </Button>
         </div>
       </aside>
+
       <HouseholdFood household={household} />
     </div>
   );
