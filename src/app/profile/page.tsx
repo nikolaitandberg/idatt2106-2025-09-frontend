@@ -5,10 +5,27 @@ import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
-export default function ProfilePage() {
-  const { data: session } = useSession();
-  const userId = session?.user?.userId as number;
+export default function ProfilePageWrapper() {
+  const session = useSession();
+
+  if (session.status === "loading") {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (session.status === "unauthenticated" || !session.data) {
+    redirect("/login");
+  }
+
+  return <ProfilePage userId={session.data.user.userId} />;
+}
+
+function ProfilePage({ userId }: { userId: number }) {
   const { data: profile, isLoading, error } = useProfile(userId);
 
   if (isLoading) {
