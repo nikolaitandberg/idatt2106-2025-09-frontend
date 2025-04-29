@@ -1,16 +1,19 @@
 "use client";
 
 import { useProfile } from "@/actions/user";
-import { useHousehold, useHouseholdUsers, useExtraResidents } from "@/actions/household";
-import ProgressBar from "@/components/ui/progressbar";
-import Alert from "@/components/ui/alert";
+import { useHousehold, useHouseholdUsers, useExtraResidents, useCreateHousehold } from "@/actions/household";
 import { Button } from "@/components/ui/button";
-import { Home, MapPin, Pencil } from "lucide-react";
+import { Home, MapPin, Pencil, Plus } from "lucide-react";
 import MemberCard from "@/components/ui/memberCard";
 import GroupCard from "@/components/ui/groupCard";
 import { useSession } from "next-auth/react";
 import { AddMemberDialog } from "@/components/ui/addMemberDialog";
 import HouseholdFood from "@/components/household/HouseholdFood";
+import { useState, FormEvent } from "react";
+import TextInput from "@/components/ui/textinput";
+import FormSection from "@/components/ui/formSection";
+import LoadingSpinner from "@/components/ui/loadingSpinner";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function HouseholdPageWrapper() {
   const session = useSession({ required: true });
@@ -22,9 +25,89 @@ export default function HouseholdPageWrapper() {
   return <HouseholdPage userId={session.data.user.userId} />;
 }
 
+function CreateHouseholdForm() {
+  const queryClient = useQueryClient();
+  const { mutate: createHousehold, isPending } = useCreateHousehold();
+  const [address, setAddress] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [city, setCity] = useState("");
+  const session = useSession();
+  const username = session.data?.sub;
+  const { refetch: refetchProfile } = useProfile(session.data?.user.userId || 0);
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!address || !postalCode || !city) {
+      alert("Vennligst fyll ut alle feltene");
+      return;
+    }
+
+    if (!username) {
+      alert("Brukernavn mangler. Prøv å logge inn på nytt.");
+      return;
+    }
+
+    const fullAddress = `${address}, ${postalCode} ${city}`;
+
+    createHousehold(
+      {
+        address: fullAddress,
+        // These values can be updated later or geocoded from the address
+        longitude: 0,
+        latitude: 0,
+        waterAmountLiters: 0,
+        lastWaterChangeDate: new Date().toISOString(),
+        username: username,
+      },
+      {
+        onSuccess: async () => {
+          await queryClient.invalidateQueries({ queryKey: ["profile"] });
+          await refetchProfile();
+        },
+        onError: (error) => {
+          console.error("Error creating household:", error);
+          alert("Kunne ikke opprette husholdning. Prøv igjen senere.");
+        },
+      },
+    );
+  };
+
+  return (
+    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md mt-8">
+      <div className="flex items-center gap-2 mb-6">
+        <Home className="w-5 h-5 text-primary" />
+        <h1 className="text-xl font-semibold">Opprett ny husholdning</h1>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <FormSection title="Adresse">
+          <TextInput label="Gateadresse" name="address" onChange={setAddress} />
+
+          <div className="grid grid-cols-2 gap-4">
+            <TextInput label="Postnummer" name="postalCode" onChange={setPostalCode} />
+            <TextInput label="Poststed" name="city" onChange={setCity} />
+          </div>
+        </FormSection>
+
+        <Button type="submit" size="fullWidth" disabled={isPending}>
+          {isPending ? (
+            <LoadingSpinner />
+          ) : (
+            <>
+              <Plus className="w-4 h-4 mr-2" />
+              Opprett husholdning
+            </>
+          )}
+        </Button>
+      </form>
+    </div>
+  );
+}
+
 function HouseholdPage({ userId }: { userId: number }) {
   const { data: profile, isPending: profilePending, isError: profileError } = useProfile(userId);
-  const householdId = profile?.householdId ?? -1;
+  const householdId = profile?.householdId ?? 0;
 
   const {
     data: household,
@@ -53,12 +136,33 @@ function HouseholdPage({ userId }: { userId: number }) {
     enabled: householdId > 0,
   });
 
-  if (profilePending || householdPending || usersPending || extraResidentsPending) {
-    return <div>Loading...</div>;
+  if (profilePending) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
-  if (profileError || householdError || usersError || extraResidentsError || !profile || !household) {
-    return <div>Kunne ikke hente husholdningsdata</div>;
+  if (profileError || !profile) {
+    return <div className="text-center py-12 text-red-600">Kunne ikke hente profildata</div>;
+  }
+
+  // Show create household form if user doesn't have a household
+  if (!householdId || householdId <= 0) {
+    return <CreateHouseholdForm />;
+  }
+
+  if (householdPending || usersPending || extraResidentsPending) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (householdError || usersError || extraResidentsError || !household) {
+    return <div className="text-center py-12 text-red-600">Kunne ikke hente husholdningsdata</div>;
   }
 
   return (
