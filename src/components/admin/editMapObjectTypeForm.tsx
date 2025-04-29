@@ -3,6 +3,7 @@ import { useMutateMapObjectType } from "@/actions/map";
 import useAppForm from "@/util/formContext";
 import { z } from "zod";
 import { mapIcons } from "@/util/icons";
+import FormError from "../ui/form/formError";
 
 interface EditMapObjectTypeFormProps {
   mapObjectType: MapObjectType;
@@ -20,7 +21,7 @@ export default function EditMapObjectTypeForm({ mapObjectType, onClose }: EditMa
     icon: z.string().min(1, { message: "Du må velge et ikon" }),
   }) as z.ZodType<FormValues>;
 
-  const { mutate: updateMapObjectType } = useMutateMapObjectType();
+  const { mutate: updateMapObjectType, error } = useMutateMapObjectType();
 
   const editForm = useAppForm({
     defaultValues: {
@@ -54,6 +55,7 @@ export default function EditMapObjectTypeForm({ mapObjectType, onClose }: EditMa
       <editForm.AppForm>
         <editForm.SubmitButton>Lagre</editForm.SubmitButton>
       </editForm.AppForm>
+      <FormError error={error?.message} />
     </>
   );
 }

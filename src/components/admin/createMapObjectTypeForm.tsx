@@ -2,13 +2,14 @@ import { useCreateMapObjectType } from "@/actions/map";
 import { mapIcons } from "@/util/icons";
 import { z } from "zod";
 import useAppForm from "@/util/formContext";
+import FormError from "../ui/form/formError";
 
 interface EditMapObjectTypeFormProps {
   onClose?: () => void;
 }
 
 export default function CreateMapObjectTypeForm({ onClose }: EditMapObjectTypeFormProps) {
-  const { mutate: createMapObjectType } = useCreateMapObjectType();
+  const { mutate: createMapObjectType, error } = useCreateMapObjectType();
 
   const schema = z.object({
     name: z.string().min(1, { message: "Du må skrive inn et navn" }),
@@ -49,6 +50,7 @@ export default function CreateMapObjectTypeForm({ onClose }: EditMapObjectTypeFo
       <createForm.AppForm>
         <createForm.SubmitButton>Lagre</createForm.SubmitButton>
       </createForm.AppForm>
+      <FormError error={error?.message} />
     </>
   );
 }
