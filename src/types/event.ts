@@ -16,3 +16,17 @@ export interface Severity {
   name: string | null;
   description: string | null;
 }
+
+export interface InfoPage {
+  id: number;
+  title: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Quiz {
+  id: number;
+  info_page_id: number | null;
+  name: string | null;
+}
