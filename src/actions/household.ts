@@ -2,10 +2,10 @@ import { ApiError, GetHouseholdFoodResponse, GetHouseholdResonse } from "@/types
 import { API_BASE_URL } from "@/types/constants";
 import { Food, FoodType, UserResponse } from "@/types/household";
 import Fetch, { FetchFunction, useFetch } from "@/util/fetch";
-import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { useQuery, UseQueryOptions, useMutation } from "@tanstack/react-query";
 import { AddUserToHouseRequest, AddExtraResidentRequest, AddHouseholdFoodRequest } from "@/types/apiRequests";
-import { useMutation } from "@tanstack/react-query";
 import { ExtraResidentResponse } from "@/types/extraResident";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const getHousehold = async (id: number, fetcher: FetchFunction = Fetch): Promise<GetHouseholdResonse | null> => {
   try {
@@ -40,11 +40,16 @@ export const addExtraResident = async (data: AddExtraResidentRequest, fetcher: F
   });
 };
 
+export const deleteExtraResident = async (id: number, fetcher: FetchFunction = Fetch) => {
+  await fetcher<void>(`${API_BASE_URL}/extra-residents/${id}`, {
+    method: "DELETE",
+  });
+};
+
 export const getExtraResidents = async (fetcher: FetchFunction = Fetch): Promise<ExtraResidentResponse[]> => {
   const res = await fetcher<ExtraResidentResponse[]>(`${API_BASE_URL}/extra-residents`);
   return res ?? [];
 };
-
 
 export const useExtraResidents = (options?: UseQueryOptions<ExtraResidentResponse[], Error>) => {
   const fetcher = useFetch();
@@ -56,9 +61,7 @@ export const useExtraResidents = (options?: UseQueryOptions<ExtraResidentRespons
   });
 };
 
-
 export const useHousehold = (id: number, options?: UseQueryOptions<GetHouseholdResonse | null, Error>) => {
-
   const fetcher = useFetch();
 
   return useQuery<GetHouseholdResonse | null, Error>({
@@ -95,6 +98,19 @@ export const useAddExtraResident = () => {
     mutationFn: (data) => addExtraResident(data, fetcher),
   });
 };
+
+export const useDeleteExtraResident = () => {
+  const fetcher = useFetch();
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, number>({
+    mutationFn: (id) => deleteExtraResident(id, fetcher),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["extraResidents"] });
+    },
+  });
+};
+
 
 export const getHouseholdFood = async (
   householdId: number,
