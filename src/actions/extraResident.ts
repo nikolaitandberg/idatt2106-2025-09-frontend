@@ -23,3 +23,5 @@ export const useExtraResidentTypes = (options?: UseQueryOptions<ExtraResidentTyp
     ...options,
   });
 };
+
+
