@@ -167,3 +167,18 @@ export const useCreateHousehold = () => {
     mutationFn: (data) => createHousehold(data, fetcher),
   });
 };
+
+export const joinHousehold = async (inviteKey: string, fetcher: FetchFunction = Fetch): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/households/accept/${inviteKey}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useJoinHousehold = () => {
+  const fetcher = useFetch();
+
+  return useMutation<void, Error, { inviteKey: string }>({
+    mutationFn: ({ inviteKey }) => joinHousehold(inviteKey, fetcher),
+  });
+};
