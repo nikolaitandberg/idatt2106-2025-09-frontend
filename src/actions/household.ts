@@ -111,7 +111,6 @@ export const useDeleteExtraResident = () => {
   });
 };
 
-
 export const getHouseholdFood = async (
   householdId: number,
   fetcher: FetchFunction = Fetch,
