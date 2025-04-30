@@ -6,6 +6,7 @@ import PositionSelector from "@/components/ui/form/positionSelector";
 import TimeSelector from "@/components/ui/form/timeSelector";
 import { createFormHookContexts, createFormHook } from "@tanstack/react-form";
 import FormCombBox from "@/components/ui/form/formComboBox";
+import { DatePicker } from "@/components/ui/datePicker";
 
 export const { fieldContext, formContext, useFieldContext, useFormContext } = createFormHookContexts();
 
@@ -19,6 +20,7 @@ const { useAppForm } = createFormHook({
     TimeSelector,
     PositionSelector,
     ComboBox: FormCombBox,
+    DatePicker,
   },
   formComponents: {
     SubmitButton,

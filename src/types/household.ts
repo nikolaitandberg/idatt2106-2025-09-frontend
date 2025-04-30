@@ -14,6 +14,12 @@ export type Household = {
   latitude: number;
   waterAmountLiters: number;
   lastWaterChangeDate: string;
+  levelOfPreparedness: {
+    levelOfPreparedness: number;
+    levelOfPreparednessFood: number;
+    levelOfPreparednessKit: number;
+    levelOfPreparednessWater: number;
+  };
 };
 
 export type FoodType = {
@@ -32,6 +38,10 @@ export type Food = {
   amount: number;
 };
 
-export type FoodWithType = FoodType & {
-  food: Food[];
+export type FoodSummary = Omit<FoodType, "id" | "name"> & {
+  typeId: number;
+  typeName: string;
+  totalAmount: number;
+  totalCalories: number;
+  batches: Omit<Food, "typeId" | "householdId">[];
 };

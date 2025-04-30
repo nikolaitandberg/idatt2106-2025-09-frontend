@@ -1,8 +1,8 @@
 import { ApiError, GetHouseholdFoodResponse, GetHouseholdResonse } from "@/types/apiResponses";
 import { API_BASE_URL } from "@/types/constants";
-import { Food, FoodType, Household, UserResponse } from "@/types/household";
+import { Household, UserResponse } from "@/types/household";
 import Fetch, { FetchFunction, useFetch } from "@/util/fetch";
-import { useQuery, UseQueryOptions, useMutation } from "@tanstack/react-query";
+import { useQuery, UseQueryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   AddUserToHouseRequest,
   AddExtraResidentRequest,
@@ -10,7 +10,6 @@ import {
   EditHouseholdInfoRequest,
 } from "@/types/apiRequests";
 import { ExtraResidentResponse } from "@/types/extraResident";
-import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 
 export const getHousehold = async (id: number, fetcher: FetchFunction = Fetch): Promise<GetHouseholdResonse | null> => {
@@ -160,17 +159,15 @@ export const getHouseholdFood = async (
   householdId: number,
   fetcher: FetchFunction = Fetch,
 ): Promise<GetHouseholdFoodResponse> => {
-  const foodTypes = await fetcher<FoodType[]>(`${API_BASE_URL}/food-types`);
-  const food = await fetcher<Food[]>(`${API_BASE_URL}/food/household/${householdId}`);
+  const food = await fetcher<GetHouseholdFoodResponse>(
+    `${API_BASE_URL}/food/household/summary/detailed/${householdId}`,
+  );
 
-  if (!foodTypes || !food) {
-    throw new Error("Failed to fetch food data");
+  if (!food) {
+    throw new ApiError("Failed to fetch food data");
   }
 
-  return foodTypes.map((type) => ({
-    ...type,
-    food: food.filter((f) => f.typeId === type.id),
-  }));
+  return food;
 };
 
 export const useHouseholdFood = (householdId: number) => {
@@ -257,7 +254,7 @@ export const useEditHouseholdInfo = () => {
   return useMutation<void, Error, EditHouseholdInfoRequest>({
     mutationFn: (data) => editHouseholdInfo(data, fetcher),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["household"] });
+      queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
     },
   });
 };

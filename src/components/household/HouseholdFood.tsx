@@ -5,6 +5,9 @@ import { useHouseholdFood } from "@/actions/household";
 import { Accordion } from "../ui/accordion";
 import FoodAccordionItem from "../ui/itemAccordion";
 import { Household } from "@/types/household";
+import { Button } from "../ui/button";
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogTitle, DialogTrigger } from "../ui/dialog";
+import PreparednessBreakdown from "./PreparednessBreakdown";
 
 export default function HouseholdFood({ household }: { household: Household }) {
   const { data: householdFood } = useHouseholdFood(household.id);
@@ -17,12 +20,25 @@ export default function HouseholdFood({ household }: { household: Household }) {
     <main className="flex-1 p-8 bg-background">
       <div className="max-w-3xl mx-auto space-y-8">
         <section className="space-y-4">
-          <ProgressBar value={45} label="Forberedelsesgrad" />
+          <ProgressBar value={household.levelOfPreparedness.levelOfPreparedness * 100} label="Forberedelsesgrad" />
           <Alert type="warning">
-            Du er ikke godt nok forberedt.{" "}
-            <a href="household" className="underline underline-offset-2">
-              Lær mer om hvordan vi beregner dette
-            </a>
+            Du er ikke godt nok forberedt.
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="text-md p-1 underline" variant="link">
+                  Lær mer om hvordan vi beregner dette
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogTitle>Hvordan beregner vi forberedelsesgrad?</DialogTitle>
+                <PreparednessBreakdown household={household} />
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button>Lukk</Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </Alert>
         </section>
 
@@ -48,16 +64,18 @@ export default function HouseholdFood({ household }: { household: Household }) {
         <section className="space-y-4">
           <h2 className="text-lg font-medium">Matvarer</h2>
           <Accordion type="multiple">
-            {householdFood.map((foodType) => (
-              <FoodAccordionItem
-                householdId={household.id}
-                key={foodType.id}
-                id={foodType.id}
-                name={foodType.name}
-                totalAmount={foodType.food.length}
-                units={foodType.food}
-              />
-            ))}
+            {householdFood.map((foodType) => {
+              return (
+                <FoodAccordionItem
+                  householdId={household.id}
+                  key={foodType.typeId}
+                  id={foodType.typeId}
+                  name={foodType.typeName}
+                  totalAmount={foodType.totalAmount}
+                  units={foodType.batches}
+                />
+              );
+            })}
           </Accordion>
         </section>
       </div>
