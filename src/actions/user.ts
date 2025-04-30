@@ -30,7 +30,7 @@ export const requestPasswordReset = async (email: string, fetcher: FetchFunction
   });
 };
 
-export const useRequestPasswordReset = (email: string) => {
+export const useRequestPasswordReset = () => {
   const fetcher = useFetch();
 
   return useMutation({

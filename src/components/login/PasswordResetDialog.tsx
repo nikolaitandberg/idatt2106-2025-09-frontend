@@ -6,13 +6,12 @@ import TextInput from "@/components/ui/textinput";
 import { Button } from "@/components/ui/button";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import Alert from "@/components/ui/alert";
+import { useRequestPasswordReset } from "@/actions/user";
 
 export default function PasswordResetDialog() {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
-  const [isResetting, setIsResetting] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const { mutate: resetPassword, isError, isPending, error, isSuccess } = useRequestPasswordReset();
 
   const handleResetPassword = async (e: FormEvent) => {
     e.preventDefault();
@@ -21,31 +20,14 @@ export default function PasswordResetDialog() {
       return;
     }
 
-    setIsResetting(true);
-    setError(null);
-
-    try {
-      // TODO: Må sette inn api-kall her
-
-
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setSuccess(true);
-    } catch (error) {
-      console.error(error);
-      setError("Kunne ikke sende e-post for nullstilling. Prøv igjen senere.");
-    } finally {
-      setIsResetting(false);
-    }
+    resetPassword(email);
   };
 
   const handleClose = () => {
     setOpen(false);
-    if (success) {
-      setTimeout(() => {
-        setSuccess(false);
-        setEmail("");
-      }, 300);
-    }
+    setTimeout(() => {
+      setEmail("");
+    }, 300);
   };
 
   return (
@@ -59,7 +41,7 @@ export default function PasswordResetDialog() {
           <DialogTitle>Tilbakestill passord</DialogTitle>
         </DialogHeader>
 
-        {success ? (
+        {isSuccess ? (
           <>
             <Alert type="success">
               En e-post med instruksjoner for å tilbakestille passordet er sendt. Sjekk innboksen din (og eventuelt
@@ -86,11 +68,11 @@ export default function PasswordResetDialog() {
               validationErrorMessage="Vennligst skriv inn en gyldig e-postadresse"
             />
 
-            {error && <Alert type="critical">{error}</Alert>}
+            {isError && <Alert type="critical">{error.message}</Alert>}
 
             <DialogFooter className="mt-6">
-              <Button type="submit" disabled={isResetting}>
-                {isResetting ? <LoadingSpinner /> : "Send nullstillingslenke"}
+              <Button type="submit" disabled={isPending}>
+                {isPending ? <LoadingSpinner /> : "Send nullstillingslenke"}
               </Button>
             </DialogFooter>
           </form>
