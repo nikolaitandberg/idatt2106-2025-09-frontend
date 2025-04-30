@@ -7,6 +7,7 @@ interface ComboBoxProps<T> {
   placeholder?: string;
   options: T[];
   initialValue?: T | null;
+  value?: T | null;
   onSelect: (option: T) => void;
   renderOption: (option: T) => React.ReactNode;
   renderSelected: (option: T) => React.ReactNode;
@@ -16,6 +17,7 @@ export default function ComboBox<T>({
   placeholder,
   options,
   initialValue,
+  value,
   onSelect,
   renderOption,
   renderSelected,
@@ -29,6 +31,12 @@ export default function ComboBox<T>({
       setSelectedElement(el);
     }
   };
+
+  useEffect(() => {
+    if (value !== undefined) {
+      setSelectedOption(value);
+    }
+  }, [value]);
 
   useEffect(() => {
     if (selectedElement) {
