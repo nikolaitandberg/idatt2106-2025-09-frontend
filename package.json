@@ -17,6 +17,7 @@
     "date-fns": "^4.1.0",
     "framer-motion": "^12.8.2",
     "jwt-decode": "^4.0.0",
+    "lightningcss": "^1.29.3",
     "lucide-react": "^0.503.0",
     "maplibre-gl": "^5.4.0",
     "motion": "^12.8.2",
