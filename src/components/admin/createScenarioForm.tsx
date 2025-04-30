@@ -43,17 +43,11 @@ export default function CreateScenarioForm({ onCreated }: CreateScenarioFormProp
   return (
     <div className="flex flex-col gap-4 border-t-1 border-foreground-muted pt-2">
       <FormSection>
-        <form.AppField name="title">
-          {(field) => <field.TextInput label="Tittel" />}
-        </form.AppField>
+        <form.AppField name="title">{(field) => <field.TextInput label="Tittel" />}</form.AppField>
 
-        <form.AppField name="shortDescription">
-          {(field) => <field.TextInput label="Kort beskrivelse" />}
-        </form.AppField>
+        <form.AppField name="shortDescription">{(field) => <field.TextInput label="Kort beskrivelse" />}</form.AppField>
 
-        <form.AppField name="content">
-          {(field) => <field.TextArea label="Innhold (Markdown)" />}
-        </form.AppField>
+        <form.AppField name="content">{(field) => <field.TextArea label="Innhold (Markdown)" />}</form.AppField>
       </FormSection>
 
       <form.AppForm>

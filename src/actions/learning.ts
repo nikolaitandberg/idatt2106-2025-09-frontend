@@ -4,7 +4,6 @@ import Fetch, { FetchFunction, useFetch } from "@/util/fetch";
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { useMutation } from "@tanstack/react-query";
 
-
 export const getAllInfoPages = async (fetcher: FetchFunction = Fetch): Promise<InfoPage[]> => {
   const res = await fetcher<InfoPage[]>(`${API_BASE_URL}/info-page/all`);
   return res ?? [];
@@ -57,7 +56,6 @@ export const useEditScenario = () => {
   });
 };
 
-
 export const deleteInfoPage = async (id: number, fetcher: FetchFunction) => {
   await fetcher<void>(`${API_BASE_URL}/info-page/${id}`, {
     method: "DELETE",
@@ -88,6 +86,6 @@ export const useCreateScenario = () => {
   return useMutation({
     mutationFn: (data: CreateInfoPageRequest) => {
       return createInfoPage(data, fetcher);
-    }
+    },
   });
 };

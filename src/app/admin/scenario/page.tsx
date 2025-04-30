@@ -40,15 +40,13 @@ export default function AdminScenario() {
           </DialogTrigger>
           <DialogContent className="max-w-3xl">
             <DialogTitle>Nytt scenario</DialogTitle>
-            <CreateScenarioForm onCreated={handleCreated}/>
+            <CreateScenarioForm onCreated={handleCreated} />
           </DialogContent>
         </Dialog>
       </div>
 
       <ul className="space-y-4">
-        {scenarios?.map((scenario) => (
-          <ScenarioCard key={scenario.id} scenario={scenario} onDeleted={handleDeleted} />
-        ))}
+        {scenarios?.map((scenario) => <ScenarioCard key={scenario.id} scenario={scenario} onDeleted={handleDeleted} />)}
       </ul>
     </div>
   );

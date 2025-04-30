@@ -23,7 +23,9 @@ export default function ScenarioList() {
             <p className="text-gray-600">{scenario.shortDescription}</p>
           </div>
 
-          <Dialog open={openDialogId === scenario.id} onOpenChange={(open) => setOpenDialogId(open ? scenario.id : null)}>
+          <Dialog
+            open={openDialogId === scenario.id}
+            onOpenChange={(open) => setOpenDialogId(open ? scenario.id : null)}>
             <DialogTrigger asChild>
               <Button variant="outline" className="ml-4 mt-1 flex items-center gap-2 whitespace-nowrap">
                 <Pencil size={16} strokeWidth={1.5} />
