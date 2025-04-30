@@ -1,4 +1,4 @@
-import { InfoPage, EditInfoPageRequest } from "@/types/learning";
+import { InfoPage, EditInfoPageRequest, CreateInfoPageRequest } from "@/types/learning";
 import { API_BASE_URL } from "@/types/constants";
 import Fetch, { FetchFunction, useFetch } from "@/util/fetch";
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
@@ -39,27 +39,24 @@ export const useInfoPageById = (id: number, options?: UseQueryOptions<InfoPage |
   });
 };
 
-export const editInfoPage = async (data: EditInfoPageRequest): Promise<InfoPage> => {
-  const response = await Fetch<InfoPage | null>(`${API_BASE_URL}/info-page/${data.id}`, {
+export const editInfoPage = async (data: EditInfoPageRequest, fetcher: FetchFunction): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/info-page`, {
     method: "PUT",
     body: JSON.stringify(data),
     headers: {
       "Content-Type": "application/json",
     },
   });
-
-  if (!response) {
-    throw new Error("Failed to edit InfoPage: response is null");
-  }
-
-  return response;
 };
 
 export const useEditScenario = () => {
-  return useMutation<InfoPage, Error, EditInfoPageRequest>({
-    mutationFn: editInfoPage,
+  const fetcher = useFetch();
+
+  return useMutation({
+    mutationFn: (data: EditInfoPageRequest) => editInfoPage(data, fetcher),
   });
 };
+
 
 export const deleteInfoPage = async (id: number, fetcher: FetchFunction) => {
   await fetcher<void>(`${API_BASE_URL}/info-page/${id}`, {
@@ -72,5 +69,25 @@ export const useDeleteScenario = () => {
 
   return useMutation<void, Error, number>({
     mutationFn: (id: number) => deleteInfoPage(id, fetcher),
+  });
+};
+
+export const createInfoPage = async (data: CreateInfoPageRequest, fetcher: FetchFunction): Promise<void> => {
+  await fetcher<InfoPage>(`${API_BASE_URL}/info-page`, {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+export const useCreateScenario = () => {
+  const fetcher = useFetch();
+
+  return useMutation({
+    mutationFn: (data: CreateInfoPageRequest) => {
+      return createInfoPage(data, fetcher);
+    }
   });
 };
