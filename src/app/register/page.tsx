@@ -9,8 +9,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { ApiError } from "@/types/apiResponses";
+import { FormEvent } from "react";
 
-export default function () {
+export default function RegisterPage() {
   const router = useRouter();
 
   const {
@@ -24,7 +25,7 @@ export default function () {
     },
   });
 
-  const handleRegister = async (event: React.FormEvent) => {
+  const handleRegister = async (event: FormEvent) => {
     event.preventDefault();
     register(
       {
@@ -46,7 +47,7 @@ export default function () {
   };
 
   return (
-    <div className="flex items-center justify-center bg-background px-4">
+    <div className="flex items-center justify-center bg-background px-4 mt-8">
       <div className="w-full max-w-md bg-white rounded-2xl p-8 space-y-6">
         <h1 className="text-2xl font-bold text-center">Registrer deg</h1>
         <form onSubmit={handleRegister}>
