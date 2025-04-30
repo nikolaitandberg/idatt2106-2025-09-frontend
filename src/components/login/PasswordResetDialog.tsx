@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import TextInput from "@/components/ui/textinput";
 import { Button } from "@/components/ui/button";
-import LoadingSpinner from "@/components/ui/loadingSpinner";
 import Alert from "@/components/ui/alert";
 import { useRequestPasswordReset } from "@/actions/user";
 import { z } from "zod";
@@ -13,10 +11,10 @@ import useAppForm from "@/util/formContext";
 export default function PasswordResetDialog() {
   const [open, setOpen] = useState(false);
   const { mutate: resetPassword, isError, error, isSuccess } = useRequestPasswordReset();
-  
+
   const schema = z.object({
-    email: z.string().email({ message: "Ugyldig epost"})
-  })
+    email: z.string().email({ message: "Ugyldig epost" }),
+  });
 
   const handleClose = () => {
     setOpen(false);
@@ -32,10 +30,10 @@ export default function PasswordResetDialog() {
     onSubmit: async ({ value }) => {
       await new Promise((resolve) => {
         resetPassword(value.email, {
-          onSettled: resolve
-        })
-      })
-  }
+          onSettled: resolve,
+        });
+      });
+    },
   });
 
   return (
