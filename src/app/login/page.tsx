@@ -6,6 +6,7 @@ import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import PasswordResetDialog from "@/components/login/PasswordResetDialog";
 
 export default function LoginPage() {
   const [isSigningIn, setIsSigningIn] = useState(false);
@@ -25,7 +26,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center bg-background px-4">
+    <div className="flex items-center justify-center bg-background px-4 mt-8">
       <div className="w-full max-w-md bg-white rounded-2xl p-8 space-y-6">
         <h1 className="text-2xl font-bold text-center">Logg inn</h1>
         <form onSubmit={handleLogin} className="space-y-4">
@@ -50,12 +51,15 @@ export default function LoginPage() {
             {isSigningIn ? <LoadingSpinner /> : "Logg inn"}
           </Button>
         </form>
-        <div className="flex justify-center">
+        <div className="flex justify-center flex-col">
           <p className="text-sm text-gray-500">
             Har du ikke en konto?{" "}
             <Link href="/register" className="text-blue-500 hover:underline">
               Registrer deg
             </Link>
+          </p>
+          <p className="text-sm text-gray-500">
+            Glemt passord? <PasswordResetDialog />
           </p>
         </div>
       </div>
