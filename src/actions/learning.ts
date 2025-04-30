@@ -60,3 +60,17 @@ export const useEditScenario = () => {
     mutationFn: editInfoPage,
   });
 };
+
+export const deleteInfoPage = async (id: number, fetcher: FetchFunction) => {
+  await fetcher<void>(`${API_BASE_URL}/info-page/${id}`, {
+    method: "DELETE",
+  });
+};
+
+export const useDeleteScenario = () => {
+  const fetcher = useFetch();
+
+  return useMutation<void, Error, number>({
+    mutationFn: (id: number) => deleteInfoPage(id, fetcher),
+  });
+};
