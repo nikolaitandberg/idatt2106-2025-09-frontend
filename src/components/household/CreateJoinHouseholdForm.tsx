@@ -6,7 +6,7 @@ import { useProfile } from "@/actions/user";
 import { useRouter } from "next/navigation";
 import { Home, Plus } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import FormSection from "@/components/ui/formSection";
+import FormSection from "@/components/ui/form/formSection";
 import TextInput from "@/components/ui/textinput";
 import { Button } from "@/components/ui/button";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
