@@ -16,7 +16,7 @@ export default function CreateMapObjectForm({ mapObjectType, onClose }: CreateMa
   const schema = z
     .object({
       description: z.string().min(1, { message: "Du må skrive inn en beskrivelse" }),
-      contanctName: z.string().optional(),
+      contactName: z.string().optional(),
       contactEmail: z.union([z.string().email({ message: "Ugyldig e-postadresse" }), z.literal("")]),
       contactPhone: z.string().optional(),
       position: z.object({

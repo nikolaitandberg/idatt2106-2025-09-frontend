@@ -3,11 +3,13 @@ export interface UserResponse {
   firstName: string;
   lastName: string;
   email?: string;
+  username: string;
+  picture: string;
 }
 
 export type Household = {
   id: number;
-  adress: string;
+  address: string;
   longitude: number;
   latitude: number;
   waterAmountLiters: number;

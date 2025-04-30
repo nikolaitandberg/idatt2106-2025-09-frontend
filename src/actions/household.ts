@@ -3,9 +3,15 @@ import { API_BASE_URL } from "@/types/constants";
 import { Food, FoodType, Household, UserResponse } from "@/types/household";
 import Fetch, { FetchFunction, useFetch } from "@/util/fetch";
 import { useQuery, UseQueryOptions, useMutation } from "@tanstack/react-query";
-import { AddUserToHouseRequest, AddExtraResidentRequest, AddHouseholdFoodRequest } from "@/types/apiRequests";
+import {
+  AddUserToHouseRequest,
+  AddExtraResidentRequest,
+  AddHouseholdFoodRequest,
+  EditHouseholdInfoRequest,
+} from "@/types/apiRequests";
 import { ExtraResidentResponse } from "@/types/extraResident";
 import { useQueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 
 export const getHousehold = async (id: number, fetcher: FetchFunction = Fetch): Promise<GetHouseholdResonse | null> => {
   try {
@@ -19,13 +25,33 @@ export const getHousehold = async (id: number, fetcher: FetchFunction = Fetch): 
   }
 };
 
+export const getMyHousehold = async (fetcher: FetchFunction = Fetch): Promise<GetHouseholdResonse> => {
+  const res = await fetcher<GetHouseholdResonse>(`${API_BASE_URL}/households/my-household`);
+  if (!res) {
+    throw new ApiError("Failed to fetch household data");
+  }
+  return res;
+};
+
+export const useMyHousehold = () => {
+  const fetcher = useFetch();
+  const session = useSession();
+
+  return useQuery({
+    retry: false,
+    queryKey: ["household", "my-household"],
+    queryFn: () => getMyHousehold(fetcher),
+    enabled: session.status !== "loading",
+  });
+};
+
 export const getHouseholdUsers = async (id: number, fetcher: FetchFunction = Fetch): Promise<UserResponse[]> => {
   const res = await fetcher<UserResponse[]>(`${API_BASE_URL}/households/${id}/users`);
   return res ?? [];
 };
 
 export const addUserToHousehold = async (data: AddUserToHouseRequest, fetcher: FetchFunction = Fetch) => {
-  await fetcher<void>(`${API_BASE_URL}/households/add-user`, {
+  await fetcher<void>(`${API_BASE_URL}/households/invite-user`, {
     method: "POST",
     body: JSON.stringify(data),
     headers: { "Content-Type": "application/json" },
@@ -55,7 +81,7 @@ export const useExtraResidents = (options?: UseQueryOptions<ExtraResidentRespons
   const fetcher = useFetch();
 
   return useQuery<ExtraResidentResponse[], Error>({
-    queryKey: ["extraResidents"],
+    queryKey: ["household", "extraResidents"],
     queryFn: () => getExtraResidents(fetcher),
     ...options,
   });
@@ -76,7 +102,7 @@ export const useHousehold = (id: number, options?: UseQueryOptions<GetHouseholdR
   const fetcher = useFetch();
 
   return useQuery<GetHouseholdResonse | null, Error>({
-    queryKey: ["household", id],
+    queryKey: ["household"],
     queryFn: () => getHousehold(id, fetcher),
     enabled: options?.enabled ?? true,
     ...options,
@@ -87,7 +113,7 @@ export const useHouseholdUsers = (id: number, options?: UseQueryOptions<UserResp
   const fetcher = useFetch();
 
   return useQuery<UserResponse[], Error>({
-    queryKey: ["householdUsers", id],
+    queryKey: ["household", "users"],
     queryFn: () => getHouseholdUsers(id, fetcher),
     enabled: options?.enabled ?? true,
     ...options,
@@ -96,17 +122,25 @@ export const useHouseholdUsers = (id: number, options?: UseQueryOptions<UserResp
 
 export const useAddUserToHousehold = () => {
   const fetcher = useFetch();
+  const queryClient = useQueryClient();
 
   return useMutation<void, Error, AddUserToHouseRequest>({
     mutationFn: (data) => addUserToHousehold(data, fetcher),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["household", "users"] });
+    },
   });
 };
 
 export const useAddExtraResident = () => {
   const fetcher = useFetch();
+  const queryClient = useQueryClient();
 
   return useMutation<void, Error, AddExtraResidentRequest>({
     mutationFn: (data) => addExtraResident(data, fetcher),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["household", "extraResidents"] });
+    },
   });
 };
 
@@ -117,7 +151,7 @@ export const useDeleteExtraResident = () => {
   return useMutation<void, Error, number>({
     mutationFn: (id) => deleteExtraResident(id, fetcher),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["extraResidents"] });
+      queryClient.invalidateQueries({ queryKey: ["household", "extraResidents"] });
     },
   });
 };
@@ -198,5 +232,32 @@ export const useJoinHousehold = () => {
 
   return useMutation<void, Error, { inviteKey: string }>({
     mutationFn: ({ inviteKey }) => joinHousehold(inviteKey, fetcher),
+  });
+};
+
+export const editHouseholdInfo = async (
+  req: EditHouseholdInfoRequest,
+  fetcher: FetchFunction = Fetch,
+): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/households/${req.id}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      address: req.address,
+      longitude: req.longitude,
+      latitude: req.latitude,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useEditHouseholdInfo = () => {
+  const fetcher = useFetch();
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, EditHouseholdInfoRequest>({
+    mutationFn: (data) => editHouseholdInfo(data, fetcher),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["household"] });
+    },
   });
 };
