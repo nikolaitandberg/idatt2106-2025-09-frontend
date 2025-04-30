@@ -56,8 +56,7 @@ export default function ScenarioCard({ scenario, onDeleted }: ScenarioCardProps)
           variant="destructive"
           className="w-full flex items-center gap-2 justify-center"
           onClick={() => setIsDeleteDialogOpen(true)}
-          disabled={isPending}
-        >
+          disabled={isPending}>
           <Trash size={16} strokeWidth={1.5} />
           Slett
         </Button>
