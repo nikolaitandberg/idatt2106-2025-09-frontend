@@ -37,3 +37,24 @@ export const useRequestPasswordReset = () => {
     mutationFn: (email: string) => requestPasswordReset(email, fetcher),
   });
 };
+
+export const resetPassword = async (
+  token: string,
+  password: string,
+  fetcher: FetchFunction = Fetch
+): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/auth/reset-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, password }),
+  });
+};
+
+export const useResetPassword = () => {
+  const fetcher = useFetch();
+
+  return useMutation({
+    mutationFn: ({ token, password }: { token: string; password: string }) =>
+      resetPassword(token, password, fetcher),
+  });
+};
