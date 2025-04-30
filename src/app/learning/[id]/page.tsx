@@ -30,6 +30,24 @@ export default function ScenarioPage() {
         <div className="prose max-w-none text-left">
           <MarkdownRenderer content={infoPage.content} />
         </div>
+        <div className="flex items-center justify-between mt-12">
+          <div className="flex gap-4">
+            <Button variant="default" size="lg" onClick={() => router.push(`/learning`)}>
+              Tilbake til scenarioer
+            </Button>
+            <Button variant="default" size="lg" onClick={() => router.push(`/learning/${id}/quiz`)}>
+              Ta Quiz
+            </Button>
+          </div>
+          <div>
+            <p className="text-sm text-foreground">
+              Opprettet: {new Date(infoPage.createdAt).toLocaleDateString("no-NO")}
+            </p>
+            <p className="text-sm text-foreground">
+              Sist oppdatert: {new Date(infoPage.updatedAt).toLocaleDateString("no-NO")}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
