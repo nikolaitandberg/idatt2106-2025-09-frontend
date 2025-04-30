@@ -6,3 +6,10 @@ export interface InfoPage {
   createdAt: string;
   updatedAt: string;
 }
+
+export interface EditInfoPageRequest {
+  id: number;
+  title: string;
+  shortDescription: string;
+  content: string;
+}
