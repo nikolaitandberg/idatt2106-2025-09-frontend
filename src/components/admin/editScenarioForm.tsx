@@ -1,9 +1,12 @@
+"use client";
+
 import { InfoPage, EditInfoPageRequest } from "@/types/learning";
 import { useEditScenario } from "@/actions/learning";
 import FormSection from "../ui/form/formSection";
 import FormError from "../ui/form/formError";
 import useAppForm from "@/util/formContext";
 import { z } from "zod";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface EditScenarioFormProps {
   scenario: InfoPage;
@@ -12,6 +15,7 @@ interface EditScenarioFormProps {
 
 export default function EditScenarioForm({ scenario, onClose }: EditScenarioFormProps) {
   const { mutate: editScenario, error } = useEditScenario();
+  const queryClient = useQueryClient();
 
   const schema = z.object({
     title: z.string().min(1, { message: "Du må skrive inn en tittel" }),
@@ -36,6 +40,7 @@ export default function EditScenarioForm({ scenario, onClose }: EditScenarioForm
           { id: scenario.id, ...value },
           {
             onSuccess: () => {
+              queryClient.invalidateQueries({ queryKey: ["infoPages"] });
               onClose();
             },
             onSettled: resolve,
