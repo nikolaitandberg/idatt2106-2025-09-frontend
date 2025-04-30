@@ -1,6 +1,6 @@
 import { ApiError, GetHouseholdFoodResponse, GetHouseholdResonse } from "@/types/apiResponses";
 import { API_BASE_URL } from "@/types/constants";
-import { Food, FoodType, UserResponse } from "@/types/household";
+import { Food, FoodType, Household, UserResponse } from "@/types/household";
 import Fetch, { FetchFunction, useFetch } from "@/util/fetch";
 import { useQuery, UseQueryOptions, useMutation } from "@tanstack/react-query";
 import { AddUserToHouseRequest, AddExtraResidentRequest, AddHouseholdFoodRequest } from "@/types/apiRequests";
@@ -58,6 +58,17 @@ export const useExtraResidents = (options?: UseQueryOptions<ExtraResidentRespons
     queryKey: ["extraResidents"],
     queryFn: () => getExtraResidents(fetcher),
     ...options,
+  });
+};
+
+export const createHousehold = async (
+  household: Omit<Household, "id">,
+  fetcher: FetchFunction = Fetch,
+): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/households/register`, {
+    method: "POST",
+    body: JSON.stringify(household),
+    headers: { "Content-Type": "application/json" },
   });
 };
 
@@ -164,5 +175,28 @@ export const useDeleteHouseholdFood = () => {
 
   return useMutation<void, Error, number>({
     mutationFn: (id) => deleteHouseholdFood(id, fetcher),
+  });
+};
+
+export const useCreateHousehold = () => {
+  const fetcher = useFetch();
+
+  return useMutation<void, Error, Omit<Household, "id"> & { username?: string }>({
+    mutationFn: (data) => createHousehold(data, fetcher),
+  });
+};
+
+export const joinHousehold = async (inviteKey: string, fetcher: FetchFunction = Fetch): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/households/accept/${inviteKey}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useJoinHousehold = () => {
+  const fetcher = useFetch();
+
+  return useMutation<void, Error, { inviteKey: string }>({
+    mutationFn: ({ inviteKey }) => joinHousehold(inviteKey, fetcher),
   });
 };
