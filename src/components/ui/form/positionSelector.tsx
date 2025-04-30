@@ -15,13 +15,12 @@ type Position = {
 };
 
 interface PositionSelectorProps {
-  initialPosition?: Position;
   icon?: keyof typeof mapIcons;
-  onChange: (position: Position) => void;
+  initialMapViewState?: Position;
   className?: string;
 }
 
-export default function PositionSelector({ initialPosition, className, icon, onChange }: PositionSelectorProps) {
+export default function PositionSelector({ initialMapViewState, className, icon }: PositionSelectorProps) {
   const field = useFieldContext<Position>();
 
   const mapRef = useRef<MapRef>(null);
@@ -30,16 +29,26 @@ export default function PositionSelector({ initialPosition, className, icon, onC
     mapRef.current?.on("click", (e) => {
       const { lng, lat } = e.lngLat;
       field.handleChange({ latitude: lat, longitude: lng });
-      onChange({ latitude: lat, longitude: lng });
     });
-  }, [onChange]);
+  }, [field]);
 
   return (
     <Dialog>
       <DialogTrigger>
         <div className="text-left mb-1">Velg posisjon</div>
         <div className={cn("w-full p-2 border border-neutral-300 rounded-md hover:cursor-pointer", className)}>
-          {field.state.value.latitude}, {field.state.value.longitude}
+          {field.state.value === undefined ? (
+            <p className="text-sm text-neutral-500">Ingen posisjon valgt</p>
+          ) : (
+            <>
+              {field.state.value.latitude}, {field.state.value.longitude}{" "}
+            </>
+          )}
+        </div>
+        <div className="text-red-500 text-sm">
+          {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
+            <p>{field.state.meta.errors[0].message}</p>
+          )}
         </div>
       </DialogTrigger>
       <DialogContent>
@@ -49,13 +58,16 @@ export default function PositionSelector({ initialPosition, className, icon, onC
             onLoad={onMapLoad}
             ref={mapRef}
             initialViewState={
-              initialPosition && {
-                latitude: field.state.value.latitude,
-                longitude: field.state.value.longitude,
+              initialMapViewState && {
+                latitude: initialMapViewState.latitude,
+                longitude: initialMapViewState.longitude,
                 zoom: 12,
               }
             }>
-            <Marker longitude={field.state.value.longitude} latitude={field.state.value.latitude} anchor="center">
+            <Marker
+              longitude={field.state.value?.longitude ?? 0}
+              latitude={field.state.value?.latitude ?? 0}
+              anchor="center">
               {icon && <Icon className="bg-white rounded-full p-2" icon={icon} size={30} />}
             </Marker>
           </MapComponent>

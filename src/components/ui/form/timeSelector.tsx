@@ -1,9 +1,5 @@
+import { Time } from "@/types/time";
 import { useFieldContext } from "@/util/formContext";
-
-type Time = {
-  hours: number;
-  minutes: number;
-};
 
 interface TimeSelectorProps {
   maxHours?: number;
@@ -26,32 +22,32 @@ export default function TimeSelector({
     const newHours = event.target.value ? parseInt(event.target.value, 10) : 0;
 
     if (newHours < minHours) {
-      field.handleChange((prev) => ({ ...prev, hours: minHours }));
+      field.handleChange((prev) => new Time(newHours, prev?.minutes ?? 0));
       return;
     }
 
     if (newHours > maxHours) {
-      field.handleChange((prev) => ({ ...prev, hours: maxHours }));
+      field.handleChange((prev) => new Time(maxHours, prev?.minutes ?? 0));
       return;
     }
 
-    field.handleChange((prev) => ({ ...prev, hours: newHours }));
+    field.handleChange((prev) => new Time(newHours, prev?.minutes ?? 0));
   };
 
   const handleMinutesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newMinutes = event.target.value ? parseInt(event.target.value, 10) : 0;
 
     if (newMinutes < minMinutes) {
-      field.handleChange((prev) => ({ ...prev, minutes: minMinutes }));
+      field.handleChange((prev) => new Time(prev?.hours ?? 0, minMinutes));
       return;
     }
 
     if (newMinutes > maxMinutes) {
-      field.handleChange((prev) => ({ ...prev, minutes: maxMinutes }));
+      field.handleChange((prev) => new Time(prev?.hours ?? 0, maxMinutes));
       return;
     }
 
-    field.handleChange((prev) => ({ ...prev, minutes: newMinutes }));
+    field.handleChange((prev) => new Time(prev?.hours ?? 0, newMinutes));
   };
 
   return (
@@ -60,14 +56,14 @@ export default function TimeSelector({
       <div className="flex gap-2">
         <input
           type="text"
-          value={field.state.value.hours}
+          value={field.state.value?.hours ?? 0}
           onChange={handleHoursChange}
           className="border rounded p-1 w-16"
         />
         {":"}
         <input
           type="text"
-          value={field.state.value.minutes}
+          value={field.state.value?.minutes ?? 0}
           onChange={handleMinutesChange}
           className="border rounded p-1 w-16"
         />
