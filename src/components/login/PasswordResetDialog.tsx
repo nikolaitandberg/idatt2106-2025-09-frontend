@@ -7,28 +7,36 @@ import { Button } from "@/components/ui/button";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import Alert from "@/components/ui/alert";
 import { useRequestPasswordReset } from "@/actions/user";
+import { z } from "zod";
+import useAppForm from "@/util/formContext";
 
 export default function PasswordResetDialog() {
   const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState("");
-  const { mutate: resetPassword, isError, isPending, error, isSuccess } = useRequestPasswordReset();
-
-  const handleResetPassword = async (e: FormEvent) => {
-    e.preventDefault();
-
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return;
-    }
-
-    resetPassword(email);
-  };
+  const { mutate: resetPassword, isError, error, isSuccess } = useRequestPasswordReset();
+  
+  const schema = z.object({
+    email: z.string().email({ message: "Ugyldig epost"})
+  })
 
   const handleClose = () => {
     setOpen(false);
-    setTimeout(() => {
-      setEmail("");
-    }, 300);
   };
+
+  const form = useAppForm({
+    defaultValues: {
+      email: "",
+    },
+    validators: {
+      onChange: schema,
+    },
+    onSubmit: async ({ value }) => {
+      await new Promise((resolve) => {
+        resetPassword(value.email, {
+          onSettled: resolve
+        })
+      })
+  }
+  });
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -52,30 +60,21 @@ export default function PasswordResetDialog() {
             </DialogFooter>
           </>
         ) : (
-          <form onSubmit={handleResetPassword}>
+          <>
             <p className="text-sm text-gray-500 mb-4">
               Skriv inn din e-postadresse for å motta en lenke for å tilbakestille passordet ditt.
             </p>
 
-            <TextInput
-              label="E-post"
-              name="email"
-              type="email"
-              placeholder="din@epost.no"
-              initialValue={email}
-              onChange={setEmail}
-              validate={(value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)}
-              validationErrorMessage="Vennligst skriv inn en gyldig e-postadresse"
-            />
+            <form.AppField name="email">{(field) => <field.TextInput label="Epost" />}</form.AppField>
 
             {isError && <Alert type="critical">{error.message}</Alert>}
 
             <DialogFooter className="mt-6">
-              <Button type="submit" disabled={isPending}>
-                {isPending ? <LoadingSpinner /> : "Send nullstillingslenke"}
-              </Button>
+              <form.AppForm>
+                <form.SubmitButton>Send tilbakestillinslenke</form.SubmitButton>
+              </form.AppForm>
             </DialogFooter>
-          </form>
+          </>
         )}
       </DialogContent>
     </Dialog>

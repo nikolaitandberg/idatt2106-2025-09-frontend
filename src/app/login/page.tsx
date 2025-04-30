@@ -63,7 +63,7 @@ export default function LoginPage() {
           <loginForm.SubmitButton>Logg inn</loginForm.SubmitButton>
         </loginForm.AppForm>
         <div className="text-red-500 text-sm text-center">{loginError && <p>{loginError}</p>}</div>
-        <div className="flex justify-center">
+        <div className="flex justify-center flex-col">
           <p className="text-sm text-gray-500">
             Har du ikke en konto?{" "}
             <Link href="/register" className="text-blue-500 hover:underline">
