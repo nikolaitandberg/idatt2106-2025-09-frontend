@@ -1,7 +1,7 @@
 import { API_BASE_URL } from "@/types/constants";
 import { User } from "@/types/user";
 import Fetch, { FetchFunction, useFetch } from "@/util/fetch";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const getProfile = async (userId: number, fetcher: FetchFunction = Fetch): Promise<User | null> => {
   try {
@@ -19,5 +19,21 @@ export const useProfile = (userId: number) => {
   return useQuery({
     queryKey: ["user", "profile"],
     queryFn: () => getProfile(userId, fetcher),
+  });
+};
+
+export const requestPasswordReset = async (email: string, fetcher: FetchFunction = Fetch): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/auth/request-password-reset`, {
+    method: "POST",
+    body: JSON.stringify({ email }),
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useRequestPasswordReset = (email: string) => {
+  const fetcher = useFetch();
+
+  return useMutation({
+    mutationFn: (email: string) => requestPasswordReset(email, fetcher),
   });
 };
