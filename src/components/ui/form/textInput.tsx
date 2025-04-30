@@ -59,8 +59,9 @@ export default function TextInput({
           </button>
         )}
       </div>
-      <div className={cn("h-2 mt-1 text-red-500 text-sm", errorsClassName)}>
-        {field.state.meta.errors.length > 0 && <span>{field.state.meta.errors.join(", ")}</span>}
+      <div className={cn("min-h-5 mt-1 text-red-500 text-sm [&>*]:not-last:mr-2", errorsClassName)}>
+        {field.state.meta.errors.length > 0 &&
+          field.state.meta.errors.map((error) => <span key={error.validation + error.message}>{error.message}</span>)}
       </div>
     </div>
   );
