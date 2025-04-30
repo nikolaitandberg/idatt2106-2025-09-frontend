@@ -41,8 +41,8 @@ export default function CreateMapObjectForm({ mapObjectType, onClose }: CreateMa
     .refine(
       (data) => {
         if (!data.opening || !data.closing) return true;
-        const openingTime = data.closing.toDate();
-        const closingTime = data.opening.toDate();
+        const openingTime = data.opening.toDate();
+        const closingTime = data.closing.toDate();
         return openingTime.getTime() < closingTime.getTime();
       },
       {
@@ -101,7 +101,20 @@ export default function CreateMapObjectForm({ mapObjectType, onClose }: CreateMa
     <div className="flex flex-col gap-4 border-t-1 border-foreground-muted pt-2">
       <FormSection title="Generell informasjon">
         <form.AppField name="description">{(field) => <field.TextInput label="Beskrivelse" />}</form.AppField>
-        <form.AppField name="position">{(field) => <field.PositionSelector />}</form.AppField>
+        <form.AppField name="position">
+          {(field) => (
+            <field.PositionSelector
+              icon={mapObjectType.icon}
+              initialMapViewState={
+                field.state.value && {
+                  latitude: field.state?.value?.latitude,
+                  longitude: field.state?.value?.longitude,
+                  zoom: 12,
+                }
+              }
+            />
+          )}
+        </form.AppField>
       </FormSection>
       <FormSection title="Kontaktinformasjon" dividerTop>
         <form.AppField name="contactName">{(field) => <field.TextInput label="Navn" />}</form.AppField>

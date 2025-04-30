@@ -13,7 +13,7 @@ export class Time {
   }
 
   public toDate(): Date {
-    const date = new Date();
+    const date = new Date(0);
     date.setUTCHours(this.hours, this.minutes, 0, 0);
     return date;
   }

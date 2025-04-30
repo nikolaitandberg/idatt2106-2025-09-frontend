@@ -16,7 +16,9 @@ type Position = {
 
 interface PositionSelectorProps {
   icon?: keyof typeof mapIcons;
-  initialMapViewState?: Position;
+  initialMapViewState?: Position & {
+    zoom?: number;
+  };
   className?: string;
 }
 
@@ -61,7 +63,7 @@ export default function PositionSelector({ initialMapViewState, className, icon 
               initialMapViewState && {
                 latitude: initialMapViewState.latitude,
                 longitude: initialMapViewState.longitude,
-                zoom: 12,
+                zoom: initialMapViewState.zoom ?? 12,
               }
             }>
             <Marker
