@@ -42,7 +42,7 @@ export function CustomToast({
   return (
     <div
       className={cn(
-        "relative flex w-full max-w-md items-start justify-between gap-4 rounded-lg p-4 shadow-sm",
+        "relative flex w-full min-w-xs max-w-md items-start justify-between gap-4 rounded-lg p-4 shadow-sm",
         variantStyles[variant],
       )}>
       <button onClick={() => sonnerToast.dismiss()} className="absolute top-2 right-2 text-gray-500 hover:text-black">
