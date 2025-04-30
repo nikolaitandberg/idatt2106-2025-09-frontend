@@ -13,3 +13,9 @@ export interface EditInfoPageRequest {
   shortDescription: string;
   content: string;
 }
+
+export interface CreateInfoPageRequest {
+  title: string;
+  shortDescription: string;
+  content: string;
+}
