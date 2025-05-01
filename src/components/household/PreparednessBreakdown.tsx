@@ -21,7 +21,7 @@ export default function PreparednessBreakdown({ household }: PreparednessBreakdo
       <ProgressResult
         value={household.levelOfPreparedness.levelOfPreparednessWater * 100}
         label="Vann"
-        descrption="Har gruppen nok vann, og er det lenge til neste vannbytte?"
+        descrption="Har husstanden nok vann, og er det lenge til neste vannbytte?"
       />
       <ProgressResult value={household.levelOfPreparedness.levelOfPreparedness * 100} label="Totalt" />
     </div>
