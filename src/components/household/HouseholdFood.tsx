@@ -11,6 +11,7 @@ import PreparednessBreakdown from "./PreparednessBreakdown";
 import { useMemo, useState } from "react";
 import AddNewFoodForm from "./AddNewFoodForm";
 import { useQueryClient } from "@tanstack/react-query";
+import HouseholdKits from "./HouseholdKits";
 
 export default function HouseholdFood({ household }: Readonly<{ household: Household }>) {
   const { data: householdFood } = useHouseholdFood(household.id);
@@ -79,6 +80,14 @@ export default function HouseholdFood({ household }: Readonly<{ household: House
             </div>
             <div className="text-sm font-medium">{household.waterAmountLiters} L</div>
           </div>
+        </section>
+
+        <section className="space-y-4">
+          <div>
+            <h2 className="text-lg font-medium">Utstyr</h2>
+            <p className="text-sm text-muted-foreground">Utstyr husholdningen har</p>
+          </div>
+          <HouseholdKits householdId={household.id} />
         </section>
 
         <section className="space-y-4">
