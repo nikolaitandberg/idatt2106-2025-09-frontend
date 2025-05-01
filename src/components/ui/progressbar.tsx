@@ -12,8 +12,8 @@ export default function ProgressBar({ value, label, className }: ProgressBarProp
   const clampedValue = Math.min(100, Math.max(0, value));
 
   const getBarColor = (value: number) => {
-    if (value <= 33) return "bg-progress-low";
-    if (value <= 66) return "bg-progress-medium";
+    if (value <= 45) return "bg-progress-low";
+    if (value <= 75) return "bg-progress-medium";
     return "bg-progress-high";
   };
 

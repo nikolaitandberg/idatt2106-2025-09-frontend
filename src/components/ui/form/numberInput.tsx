@@ -25,17 +25,24 @@ export default function NumberInput({ label, placeholder, className, errorsClass
           name={field.name}
           type="number"
           placeholder={placeholder}
-          value={field.state.value}
-          onChange={(e) => field.handleChange(e.target.valueAsNumber)}
+          value={String(field.state.value)}
+          onChange={(e) => {
+            if (e.target.value === "") {
+              field.handleChange(0);
+              return;
+            }
+            field.handleChange(e.target.valueAsNumber);
+          }}
           className={cn(
-            "w-full px-3 py-2 border rounded-md pr-10",
+            "w-full px-3 py-2 border rounded-md",
             field.state.meta.errors.length > 0 ? "border-red-500" : "border-gray-300",
             className,
           )}
         />
       </div>
-      <div className={cn("h-2 mt-1 text-red-500 text-sm", errorsClassName)}>
-        {field.state.meta.errors.length > 0 && <span>{field.state.meta.errors.join(", ")}</span>}
+      <div className={cn("min-h-5 mt-1 text-red-500 text-sm [&>*]:not-last:mr-2", errorsClassName)}>
+        {field.state.meta.errors.length > 0 &&
+          field.state.meta.errors.map((error) => <span key={error.validation + error.message}>{error.message}</span>)}
       </div>
     </div>
   );

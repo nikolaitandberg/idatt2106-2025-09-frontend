@@ -1,4 +1,4 @@
-import { Food, Household } from "./household";
+import { Food, FoodType, Household } from "./household";
 import { MapObject, MapObjectType } from "./map";
 
 export type CreateMapObjectTypeRequest = Omit<MapObjectType, "id">;
@@ -15,3 +15,5 @@ export type EditMapObjectRequest = MapObject;
 
 export type AddHouseholdFoodRequest = Omit<Food, "id">;
 export type EditHouseholdInfoRequest = Omit<Household, "waterAmountLiters" | "lastWaterChangeDate">;
+
+export type CreateFoodTypeRequest = Omit<FoodType, "id">;

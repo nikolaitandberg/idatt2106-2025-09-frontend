@@ -1,16 +1,36 @@
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, Plus } from "lucide-react";
 import Alert from "../ui/alert";
 import ProgressBar from "../ui/progressbar";
-import { useHouseholdFood } from "@/actions/household";
+import { useAddHouseholdFood, useHouseholdFood } from "@/actions/household";
 import { Accordion } from "../ui/accordion";
 import FoodAccordionItem from "../ui/itemAccordion";
 import { Household } from "@/types/household";
 import { Button } from "../ui/button";
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogTitle, DialogTrigger } from "../ui/dialog";
 import PreparednessBreakdown from "./PreparednessBreakdown";
+import { useMemo, useState } from "react";
+import AddNewFoodForm from "./AddNewFoodForm";
+import { useQueryClient } from "@tanstack/react-query";
 
-export default function HouseholdFood({ household }: { household: Household }) {
+export default function HouseholdFood({ household }: Readonly<{ household: Household }>) {
   const { data: householdFood } = useHouseholdFood(household.id);
+  const { mutate: updateHouseholdFood } = useAddHouseholdFood();
+  const [addNewFoodDialogOpen, setAddNewFoodDialogOpen] = useState(false);
+  const queryClient = useQueryClient();
+
+  const alertType = useMemo<{ type: "warning" | "info" | "success" | "critical"; message: string }>(() => {
+    if (household.levelOfPreparedness.levelOfPreparedness < 0.75) {
+      return {
+        type: "warning",
+        message: "Du er ikke godt nok forberedt.",
+      };
+    }
+
+    return {
+      type: "info",
+      message: "Du er godt forberedt.",
+    };
+  }, [household.levelOfPreparedness]);
 
   if (!householdFood) {
     return <div>laster...</div>;
@@ -21,8 +41,8 @@ export default function HouseholdFood({ household }: { household: Household }) {
       <div className="max-w-3xl mx-auto space-y-8">
         <section className="space-y-4">
           <ProgressBar value={household.levelOfPreparedness.levelOfPreparedness * 100} label="Forberedelsesgrad" />
-          <Alert type="warning">
-            Du er ikke godt nok forberedt.
+          <Alert type={alertType.type}>
+            {alertType.message}
             <Dialog>
               <DialogTrigger asChild>
                 <Button className="text-md p-1 underline" variant="link">
@@ -62,7 +82,45 @@ export default function HouseholdFood({ household }: { household: Household }) {
         </section>
 
         <section className="space-y-4">
-          <h2 className="text-lg font-medium">Matvarer</h2>
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-medium">Matvarer</h2>
+            <Dialog open={addNewFoodDialogOpen} onOpenChange={setAddNewFoodDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  Legg til ny matvare <Plus strokeWidth={1.25} size={20} />
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogTitle>Legg til ny matvare</DialogTitle>
+                <AddNewFoodForm
+                  onSubmit={async (e) => {
+                    await new Promise((resolve) => {
+                      updateHouseholdFood(
+                        {
+                          householdId: household.id,
+                          typeId: e.typeId,
+                          amount: e.amount,
+                          expirationDate: e.expirationDate,
+                        },
+                        {
+                          onSettled: resolve,
+                          onSuccess: () => {
+                            queryClient.invalidateQueries({
+                              queryKey: ["household", "food"],
+                            });
+                            queryClient.invalidateQueries({
+                              queryKey: ["household", "my-household"],
+                            });
+                          },
+                        },
+                      );
+                    });
+                    setAddNewFoodDialogOpen(false);
+                  }}
+                />
+              </DialogContent>
+            </Dialog>
+          </div>
           <Accordion type="multiple">
             {householdFood.map((foodType) => {
               return (

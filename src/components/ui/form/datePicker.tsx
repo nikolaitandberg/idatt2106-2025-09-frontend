@@ -11,9 +11,10 @@ import { useFieldContext } from "@/util/formContext";
 
 interface DatePickerProps {
   label?: string;
+  errorsClassName?: string;
 }
 
-export default function DatePicker({ label }: DatePickerProps) {
+export default function DatePicker({ label, errorsClassName }: DatePickerProps) {
   const field = useFieldContext<Date>();
 
   return (
@@ -30,6 +31,10 @@ export default function DatePicker({ label }: DatePickerProps) {
           {field.state.value ? format(field.state.value, "PPP") : <span>Velg en dato</span>}
         </Button>
       </PopoverTrigger>
+      <div className={cn("mt-1 text-red-500 text-sm [&>*]:not-last:mr-2", errorsClassName)}>
+        {field.state.meta.errors.length > 0 &&
+          field.state.meta.errors.map((error) => <span key={error.validation + error.message}>{error.message}</span>)}
+      </div>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar mode="single" required selected={field.state.value} onSelect={field.handleChange} />
       </PopoverContent>
