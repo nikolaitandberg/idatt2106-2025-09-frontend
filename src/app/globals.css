@@ -7,7 +7,8 @@
   --primary: #1f2a44;
   --primary-foreground: #ffffff;
   --secondary: #84dfe9;
-  --secondary-foreground: #0a0a0a;
+  --secondary-foreground: #8684e9;
+  --secondary-foreground-muted: rgba(134, 132, 233, 0.35);
 
   --accent: #e6f7f9;
   --accent-foreground: #1f2a44;
@@ -36,6 +37,7 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-foreground-muted: var(--secondary-foreground-muted);
 
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
