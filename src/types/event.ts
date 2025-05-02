@@ -8,14 +8,14 @@ export type Event = {
   endTime?: string;
   severityId: number;
   recommendation?: string;
-}
+};
 
 export type Severity = {
   id: number;
   colour: string;
   name: string | null;
   description: string | null;
-}
+};
 
 export type InfoPage = {
   id: number;
@@ -23,10 +23,10 @@ export type InfoPage = {
   content: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 export type Quiz = {
   id: number;
   infoPageId: number | null;
   name: string | null;
-}
+};

@@ -23,4 +23,4 @@ export type ResetPasswordRequest = {
   newPassword: string;
 };
 
-export type CreateEventRequest = Omit<Event, "id">
+export type CreateEventRequest = Omit<Event, "id">;
