@@ -7,13 +7,16 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import { DialogContent, DialogTitle, DialogTrigger, Dialog } from "@/components/ui/dialog";
 import { useDeleteEvent, useEvents, useSeverities } from "@/actions/event";
-import CreateEventForm from "@/components/admin/createEventForm";
+import EventForm from "@/components/admin/EventForm";
+import { Event as AppEvent } from "@/types/event";
 
 export default function AdminEvents() {
   const events = useEvents(MAP_BOUNDS_MAX);
   const severities = useSeverities();
   const [newEventDialogOpen, setNewEventDialogOpen] = useState(false);
   const deleteEvent = useDeleteEvent();
+  const [editEventDialogOpen, setEditEventDialogOpen] = useState(false);
+  const [currentEditEvent, setCurrentEditEvent] = useState<AppEvent | undefined>(undefined);
 
   if (events.isPending || severities.isPending) {
     return <div>Loading...</div>;
@@ -32,13 +35,18 @@ export default function AdminEvents() {
   const handleDeleteEvent = (eventId: number) => {
     deleteEvent.mutate(eventId, {
       onSuccess: () => {
-        events.refetch().then(r => {
+        events.refetch().then((r) => {
           if (r.isError) {
             console.error("Feil ved lasting av hendelser");
           }
         });
       },
     });
+  };
+
+  const handleEditEvent = (event: AppEvent) => {
+    setCurrentEditEvent(event);
+    setEditEventDialogOpen(true);
   };
 
   return (
@@ -61,7 +69,13 @@ export default function AdminEvents() {
                 </DialogTrigger>
                 <DialogContent className="max-h-10/12 overflow-y-auto">
                   <DialogTitle>Legg til ny hendelse</DialogTitle>
-                  <CreateEventForm onClose={() => setNewEventDialogOpen(false)} />
+                  <EventForm onClose={() => setNewEventDialogOpen(false)} />
+                </DialogContent>
+              </Dialog>
+              <Dialog open={editEventDialogOpen} onOpenChange={setEditEventDialogOpen}>
+                <DialogContent className="max-h-10/12 overflow-y-auto">
+                  <DialogTitle>Rediger hendelse</DialogTitle>
+                  <EventForm onClose={() => setEditEventDialogOpen(false)} event={currentEditEvent} isEdit={true} />
                 </DialogContent>
               </Dialog>
             </div>
@@ -118,7 +132,7 @@ export default function AdminEvents() {
                         )}
 
                         <div className="flex justify-end gap-2 mt-4">
-                          <Button variant="outline" size="sm">
+                          <Button variant="outline" size="sm" onClick={() => handleEditEvent(event)}>
                             Rediger
                           </Button>
                           <Button
