@@ -56,6 +56,8 @@ jobs:
       - run: npm ci
       - run: npm run build
 
+      - run: ls -la .next
+
       - run: |
           if [ ! -d ".next" ] || [ -z "$(ls -A .next)" ]; then
             echo ".next directory is missing or empty";
