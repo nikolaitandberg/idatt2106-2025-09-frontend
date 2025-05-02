@@ -111,8 +111,7 @@ export default function MapEvent({ event }: { event: Event }) {
           <div className="bg-white pl-4 pr-2 py-2 rounded-md shadow-md relative cursor-auto w-64 z-10" ref={innerRef}>
             <div className="flex justify-between flex-row items-center">
               <div className="text-black text-base font-bold flex items-center">
-                <AlertTriangle size={16} className={`mr-2 ${colors.textColor}`} />
-                #{event.id} {event.name}
+                <AlertTriangle size={16} className={`mr-2 ${colors.textColor}`} />#{event.id} {event.name}
               </div>
               <X onClick={() => setOpen(false)} className="cursor-pointer" />
             </div>

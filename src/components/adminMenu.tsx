@@ -8,7 +8,6 @@ export function AdminMenu() {
       <AdminMenuCard icon={MapPin} text="Kart" href="/admin/map" />
       <AdminMenuCard icon={CircleAlert} text="Scenario" href="/admin/scenario" />
       <AdminMenuCard icon={ShieldUser} text="Ny admin" href="/admin/new-admin" />
-      <AdminMenuCard icon={CircleAlert} text="Hendelser" href="/admin/events" />
     </div>
   );
 }
