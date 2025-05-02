@@ -45,3 +45,12 @@ export type FoodSummary = Omit<FoodType, "id" | "name"> & {
   totalCalories: number;
   batches: Omit<Food, "typeId" | "householdId">[];
 };
+
+export interface HouseholdGroupMember {
+  id: number;
+  name: string;
+  address: string;
+  peopleCount: number;
+  petCount?: number;
+  isHome?: boolean;
+}
