@@ -11,7 +11,7 @@ export default function ResetPasswordPage() {
   const router = useRouter();
   const [resetSuccess, setResetSuccess] = useState(false);
   const params = useParams();
-  const token = params.token as string;
+  const key = params.key as string;
 
   const { mutate: resetPassword, error, isError, isPending } = useResetPassword();
 
@@ -35,7 +35,7 @@ export default function ResetPasswordPage() {
 
   const handlePasswordReset = async ({ password }: { password: string; confirmPassword: string }) => {
     resetPassword(
-      { token, password },
+      { key, newPassword: password },
       {
         onSuccess: () => {
           setResetSuccess(true);
