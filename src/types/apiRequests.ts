@@ -17,3 +17,7 @@ export type AddHouseholdFoodRequest = Omit<Food, "id">;
 export type EditHouseholdInfoRequest = Omit<Household, "waterAmountLiters" | "lastWaterChangeDate">;
 
 export type CreateFoodTypeRequest = Omit<FoodType, "id">;
+export type ResetPasswordRequest = {
+  key: string;
+  newPassword: string;
+};

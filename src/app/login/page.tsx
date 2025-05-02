@@ -2,6 +2,7 @@
 
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import PasswordResetDialog from "@/components/login/PasswordResetDialog";
 import useAppForm from "@/util/formContext";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
@@ -49,7 +50,7 @@ export default function LoginPage() {
   });
 
   return (
-    <div className="flex items-center justify-center bg-background px-4">
+    <div className="flex items-center justify-center bg-background px-4 mt-8">
       <div className="w-full max-w-md rounded-2xl p-8 space-y-6">
         <h1 className="text-2xl font-bold text-center">Logg inn</h1>
         <loginForm.AppField name="username">
@@ -62,12 +63,15 @@ export default function LoginPage() {
           <loginForm.SubmitButton>Logg inn</loginForm.SubmitButton>
         </loginForm.AppForm>
         <div className="text-red-500 text-sm text-center">{loginError && <p>{loginError}</p>}</div>
-        <div className="flex justify-center">
+        <div className="flex justify-center flex-col">
           <p className="text-sm text-gray-500">
             Har du ikke en konto?{" "}
             <Link href="/register" className="text-blue-500 hover:underline">
               Registrer deg
             </Link>
+          </p>
+          <p className="text-sm text-gray-500">
+            Glemt passord? <PasswordResetDialog />
           </p>
         </div>
       </div>

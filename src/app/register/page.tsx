@@ -82,7 +82,7 @@ export default function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center bg-background px-4">
+    <div className="flex items-center justify-center bg-background px-4 mt-8">
       <div className="w-full max-w-md rounded-2xl p-8 space-y-6">
         <h1 className="text-2xl font-bold text-center">Registrer deg</h1>
         <form.AppField name="username">{(field) => <field.TextInput label="Brukernavn" />}</form.AppField>
