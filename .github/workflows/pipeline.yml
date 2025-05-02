@@ -5,15 +5,11 @@ on:
     branches: -main
       - dev
       - "81-*"
-    paths:
-      - "frontend/**"
   pull_request:
     branches:
       - main
       - dev
       - "81-*"
-    paths:
-      - "frontend/**"
 
 jobs:
   build-frontend:
