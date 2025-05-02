@@ -76,7 +76,6 @@ export default function MapEvent({ event }: { event: Event }) {
     return new Date(timestamp).toLocaleString();
   };
 
-  // Memoize the circle GeoJSON to prevent regeneration on every render
   const circleGeoJSON = useMemo(() => {
     const center = point([event.longitude, event.latitude]);
     return circle(center, event.radius, { units: "kilometers" });
