@@ -18,7 +18,14 @@ interface MapComponentProps {
   children?: React.ReactNode;
 }
 
-export default function MapComponent({ ref, initialViewState, onMove, onClick, onLoad, children }: MapComponentProps) {
+export default function MapComponent({
+  ref,
+  initialViewState,
+  onMove,
+  onClick,
+  onLoad,
+  children,
+}: Readonly<MapComponentProps>) {
   return (
     <Map
       onLoad={onLoad}
