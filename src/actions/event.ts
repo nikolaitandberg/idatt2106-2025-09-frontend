@@ -9,13 +9,13 @@ export type EventsResponse = Event[];
 export type SeveritiesResponse = Severity[];
 
 export interface CreateEventRequest {
-  info_page_id?: number;
+  infoPageId?: number;
   latitude: number;
   longitude: number;
   radius: number;
-  start_time: string;
-  end_time?: string;
-  severity_id: number;
+  startTime: string;
+  endTime?: string;
+  severityId: number;
   recomendation?: string;
 }
 
@@ -104,7 +104,7 @@ export const useSeverities = () => {
  * @param fetcher the fetch function to use
  */
 export const createEvent = async (req: CreateEventRequest, fetcher: FetchFunction = Fetch): Promise<null> => {
-  return await fetcher<null>(`${API_BASE_URL}/event`, {
+  return await fetcher<null>(`${API_BASE_URL}/events`, {
     method: "POST",
     body: JSON.stringify(req),
     headers: {
@@ -132,8 +132,8 @@ export const useCreateEvent = () => {
  * @param fetcher the fetch function to use
  */
 export const updateEvent = async (req: UpdateEventRequest, fetcher: FetchFunction = Fetch): Promise<null> => {
-  return await fetcher<null>(`${API_BASE_URL}/event/update`, {
-    method: "PUT",
+  return await fetcher<null>(`${API_BASE_URL}/events/update`, {
+    method: "POST",
     body: JSON.stringify(req),
     headers: {
       "Content-Type": "application/json",
@@ -160,7 +160,7 @@ export const useUpdateEvent = () => {
  * @param fetcher the fetch function to use
  */
 export const deleteEvent = async (id: number, fetcher: FetchFunction = Fetch): Promise<null> => {
-  return await fetcher<null>(`${API_BASE_URL}/event/${id}`, {
+  return await fetcher<null>(`${API_BASE_URL}/events/${id}`, {
     method: "DELETE",
   });
 };
@@ -185,7 +185,7 @@ export const useDeleteEvent = () => {
  */
 export const getEventById = async (id: number, fetcher: FetchFunction = Fetch): Promise<Event | null> => {
   try {
-    return await fetcher<Event>(`${API_BASE_URL}/event/${id}`);
+    return await fetcher<Event>(`${API_BASE_URL}/events/${id}`);
   } catch (error) {
     if (error instanceof ApiError && error.code === 404) {
       return null;

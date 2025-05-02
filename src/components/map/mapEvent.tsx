@@ -21,13 +21,13 @@ export default function MapEvent({ event }: { event: Event }) {
   const colors = useMemo(() => {
     const getSeverityColor = (severityId: number) => {
       switch (severityId) {
-        case 2:
+        case 1:
           return "bg-yellow-500"; // Low
-        case 3:
+        case 2:
           return "bg-orange-500"; // Medium
-        case 4:
+        case 3:
           return "bg-red-500"; // High
-        case 5:
+        case 4:
           return "bg-purple-500"; // Extreme
         default:
           return "bg-gray-900"; // Unknown
@@ -36,13 +36,13 @@ export default function MapEvent({ event }: { event: Event }) {
 
     const fillColor = (() => {
       switch (event.severityId) {
-        case 2:
+        case 1:
           return "rgba(245, 158, 11, 0.2)"; // Yellow with transparency
-        case 3:
+        case 2:
           return "rgba(249, 115, 22, 0.2)"; // Orange with transparency
-        case 4:
+        case 3:
           return "rgba(239, 68, 68, 0.2)"; // Red with transparency
-        case 5:
+        case 4:
           return "rgba(168, 85, 247, 0.2)"; // Purple with transparency
         default:
           return "rgba(107, 114, 128, 0.2)"; // Gray with transparency
@@ -51,13 +51,13 @@ export default function MapEvent({ event }: { event: Event }) {
 
     const borderColor = (() => {
       switch (event.severityId) {
-        case 2:
+        case 1:
           return "rgba(245, 158, 11, 0.8)"; // Yellow border
-        case 3:
+        case 2:
           return "rgba(249, 115, 22, 0.8)"; // Orange border
-        case 4:
+        case 3:
           return "rgba(239, 68, 68, 0.8)"; // Red border
-        case 5:
+        case 4:
           return "rgba(168, 85, 247, 0.8)"; // Purple border
         default:
           return "rgba(107, 114, 128, 0.8)"; // Gray border
@@ -73,7 +73,7 @@ export default function MapEvent({ event }: { event: Event }) {
   }, [event]);
 
   const formatDate = (timestamp: string) => {
-    return new Date(timestamp).toLocaleString();
+    return new Date(timestamp).toLocaleDateString();
   };
 
   const circleGeoJSON = useMemo(() => {
@@ -110,32 +110,31 @@ export default function MapEvent({ event }: { event: Event }) {
           <div className="bg-white pl-4 pr-2 py-2 rounded-md shadow-md relative cursor-auto w-64 z-10" ref={innerRef}>
             <div className="flex justify-between flex-row items-center">
               <div className="text-black text-base font-bold flex items-center">
-                <AlertTriangle size={16} className={`mr-2 ${colors.textColor}`} />
-                Event #{event.id}
+                <AlertTriangle size={16} className={`mr-2 ${colors.textColor}`} />#{event.id} {event.name}
               </div>
               <X onClick={() => setOpen(false)} className="cursor-pointer" />
             </div>
             <div className="flex flex-col gap-2 mt-2">
               <div className="flex items-center text-gray-700 text-sm">
                 <Clock size={14} className="mr-1" />
-                Start: {formatDate(event.start_time)}
+                Start: {formatDate(event.startTime)}
               </div>
-              {event.end_time && (
+              {event.endTime && (
                 <div className="flex items-center text-gray-700 text-sm">
                   <Clock size={14} className="mr-1" />
-                  End: {formatDate(event.end_time)}
+                  Slutt: {formatDate(event.endTime)}
                 </div>
               )}
               <div className="text-gray-700 text-sm">Affected radius: {event.radius} km</div>
-              {event.recomendation && (
+              {event.recommendation && (
                 <div className="text-gray-700 text-sm mt-2 p-2 bg-accent rounded-md">
-                  <strong>Recommendation:</strong> {event.recomendation}
+                  <strong>Anbefalning:</strong> {event.recommendation}
                 </div>
               )}
-              {event.info_page_id && (
+              {event.infoPageId && (
                 <div className="mt-2">
-                  <a href={`/info/${event.info_page_id}`} className="text-primary text-sm underline">
-                    View Information Page
+                  <a href={`/learning/${event.infoPageId}`} className="text-primary text-sm underline">
+                    Se læringsside
                   </a>
                 </div>
               )}
