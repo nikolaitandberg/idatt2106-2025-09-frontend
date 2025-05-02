@@ -29,7 +29,7 @@ jobs:
       - name: Install Maven
         run: sudo apt-get update && sudo apt-get install maven -y
       - name: Build with Maven
-        run: cd idatt2106-2025-09-backend && mvn -B package -Dspring.profiles.active=test-e2e -Ptest-e2e
+        run: mvn -B package -Dspring.profiles.active=test-e2e -Ptest-e2e
       - name: Upload Backend Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -43,9 +43,6 @@ jobs:
       NEXTAUTH_URL: https://localhost:3000
       NEXTAUTH_SECRET: aaa
 
-    defaults:
-      run:
-        working-directory: idatt2106-2025-09-frontend
     steps:
       - uses: actions/checkout@v4
 
@@ -54,7 +51,7 @@ jobs:
         with:
           node-version: "18"
           cache: "npm"
-          cache-dependency-path: "idatt2106-2025-09-frontend/package-lock.json"
+          cache-dependency-path: "package-lock.json"
 
       - run: npm ci
       - run: npm run build
