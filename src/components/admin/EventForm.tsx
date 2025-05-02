@@ -46,6 +46,7 @@ export default function EventForm({ onClose, event, isEdit = false }: EventFormP
           },
         }
       : {
+          name: "",
           severityId: 1,
           radius: 1,
           startTime: new Date(),
