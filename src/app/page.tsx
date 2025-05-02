@@ -1,6 +1,6 @@
 "use client";
 
-import Map, { MapRef } from "react-map-gl/maplibre";
+import { MapRef } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useMapObjects, useMapObjectTypes } from "@/actions/map";
 import { useEvents } from "@/actions/event";
@@ -9,6 +9,7 @@ import MapEvent from "@/components/map/mapEvent";
 import { useDebounce } from "use-debounce";
 import { useMemo, useRef, useState } from "react";
 import { MapBounds } from "@/types/map";
+import MapComponent from "@/components/map/mapComponent";
 
 export default function Home() {
   const [bounds, setBounds] = useState<MapBounds>({} as MapBounds);
@@ -46,40 +47,23 @@ export default function Home() {
   };
 
   return (
-    <div className="flex items-center justify-center bg-background px-4 h-[80vh]">
-      <Map
-        initialViewState={{
-          longitude: 9.726463,
-          latitude: 60.931636,
-          zoom: 5,
-        }}
-        ref={mapRef}
-        style={{ width: "100%", height: "100%" }}
-        onMove={handleMove}
-        onLoad={handleMove}
-        mapStyle={{
-          version: 8,
-          sources: {
-            "raster-tiles": {
-              type: "raster",
-              tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-              tileSize: 256,
-              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            },
-          },
-          layers: [
-            {
-              id: "simple-tiles",
-              type: "raster",
-              source: "raster-tiles",
-              minzoom: 0,
-              maxzoom: 22,
-            },
-          ],
-        }}>
-        {renderedMapObjects}
-        {renderedEvents}
-      </Map>
+    <div className="grid grid-cols-1 gap-4 items-center justify-center w-full h-[90vh]">
+      <div className="flex items-center justify-center bg-white px-4 pb-4 pt-2 h-full w-full n">
+        <div className="w-full h-full rounded-md overflow-hidden">
+          <MapComponent
+            initialViewState={{
+              longitude: 9.726463,
+              latitude: 60.931636,
+              zoom: 5,
+            }}
+            ref={mapRef}
+            onMove={handleMove}
+            onLoad={handleMove}>
+            {renderedMapObjects}
+            {renderedEvents}
+          </MapComponent>
+        </div>
+      </div>
     </div>
   );
 }
