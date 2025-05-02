@@ -96,7 +96,7 @@ jobs:
           path: frontend-build/
       - name: Start Backend
         run: |
-          nohup java -jar backend/prosjektoppgave-0.0.1-SNAPSHOT.jar --spring.profiles.active=test-e2e &
+          nohup java -jar backend/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=test-e2e &
           sleep 10
       - name: Start Frontend
         run: |
