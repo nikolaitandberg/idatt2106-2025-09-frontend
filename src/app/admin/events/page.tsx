@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState } from "react";
 import { DialogContent, DialogTitle, DialogTrigger, Dialog } from "@/components/ui/dialog";
-import { useEvents, useSeverities } from "@/actions/event";
+import { useDeleteEvent, useEvents, useSeverities } from "@/actions/event";
 import CreateEventForm from "@/components/admin/createEventForm";
 
 export default function AdminEvents() {
   const events = useEvents(MAP_BOUNDS_MAX);
   const severities = useSeverities();
   const [newEventDialogOpen, setNewEventDialogOpen] = useState(false);
+  const deleteEvent = useDeleteEvent();
 
   if (events.isPending || severities.isPending) {
     return <div>Loading...</div>;
@@ -21,18 +22,23 @@ export default function AdminEvents() {
     return <div>Feil ved lasting av hendelser</div>;
   }
 
-  // Custom date formatting function to replace date-fns
-  const formatDate = (dateString: string | null): string => {
-    if (!dateString) return "Ikke satt";
+  const formatDate = (timestamp: string | undefined): string => {
+    if (!timestamp) {
+      return "Ingen sluttid bestemt";
+    }
+    return new Date(timestamp).toLocaleDateString();
+  };
 
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
-
-    return `${day}.${month}.${year} ${hours}:${minutes}`;
+  const handleDeleteEvent = (eventId: number) => {
+    deleteEvent.mutate(eventId, {
+      onSuccess: () => {
+        events.refetch().then(r => {
+          if (r.isError) {
+            console.error("Feil ved lasting av hendelser");
+          }
+        });
+      },
+    });
   };
 
   return (
@@ -53,7 +59,7 @@ export default function AdminEvents() {
                     Legg til ny hendelse <Plus size={20} strokeWidth={1} />
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-h-10/12 overflow-y-auto">
                   <DialogTitle>Legg til ny hendelse</DialogTitle>
                   <CreateEventForm onClose={() => setNewEventDialogOpen(false)} />
                 </DialogContent>
@@ -96,18 +102,18 @@ export default function AdminEvents() {
                           </div>
                           <div>
                             <p className="text-sm font-medium">Starttid</p>
-                            <p>{formatDate(event.start_time)}</p>
+                            <p>{formatDate(event.startTime)}</p>
                           </div>
                           <div>
                             <p className="text-sm font-medium">Slutttid</p>
-                            <p>{formatDate(event.end_time)}</p>
+                            <p>{formatDate(event.endTime)}</p>
                           </div>
                         </div>
 
-                        {event.recomendation && (
+                        {event.recommendation && (
                           <div>
                             <p className="text-sm font-medium">Anbefaling</p>
-                            <p>{event.recomendation}</p>
+                            <p>{event.recommendation}</p>
                           </div>
                         )}
 
@@ -115,8 +121,12 @@ export default function AdminEvents() {
                           <Button variant="outline" size="sm">
                             Rediger
                           </Button>
-                          <Button variant="destructive" size="sm">
-                            Slett
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleDeleteEvent(event.id)}
+                            disabled={deleteEvent.isPending}>
+                            {deleteEvent.isPending ? "Sletter..." : "Slett"}
                           </Button>
                         </div>
                       </div>
@@ -137,7 +147,6 @@ export default function AdminEvents() {
   );
 }
 
-// Helper function to determine text color based on background color
 function getBadgeTextColor(bgColor: string): string {
   if (
     bgColor.toLowerCase() === "#ffffff" ||
