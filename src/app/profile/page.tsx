@@ -22,7 +22,7 @@ export default function ProfilePageWrapper() {
     redirect("/login");
   }
 
-  return <ProfilePage userId={session.data.user.userId} />;
+  return <ProfilePage userId={session.data.user?.userId} />;
 }
 
 function ProfilePage({ userId }: { userId: number }) {
