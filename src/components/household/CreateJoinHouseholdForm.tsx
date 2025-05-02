@@ -42,7 +42,7 @@ export default function CreateHouseholdForm() {
 
     createHousehold(
       {
-        adress: fullAddress,
+        address: fullAddress,
         longitude: 0,
         latitude: 0,
         waterAmountLiters: 0,

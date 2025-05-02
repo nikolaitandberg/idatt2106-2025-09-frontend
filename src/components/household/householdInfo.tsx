@@ -77,7 +77,7 @@ export default function HouseholdInfo({ household }: { household: Household }) {
       <hr className="border-border" />
       <HouseholdUsers householdId={household.id} />
       <hr className="border-border" />
-      <HouseholdGroups householdId={household.id} />
+      <HouseholdGroups />
     </>
   );
 }
