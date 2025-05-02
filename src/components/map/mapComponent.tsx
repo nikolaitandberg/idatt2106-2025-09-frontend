@@ -1,6 +1,6 @@
 "use client";
 
-import Map, { MapRef } from "react-map-gl/maplibre";
+import Map, { AttributionControl, MapRef } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { Ref } from "react";
 import { MAP_STYLE_CONFIG } from "@/util/mapStyleConfig";
@@ -38,9 +38,11 @@ export default function MapComponent({
           zoom: 5,
         }
       }
+      attributionControl={false}
       ref={ref}
       style={{ width: "100%", height: "100%" }}
       mapStyle={MAP_STYLE_CONFIG}>
+      <AttributionControl compact={true} position="top-left" />
       {children}
     </Map>
   );
