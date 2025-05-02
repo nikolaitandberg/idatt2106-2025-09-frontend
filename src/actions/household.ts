@@ -106,7 +106,6 @@ export const useHousehold = (id: number, options?: UseQueryOptions<GetHouseholdR
     enabled: options?.enabled ?? true,
     ...options,
   });
-  
 };
 
 export const useHouseholdUsers = (id: number, options?: UseQueryOptions<UserResponse[], Error>) => {

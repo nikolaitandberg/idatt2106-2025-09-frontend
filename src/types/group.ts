@@ -5,7 +5,6 @@ export interface Group {
   numberOfMembers: number;
 }
 
-
 export interface GroupDetails {
   groupId: number;
   groupName: string;
@@ -14,7 +13,6 @@ export interface GroupDetails {
   totalResidents: number;
   totalExtraResidents: number;
 }
-
 
 export interface GroupHouseholdRelation {
   id: number;

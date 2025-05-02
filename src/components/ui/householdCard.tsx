@@ -4,7 +4,6 @@ import { MapPin } from "lucide-react";
 import { HouseholdGroupMember } from "@/types/household";
 import { Users } from "lucide-react";
 
-
 export default function HouseholdCard({
   name = "Husholdning",
   address,

@@ -58,13 +58,9 @@ export default function EditGroupForm({ group, onClose }: EditGroupFormProps) {
   return (
     <div className="flex flex-col gap-4 border-t pt-2">
       <FormSection>
-        <form.AppField name="name">
-          {(field) => <field.TextInput label="Navn på gruppe" />}
-        </form.AppField>
+        <form.AppField name="name">{(field) => <field.TextInput label="Navn på gruppe" />}</form.AppField>
 
-        <form.AppField name="description">
-          {(field) => <field.TextInput label="Beskrivelse" />}
-        </form.AppField>
+        <form.AppField name="description">{(field) => <field.TextInput label="Beskrivelse" />}</form.AppField>
       </FormSection>
 
       <form.AppForm>

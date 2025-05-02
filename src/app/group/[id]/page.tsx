@@ -4,7 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Pencil, LogOut, Users, Apple, CirclePlus, Home, UserPlus } from "lucide-react";
-import HouseholdCard from "@/components/ui/householdCard";
+import GroupHouseholdCard from "@/components/ui/groupHouseholdCard";
 import { getGroupById, useGroupHouseholds, useLeaveGroup, useMyGroupMemberships } from "@/actions/group";
 import { useMyHousehold } from "@/actions/household";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
@@ -154,15 +154,7 @@ export default function GroupPage() {
 
             <div className="flex flex-wrap justify-center gap-4">
               {households?.map((h) => (
-                <HouseholdCard
-                  key={h.id}
-                  id={h.householdId}
-                  name={h.name}
-                  address={h.address}
-                  peopleCount={h.peopleCount}
-                  petCount={h.petCount}
-                  isHome={myHousehold?.id === h.householdId}
-                />
+                <GroupHouseholdCard key={h.id} householdId={h.householdId} isHome={myHousehold?.id === h.householdId} />
               ))}
             </div>
 

@@ -7,9 +7,7 @@ import { API_BASE_URL } from "@/types/constants";
 import { GroupDetails, GroupHouseholdRelation, GroupHousehold, EditGroupRequest } from "@/types/group";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-export const getMyGroupMemberships = async (
-  fetcher: FetchFunction = Fetch,
-): Promise<GroupHouseholdRelation[]> => {
+export const getMyGroupMemberships = async (fetcher: FetchFunction = Fetch): Promise<GroupHouseholdRelation[]> => {
   const res = await fetcher<GroupHouseholdRelation[]>(`${API_BASE_URL}/group-households/my-groups`);
   if (!res) {
     throw new Error("Failed to fetch group-household relations");
@@ -29,21 +27,13 @@ export const useMyGroupMemberships = () => {
   });
 };
 
-export const getGroupById = async (
-  id: number,
-  fetcher: FetchFunction = Fetch,
-): Promise<GroupDetails> => {
+export const getGroupById = async (id: number, fetcher: FetchFunction = Fetch): Promise<GroupDetails> => {
   const res = await fetcher<GroupDetails>(`${API_BASE_URL}/emergency-groups/summary/group/${id}`);
   if (!res) throw new Error("Could not fetch group");
   return res;
 };
 
-
-
-export const getGroupDetails = async (
-  groupId: number,
-  fetcher: FetchFunction = Fetch,
-): Promise<GroupDetails> => {
+export const getGroupDetails = async (groupId: number, fetcher: FetchFunction = Fetch): Promise<GroupDetails> => {
   const res = await fetcher<GroupDetails>(`${API_BASE_URL}/emergency-groups/summary/group/${groupId}`);
   if (!res) {
     throw new Error("Failed to fetch group details");
@@ -51,10 +41,7 @@ export const getGroupDetails = async (
   return res;
 };
 
-export const useGroupDetails = (
-  groupId: number,
-  options?: UseQueryOptions<GroupDetails, Error>,
-) => {
+export const useGroupDetails = (groupId: number, options?: UseQueryOptions<GroupDetails, Error>) => {
   const fetcher = useFetch();
 
   return useQuery<GroupDetails, Error>({
@@ -76,10 +63,7 @@ export const getGroupHouseholds = async (
   return res;
 };
 
-export const useGroupHouseholds = (
-  groupId: number,
-  options?: UseQueryOptions<GroupHousehold[], Error>,
-) => {
+export const useGroupHouseholds = (groupId: number, options?: UseQueryOptions<GroupHousehold[], Error>) => {
   const fetcher = useFetch();
 
   return useQuery<GroupHousehold[], Error>({
@@ -108,10 +92,7 @@ export const useLeaveGroup = () => {
   });
 };
 
-export const editGroup = async (
-  req: EditGroupRequest,
-  fetcher: FetchFunction = Fetch,
-): Promise<void> => {
+export const editGroup = async (req: EditGroupRequest, fetcher: FetchFunction = Fetch): Promise<void> => {
   await fetcher<void>(`${API_BASE_URL}/emergency-groups/${req.id}`, {
     method: "PUT",
     body: JSON.stringify({
