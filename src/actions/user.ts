@@ -39,9 +39,7 @@ export const useRequestPasswordReset = () => {
   });
 };
 
-export const resetPassword = async (req: ResetPasswordRequest,
-  fetcher: FetchFunction = Fetch
-): Promise<void> => {
+export const resetPassword = async (req: ResetPasswordRequest, fetcher: FetchFunction = Fetch): Promise<void> => {
   await fetcher<void>(`${API_BASE_URL}/auth/reset-password`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -53,6 +51,6 @@ export const useResetPassword = () => {
   const fetcher = useFetch();
 
   return useMutation({
-    mutationFn: async (req: ResetPasswordRequest) => resetPassword(req, fetcher)
-  })
+    mutationFn: async (req: ResetPasswordRequest) => resetPassword(req, fetcher),
+  });
 };
