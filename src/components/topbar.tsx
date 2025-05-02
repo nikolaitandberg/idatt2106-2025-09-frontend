@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import { TopbarCard } from "@/components/ui/topbarCard";
-import { CircleUserRound, ShieldUser, MapPin, GraduationCap, House, Users } from "lucide-react"; // or any icon library you prefer
+import { CircleUserRound, ShieldUser, GraduationCap, House, Users } from "lucide-react"; // or any icon library you prefer
 
 export default function Topbar() {
   const session = useSession();
@@ -16,7 +16,6 @@ export default function Topbar() {
       </Link>
       <div className="flex items-center justify-end w-1/3">
         {session?.data?.user?.isAdmin && <TopbarCard icon={ShieldUser} text="Admin" href="/admin" />}
-        <TopbarCard icon={MapPin} text="Kart" href="/map" />
         <TopbarCard icon={GraduationCap} text="Læring" href="/learning" />
         {session?.status === "authenticated" ? (
           <>

@@ -1,5 +1,5 @@
 import { AdminMenuCard } from "@/components/ui/AdminMenuCard";
-import { CircleUserRound, ShieldUser, MapPin, CircleAlert, GraduationCap, House, Users, Newspaper } from "lucide-react";
+import { ShieldUser, MapPin, CircleAlert, Newspaper } from "lucide-react";
 
 export function AdminMenu() {
   return (

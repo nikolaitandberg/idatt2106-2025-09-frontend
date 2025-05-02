@@ -87,7 +87,7 @@ export const useExtraResidents = (options?: UseQueryOptions<ExtraResidentRespons
 };
 
 export const createHousehold = async (
-  household: Omit<Household, "id">,
+  household: Omit<Household, "id" | "levelOfPreparedness">,
   fetcher: FetchFunction = Fetch,
 ): Promise<void> => {
   await fetcher<void>(`${API_BASE_URL}/households/register`, {
@@ -212,7 +212,7 @@ export const useDeleteHouseholdFood = () => {
 export const useCreateHousehold = () => {
   const fetcher = useFetch();
 
-  return useMutation<void, Error, Omit<Household, "id"> & { username?: string }>({
+  return useMutation<void, Error, Omit<Household, "id" | "levelOfPreparedness"> & { username?: string }>({
     mutationFn: (data) => createHousehold(data, fetcher),
   });
 };

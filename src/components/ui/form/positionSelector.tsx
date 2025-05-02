@@ -2,7 +2,7 @@
 import { useCallback, useRef } from "react";
 import { cn } from "@/util/cn";
 import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import MapComponent from "@/components/mapComponent";
+import MapComponent from "@/components/map/mapComponent";
 import { Button } from "@/components/ui/button";
 import { MapRef, Marker } from "react-map-gl/maplibre";
 import Icon from "@/components/ui/icon";
