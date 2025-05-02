@@ -4,7 +4,7 @@ import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { FetchFunction, Fetch, useFetch } from "@/util/fetch";
 import { API_BASE_URL } from "@/types/constants";
-import { Group, GroupDetails, GroupHouseholdRelation, GroupHousehold } from "@/types/group";
+import { GroupDetails, GroupHouseholdRelation, GroupHousehold, EditGroupRequest } from "@/types/group";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const getMyGroupMemberships = async (
@@ -32,19 +32,19 @@ export const useMyGroupMemberships = () => {
 export const getGroupById = async (
   id: number,
   fetcher: FetchFunction = Fetch,
-): Promise<Group> => {
-  const res = await fetcher<Group>(`${API_BASE_URL}/emergency-groups/${id}`);
-  if (!res) {
-    throw new Error("Could not fetch emergency group data");
-  }
+): Promise<GroupDetails> => {
+  const res = await fetcher<GroupDetails>(`${API_BASE_URL}/emergency-groups/summary/group/${id}`);
+  if (!res) throw new Error("Could not fetch group");
   return res;
 };
+
+
 
 export const getGroupDetails = async (
   groupId: number,
   fetcher: FetchFunction = Fetch,
 ): Promise<GroupDetails> => {
-  const res = await fetcher<GroupDetails>(`${API_BASE_URL}/emergency-groups/${groupId}`);
+  const res = await fetcher<GroupDetails>(`${API_BASE_URL}/emergency-groups/summary/group/${groupId}`);
   if (!res) {
     throw new Error("Failed to fetch group details");
   }
@@ -104,6 +104,32 @@ export const useLeaveGroup = () => {
     mutationFn: (relationId) => leaveGroup(relationId, fetcher),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["group-households", "my-groups"] });
+    },
+  });
+};
+
+export const editGroup = async (
+  req: EditGroupRequest,
+  fetcher: FetchFunction = Fetch,
+): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/emergency-groups/${req.id}`, {
+    method: "PUT",
+    body: JSON.stringify({
+      name: req.name,
+      description: req.description,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useEditGroup = () => {
+  const fetcher = useFetch();
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, EditGroupRequest>({
+    mutationFn: (data) => editGroup(data, fetcher),
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["group", "details", variables.id] });
     },
   });
 };
