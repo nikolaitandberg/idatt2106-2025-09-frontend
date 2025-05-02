@@ -3,26 +3,37 @@
 import { useParams, useRouter } from "next/navigation";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Pencil, LogOut, Users, Apple, CirclePlus } from "lucide-react";
+import { Pencil, LogOut, Users, Apple, CirclePlus, Home, UserPlus } from "lucide-react";
 import HouseholdCard from "@/components/ui/householdCard";
-import { useGroupDetails, useGroupHouseholds, useLeaveGroup, useMyGroupMemberships } from "@/actions/group";
+import { getGroupById, useGroupHouseholds, useLeaveGroup, useMyGroupMemberships } from "@/actions/group";
 import { useMyHousehold } from "@/actions/household";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { showToast } from "@/components/ui/toaster";
 import ConfirmationDialog from "@/components/ui/confirmationDialog";
 import { useState } from "react";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import EditGroupForm from "@/components/ui/editGroupForm";
+import { useQuery } from "@tanstack/react-query";
+import { useFetch } from "@/util/fetch";
 
 export default function GroupPage() {
   const params = useParams();
   const router = useRouter();
   const groupId = Number(params.id);
+  const fetcher = useFetch();
   const leaveGroupMutation = useLeaveGroup();
 
   const { data: groupRelations } = useMyGroupMemberships();
-  const { data: group, isPending: loadingGroup } = useGroupDetails(groupId);
+  const { data: group, isPending: loadingGroup } = useQuery({
+    queryKey: ["group", "details", groupId],
+    queryFn: () => getGroupById(groupId, fetcher),
+    enabled: !!groupId,
+  });
   const { data: households, isPending: loadingHouseholds } = useGroupHouseholds(groupId);
   const { data: myHousehold } = useMyHousehold();
+
   const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const handleLeaveGroup = () => {
     const relation = groupRelations?.find((r) => r.groupId === groupId);
@@ -32,7 +43,7 @@ export default function GroupPage() {
       onSuccess: () => {
         showToast({
           title: "Forlot gruppen",
-          description: `Du har forlatt ${group?.name}`,
+          description: `Du har forlatt ${group?.groupName ?? "gruppen"}`,
           variant: "success",
         });
         router.push("/group");
@@ -40,7 +51,7 @@ export default function GroupPage() {
       onError: () => {
         showToast({
           title: "Kunne ikke forlate gruppen",
-          description: `Noe gikk galt når du prøvde å forlate ${group?.name}`,
+          description: `Noe gikk galt når du prøvde å forlate ${group?.groupName ?? "gruppen"}`,
           variant: "error",
         });
       },
@@ -57,18 +68,52 @@ export default function GroupPage() {
 
   return (
     <div className="p-8 space-y-6">
-      <nav className="text-sm text-muted-foreground">Husholdning &gt; {group?.name}</nav>
+      <nav className="text-sm text-muted-foreground">Husholdning &gt; {group?.groupName}</nav>
 
       <div>
-        <h1 className="text-4xl font-bold">{group?.name}</h1>
-        <p className="text-lg text-muted-foreground mt-2">{group?.description}</p>
+        <h1 className="text-4xl font-bold">{group?.groupName}</h1>
+        <p className="text-lg text-muted-foreground mt-2">{group?.groupDescription}</p>
+        <div className="flex items-center gap-6 mt-3 text-muted-foreground text-sm">
+          <div className="flex items-center gap-2">
+            <Home className="w-4 h-4" />
+            <span>{group?.totalHouseholds} husholdninger</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Users className="w-4 h-4" />
+            <span>{group?.totalResidents} medlemmer</span>
+          </div>
+          {(group?.totalExtraResidents ?? 0) > 0 && (
+            <div className="flex items-center gap-2">
+              <UserPlus className="w-4 h-4" />
+              <span>{group?.totalExtraResidents} ekstra medlemmer</span>
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex justify-end items-center gap-4">
-        <Button variant="outline" className="flex items-center gap-2">
-          <Pencil className="h-4 w-4" />
-          Rediger gruppen
-        </Button>
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="flex items-center gap-2">
+              <Pencil className="h-4 w-4" />
+              Rediger gruppen
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-3xl">
+            <DialogTitle>Rediger gruppe</DialogTitle>
+            {group && (
+              <EditGroupForm
+                group={{
+                  id: group.groupId,
+                  name: group.groupName,
+                  description: group.groupDescription,
+                }}
+                onClose={() => setIsEditDialogOpen(false)}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
+
         <Button
           variant="destructive"
           className="flex items-center gap-2"
@@ -81,12 +126,12 @@ export default function GroupPage() {
         <ConfirmationDialog
           open={isLeaveDialogOpen}
           title="Forlat gruppen"
-          description={`Er du sikker på at du vil forlate "${group?.name}"?`}
+          description={`Er du sikker på at du vil forlate "${group?.groupName}"?`}
           confirmText="Forlat"
           cancelText="Avbryt"
           variant="critical"
           confirmIsPending={leaveGroupMutation.isPending}
-          onConfirm={() => handleLeaveGroup()}
+          onConfirm={handleLeaveGroup}
           onCancel={() => setIsLeaveDialogOpen(false)}
         />
       </div>
