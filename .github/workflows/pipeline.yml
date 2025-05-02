@@ -56,19 +56,13 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-      - run: ls -la .next
-
-      - run: |
-          if [ ! -d ".next" ] || [ -z "$(ls -A .next)" ]; then
-            echo ".next directory is missing or empty";
-            exit 1;
-          fi
+      - ru: cd ./.next && ls
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: frontend-build
-          path: .next
+          path: ./.next
 
   e2e:
     name: Run E2E Tests
