@@ -1,17 +1,20 @@
 export interface Group {
   id: number;
   name: string;
-  householdsCount: number;
-  membersCount: number;
-}
-
-export interface GroupDetails {
-  groupId: number;
-  name: string;
-  description: string;
   numberOfHouseholds: number;
   numberOfMembers: number;
 }
+
+
+export interface GroupDetails {
+  groupId: number;
+  groupName: string;
+  groupDescription: string;
+  totalHouseholds: number;
+  totalResidents: number;
+  totalExtraResidents: number;
+}
+
 
 export interface GroupHouseholdRelation {
   id: number;
@@ -27,4 +30,10 @@ export interface GroupHousehold {
   address: string;
   peopleCount: number;
   petCount?: number;
+}
+
+export interface EditGroupRequest {
+  id: number;
+  name: string;
+  description: string;
 }
