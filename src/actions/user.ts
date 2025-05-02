@@ -2,6 +2,7 @@ import { API_BASE_URL } from "@/types/constants";
 import { User } from "@/types/user";
 import Fetch, { FetchFunction, useFetch } from "@/util/fetch";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { ResetPasswordRequest } from "@/types";
 
 export const getProfile = async (userId: number, fetcher: FetchFunction = Fetch): Promise<User | null> => {
   try {
@@ -38,15 +39,13 @@ export const useRequestPasswordReset = () => {
   });
 };
 
-export const resetPassword = async (
-  token: string,
-  password: string,
+export const resetPassword = async (req: ResetPasswordRequest,
   fetcher: FetchFunction = Fetch
 ): Promise<void> => {
   await fetcher<void>(`${API_BASE_URL}/auth/reset-password`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ token, password }),
+    body: JSON.stringify(req),
   });
 };
 
@@ -54,7 +53,6 @@ export const useResetPassword = () => {
   const fetcher = useFetch();
 
   return useMutation({
-    mutationFn: ({ token, password }: { token: string; password: string }) =>
-      resetPassword(token, password, fetcher),
-  });
+    mutationFn: async (req: ResetPasswordRequest) => resetPassword(req, fetcher)
+  })
 };
