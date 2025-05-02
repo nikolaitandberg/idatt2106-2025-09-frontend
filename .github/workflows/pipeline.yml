@@ -63,6 +63,7 @@ jobs:
         with:
           name: frontend-build
           path: ./.next
+      - run: ls -a
 
   e2e:
     name: Run E2E Tests
