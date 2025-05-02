@@ -17,7 +17,7 @@ export default function GroupHouseholdCard({ householdId, isHome }: GroupHouseho
   return (
     <HouseholdCard
       id={householdId}
-      name="Husholdning"
+      name={household?.name ?? "Husholdning"}
       address={household?.address ?? ""}
       peopleCount={memberCount}
       isHome={isHome}

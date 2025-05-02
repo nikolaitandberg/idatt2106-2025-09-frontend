@@ -76,16 +76,23 @@ export default function GroupPage() {
         <div className="flex items-center gap-6 mt-3 text-muted-foreground text-sm">
           <div className="flex items-center gap-2">
             <Home className="w-4 h-4" />
-            <span>{group?.totalHouseholds} husholdninger</span>
+            <span>
+              {group?.totalHouseholds} husholdning{group?.totalHouseholds === 1 ? "" : "er"}
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <Users className="w-4 h-4" />
-            <span>{group?.totalResidents} medlemmer</span>
+            <span>
+              {group?.totalResidents} medlem{group?.totalResidents === 1 ? "" : "mer"}
+            </span>
           </div>
           {(group?.totalExtraResidents ?? 0) > 0 && (
             <div className="flex items-center gap-2">
               <UserPlus className="w-4 h-4" />
-              <span>{group?.totalExtraResidents} ekstra medlemmer</span>
+              <span>
+                {group?.totalExtraResidents} ekstra medlem
+                {group?.totalExtraResidents === 1 ? "" : "mer"}
+              </span>
             </div>
           )}
         </div>

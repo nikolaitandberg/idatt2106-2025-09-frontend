@@ -5,7 +5,7 @@ import { HouseholdGroupMember } from "@/types/household";
 import { Users } from "lucide-react";
 
 export default function HouseholdCard({
-  name = "Husholdning",
+  name,
   address,
   peopleCount,
   petCount = 0,

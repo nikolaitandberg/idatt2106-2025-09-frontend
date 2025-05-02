@@ -10,6 +10,7 @@ export interface UserResponse {
 export type Household = {
   id: number;
   address: string;
+  name: string;
   longitude: number;
   latitude: number;
   waterAmountLiters: number;
