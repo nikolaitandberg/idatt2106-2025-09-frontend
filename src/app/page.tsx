@@ -2,7 +2,7 @@
 
 import { MapRef } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { useMapObjects, useMapObjectTypes } from "@/actions/map";
+import { useClosestMapObject, useMapObjects, useMapObjectTypes } from "@/actions/map";
 import { useEvents } from "@/actions/event";
 import MapObject from "@/components/map/mapObject";
 import MapEvent from "@/components/map/mapEvent";
@@ -14,12 +14,14 @@ import UserPositionDisplay, { UserPositionDisplayRef } from "@/components/map/us
 import MapToolBar from "@/components/map/mapToolbar";
 import { useMyHousehold } from "@/actions/household";
 import MyHouseholdMapObject from "@/components/map/myHouseholdMapObject";
+import { showToast } from "@/components/ui/toaster";
 
 export default function Home() {
   const [bounds, setBounds] = useState<MapBounds>({} as MapBounds);
   const [debouncedBounds] = useDebounce(bounds, 100);
   const [selectedMapObjectTypes, setSelectedMapObjectTypes] = useState<number[]>([]);
   const [hasSelectedMapObjectTypes, setHasSelectedMapObjectTypes] = useState(false);
+  const { mutate: findMapObject } = useClosestMapObject();
 
   const { data: events, isFetching: eventsIsFetching } = useEvents(debouncedBounds);
   const { data: mapObjects, isFetching: mapObjectsIsFetching } = useMapObjects(debouncedBounds);
@@ -104,6 +106,43 @@ export default function Home() {
               onMapObjectTypesChange={(setSelectedTypes) => {
                 setSelectedMapObjectTypes(setSelectedTypes);
                 setHasSelectedMapObjectTypes(true);
+              }}
+              onFindObject={async (typeId) => {
+                if (!mapRef.current) return;
+
+                const position = positionRef.current?.getPosition();
+
+                if (!position) {
+                  return;
+                }
+
+                await new Promise((resolve) => {
+                  findMapObject(
+                    {
+                      position,
+                      type: typeId,
+                    },
+                    {
+                      onSuccess: (data) => {
+                        if (!data) return;
+                        mapRef.current?.flyTo({
+                          center: [data.longitude, data.latitude],
+                          zoom: 15,
+                          animate: true,
+                          duration: 1000,
+                        });
+                      },
+                      onSettled: resolve,
+                      onError: () => {
+                        showToast({
+                          title: "Feil",
+                          description: "Fant ikke kartobjektet",
+                          variant: "error",
+                        });
+                      },
+                    },
+                  );
+                });
               }}
               canGoToHousehold={!!myHousehold}
               onHouseholdClick={() => {

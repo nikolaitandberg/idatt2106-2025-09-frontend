@@ -1,7 +1,7 @@
 import { CreateMapObjectRequest, CreateMapObjectTypeRequest, EditMapObjectRequest } from "@/types";
 import { ApiError, MapObjectsResponse, MapObjectsTypesResponse } from "@/types/apiResponses";
 import { API_BASE_URL } from "@/types/constants";
-import { MapBounds, MapObjectType } from "@/types/map";
+import { MapBounds, MapObject, MapObjectType } from "@/types/map";
 import Fetch, { FetchFunction, useFetch } from "@/util/fetch";
 import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 
@@ -184,6 +184,7 @@ export const deleteMapObject = async (id: number, fetcher: FetchFunction = Fetch
     method: "DELETE",
   });
 };
+
 export const useDeleteMapObject = () => {
   const fetcher = useFetch();
 
@@ -211,5 +212,33 @@ export const useEditMapObject = () => {
     mutationFn: (req: EditMapObjectRequest) => {
       return editMapObject(req, fetcher);
     },
+  });
+};
+
+export const getClosestMapObject = async (
+  typeId: number,
+  position: GeolocationPosition,
+  fetcher: FetchFunction = Fetch,
+): Promise<MapObject | undefined> => {
+  const searchParams = new URLSearchParams({
+    type: typeId.toString(),
+    latitude: position.coords.latitude.toString(),
+    longitude: position.coords.longitude.toString(),
+  });
+
+  const res = await fetcher<MapObject>(`${API_BASE_URL}/map-object/closest?${searchParams.toString()}`);
+
+  if (!res) {
+    return undefined;
+  }
+  return res;
+};
+
+export const useClosestMapObject = () => {
+  const fetcher = useFetch();
+
+  return useMutation({
+    mutationFn: (req: { type: number; position: GeolocationPosition }) =>
+      getClosestMapObject(req.type, req.position, fetcher),
   });
 };
