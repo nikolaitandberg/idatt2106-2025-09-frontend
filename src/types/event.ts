@@ -1,4 +1,5 @@
 export type Event = {
+  name?: string;
   id: number;
   infoPageId?: number;
   latitude: number;

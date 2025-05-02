@@ -33,6 +33,7 @@ export default function EventForm({ onClose, event, isEdit = false }: EventFormP
   } =
     event && isEdit
       ? {
+          name: event.name || "",
           severityId: event.severityId,
           radius: event.radius,
           startTime: new Date(event.startTime || Date.now()),
@@ -54,6 +55,7 @@ export default function EventForm({ onClose, event, isEdit = false }: EventFormP
         };
 
   const schema = z.object({
+    name: z.string().optional(),
     severityId: z.number({
       required_error: "Vennligst velg en alvorlighetsgrad",
       invalid_type_error: "Vennligst velg en gyldig alvorlighetsgrad",
@@ -81,13 +83,14 @@ export default function EventForm({ onClose, event, isEdit = false }: EventFormP
     },
     onSubmit: async ({ value }) => {
       const eventData = {
+        name: value.name ?? undefined,
         latitude: value.position?.latitude ?? 0,
         longitude: value.position?.longitude ?? 0,
         radius: value.radius,
         severityId: value.severityId,
         startTime: value.startTime.toISOString(),
         endTime: value.endTime ? value.endTime.toISOString() : undefined,
-        recomendation: value.recommendation ?? undefined,
+        recommendation: value.recommendation ?? undefined,
         infoPageId: value.infoPageId === null ? undefined : value.infoPageId,
       };
 
@@ -115,6 +118,9 @@ export default function EventForm({ onClose, event, isEdit = false }: EventFormP
   return (
     <div className="flex flex-col gap-4 border-t-1 border-foreground-muted pt-2">
       <FormSection title="Hendelsesinformasjon">
+        <form.AppField name="name">
+          {(field) => <field.TextInput label="Tittel" placeholder="Orkanen Turid" />}
+        </form.AppField>
         <form.AppField name="severityId">
           {(field) => (
             <field.ComboBox
@@ -149,7 +155,7 @@ export default function EventForm({ onClose, event, isEdit = false }: EventFormP
         <form.AppField name="radius">{(field) => <field.NumberInput label="Radius (km)" />}</form.AppField>
       </FormSection>
 
-      <FormSection title="Timing" dividerTop>
+      <FormSection title="Tidsperiode" dividerTop>
         <form.AppField name="startTime">{(field) => <field.DatePicker label="Startdato" />}</form.AppField>
         <form.AppField name="endTime">{(field) => <field.DatePicker label="Sluttdato" />}</form.AppField>
       </FormSection>

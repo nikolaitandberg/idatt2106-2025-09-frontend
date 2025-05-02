@@ -112,7 +112,7 @@ export default function MapEvent({ event }: { event: Event }) {
             <div className="flex justify-between flex-row items-center">
               <div className="text-black text-base font-bold flex items-center">
                 <AlertTriangle size={16} className={`mr-2 ${colors.textColor}`} />
-                Hendelse #{event.id}
+                #{event.id} {event.name}
               </div>
               <X onClick={() => setOpen(false)} className="cursor-pointer" />
             </div>

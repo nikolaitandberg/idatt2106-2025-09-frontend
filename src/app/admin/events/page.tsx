@@ -27,7 +27,7 @@ export default function AdminEvents() {
 
   const formatDate = (timestamp: string | undefined): string => {
     if (!timestamp) {
-      return "Ingen sluttid bestemt";
+      return "Ikke bestemt";
     }
     return new Date(timestamp).toLocaleDateString();
   };
@@ -90,7 +90,7 @@ export default function AdminEvents() {
                         {severity && (
                           <div className="w-4 h-4 rounded-full" style={{ backgroundColor: severity.colour }} />
                         )}
-                        <span>Hendelse {event.id}</span>
+                        <span>#{event.id} {event.name}</span>
                         <span
                           className="px-2 py-1 text-xs font-medium rounded-md"
                           style={{
@@ -115,21 +115,30 @@ export default function AdminEvents() {
                             <p>{event.radius} kilometer</p>
                           </div>
                           <div>
-                            <p className="text-sm font-medium">Starttid</p>
+                            <p className="text-sm font-medium">Startdato</p>
                             <p>{formatDate(event.startTime)}</p>
                           </div>
                           <div>
-                            <p className="text-sm font-medium">Slutttid</p>
+                            <p className="text-sm font-medium">Sluttdato</p>
                             <p>{formatDate(event.endTime)}</p>
                           </div>
+                          {event.recommendation && (
+                            <div>
+                              <p className="text-sm font-medium">Anbefaling</p>
+                              <p>{event.recommendation}</p>
+                            </div>
+                          )}
+                          {event.infoPageId && (
+                            <div>
+                              <p className="text-sm font-medium">Læringsside</p>
+                              <a href={`/learning/${event.infoPageId}`} className="text-primary underline">
+                                Se læringsside
+                              </a>
+                            </div>
+                          )}
                         </div>
 
-                        {event.recommendation && (
-                          <div>
-                            <p className="text-sm font-medium">Anbefaling</p>
-                            <p>{event.recommendation}</p>
-                          </div>
-                        )}
+
 
                         <div className="flex justify-end gap-2 mt-4">
                           <Button variant="outline" size="sm" onClick={() => handleEditEvent(event)}>
