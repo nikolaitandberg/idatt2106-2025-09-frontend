@@ -15,7 +15,7 @@ type FoodAccordionItemProps = {
   id: number;
   name: string;
   totalAmount: number;
-  units: Food[];
+  units: Omit<Food, "typeId" | "householdId">[];
   householdId: number;
 };
 
@@ -67,6 +67,9 @@ export default function FoodAccordionItem({ id, name, totalAmount, householdId, 
                       queryClient.invalidateQueries({
                         queryKey: ["household", "food"],
                       });
+                      queryClient.invalidateQueries({
+                        queryKey: ["household", "my-household"],
+                      });
                     },
                   },
                 );
@@ -103,6 +106,9 @@ export default function FoodAccordionItem({ id, name, totalAmount, householdId, 
                     onSuccess: () => {
                       queryClient.invalidateQueries({
                         queryKey: ["household", "food"],
+                      });
+                      queryClient.invalidateQueries({
+                        queryKey: ["household", "my-household"],
                       });
                     },
                   });
