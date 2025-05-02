@@ -14,3 +14,7 @@ export type CreateMapObjectRequest = Omit<MapObject, "id">;
 export type EditMapObjectRequest = MapObject;
 
 export type AddHouseholdFoodRequest = Omit<Food, "id">;
+export type ResetPasswordRequest = {
+  key: string;
+  newPassword: string;
+};
