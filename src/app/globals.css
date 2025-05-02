@@ -26,6 +26,8 @@
 
   --font-geist-sans: Arial, Helvetica, sans-serif;
   --font-geist-mono: monospace;
+
+  --skeleton: oklch(87% 0 0);
 }
 
 @theme inline {
@@ -54,6 +56,8 @@
   --color-progress-high: var(--progress-high);
 
   --color-destructive: var(--color-red-500);
+
+  --color-skeleton: var(--skeleton);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
