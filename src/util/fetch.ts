@@ -48,7 +48,9 @@ export async function FetchParse<T>(
   if (!res.ok) {
     if (res.status === 401) {
       // The user is not authenticated, ensure that the auth state is updated
-      signOut();
+      signOut({
+        redirect: false,
+      });
       throw new ApiError("Unauthorized", res.status);
     }
 
