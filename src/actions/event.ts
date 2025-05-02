@@ -133,7 +133,7 @@ export const useCreateEvent = () => {
  */
 export const updateEvent = async (req: UpdateEventRequest, fetcher: FetchFunction = Fetch): Promise<null> => {
   return await fetcher<null>(`${API_BASE_URL}/events/update`, {
-    method: "PUT",
+    method: "POST",
     body: JSON.stringify(req),
     headers: {
       "Content-Type": "application/json",
