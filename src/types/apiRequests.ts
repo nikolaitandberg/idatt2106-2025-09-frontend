@@ -1,5 +1,6 @@
 import { Food, FoodType, Household } from "./household";
 import { MapObject, MapObjectType } from "./map";
+import { Event } from "./event";
 
 export type CreateMapObjectTypeRequest = Omit<MapObjectType, "id">;
 
@@ -21,3 +22,5 @@ export type ResetPasswordRequest = {
   key: string;
   newPassword: string;
 };
+
+export type CreateEventRequest = Omit<Event, "id">
