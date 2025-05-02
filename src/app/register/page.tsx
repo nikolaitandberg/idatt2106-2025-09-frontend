@@ -1,6 +1,5 @@
 "use client";
 
-import TextInput from "@/components/ui/textinput";
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
 import { useMutation } from "@tanstack/react-query";
@@ -9,73 +8,96 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { ApiError } from "@/types/apiResponses";
+import useAppForm from "@/util/formContext";
+import { z } from "zod";
 
-export default function () {
+type RegisterRequest = {
+  username: string;
+  password: string;
+  email: string;
+};
+
+export default function Register() {
   const router = useRouter();
+  const registerSchema = z
+    .object({
+      username: z.string().min(3, { message: "Brukernavn må være minst 3 tegn" }),
+      password: z
+        .string()
+        .min(8, { message: "Passord må være minst 8 tegn" })
+        .regex(/(?=.*\d)/, {
+          message: "Passord må inneholde minst ett tall",
+        })
+        .regex(/(?=.*[a-zA-Z])/, {
+          message: "Passord må inneholde minst én bokstav",
+        }),
+      email: z.string().email({ message: "Ugyldig e-postadresse" }),
+      repeatPassword: z.string(),
+    })
+    .refine((data) => data.password === data.repeatPassword, {
+      message: "Passordene er ikke like",
+      path: ["repeatPassword"],
+    });
 
   const {
-    isPending,
     isError,
     error,
     mutate: register,
   } = useMutation({
-    mutationFn: async ({ email, username, password }: { email: string; username: string; password: string }) => {
+    mutationFn: async ({ username, password, email }: RegisterRequest) => {
       return await sendRegisterRequest(email, username, password);
     },
   });
 
-  const handleRegister = async (event: React.FormEvent) => {
-    event.preventDefault();
-    register(
-      {
-        username: (event.currentTarget as HTMLFormElement).username.value,
-        password: (event.currentTarget as HTMLFormElement).password.value,
-        email: (event.currentTarget as HTMLFormElement).email.value,
-      },
-      {
+  const defaultRegister: RegisterRequest & { repeatPassword: string } = {
+    username: "",
+    password: "",
+    email: "",
+    repeatPassword: "",
+  };
+
+  const form = useAppForm({
+    validators: {
+      onChange: registerSchema,
+    },
+    defaultValues: defaultRegister,
+    onSubmit: async ({ value }) => {
+      await handleRegister(value);
+    },
+  });
+
+  const handleRegister = async (req: RegisterRequest) => {
+    return await new Promise((resolve) => {
+      register(req, {
         onSuccess: (data) => {
           signIn("token", {
             token: data.token,
             redirect: false,
-          }).then(() => {
-            router.push("/");
           });
+          router.push("/");
         },
-      },
-    );
+        onSettled: resolve,
+      });
+    });
   };
 
   return (
-    <div className="flex items-center justify-center bg-background px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl p-8 space-y-6">
+    <div className="flex items-center justify-center bg-background px-4 mt-8">
+      <div className="w-full max-w-md rounded-2xl p-8 space-y-6">
         <h1 className="text-2xl font-bold text-center">Registrer deg</h1>
-        <form onSubmit={handleRegister}>
-          <TextInput
-            label="E-post"
-            name="email"
-            type="email"
-            placeholder="epost"
-            validate={(value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)}
-          />
-          <TextInput
-            label="Brukernavn"
-            name="username"
-            type="text"
-            placeholder="brukernavn"
-            validate={(value) => value.length > 0}
-          />
-          <TextInput label="Passord" name="password" type="password" placeholder="passord" />
-          <TextInput
-            label="Bekreft passord"
-            name="confirmPassword"
-            type="password"
-            placeholder="passord"
-            validate={(value) => value.length >= 6}
-          />
-          <Button className="size-full h-12 text-md" type="submit">
-            {isPending ? <LoadingSpinner /> : "Registrer deg"}
-          </Button>
-        </form>
+        <form.AppField name="username">{(field) => <field.TextInput label="Brukernavn" />}</form.AppField>
+        <form.AppField name="email">{(field) => <field.TextInput label="E-post" type="email" />}</form.AppField>
+        <form.AppField name="password">{(field) => <field.TextInput label="Passord" type="password" />}</form.AppField>
+        <form.AppField name="repeatPassword">
+          {(field) => <field.TextInput label="Gjenta passord" type="password" />}
+        </form.AppField>
+        <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+          {([canSubmit, isSubmitting]) => (
+            <Button size="fullWidth" disabled={!canSubmit} onClick={() => form.handleSubmit()}>
+              {isSubmitting ? <LoadingSpinner /> : "Registrer deg"}
+            </Button>
+          )}
+        </form.Subscribe>
         {isError && (
           <div className="text-red-500 text-sm text-center">
             {error instanceof ApiError ? error.message : "Noe gikk galt. Vennligst prøv igjen."}

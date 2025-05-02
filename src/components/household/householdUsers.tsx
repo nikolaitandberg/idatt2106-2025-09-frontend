@@ -1,0 +1,75 @@
+import { useDeleteExtraResident, useExtraResidents, useHouseholdUsers } from "@/actions/household";
+import LoadingSpinner from "../ui/loadingSpinner";
+import MemberCard from "../ui/memberCard";
+import { AddMemberDialog } from "./addMemberDialog";
+
+export default function HouseholdUsers({ householdId }: { householdId: number }) {
+  const {
+    data: householdUsers,
+    isPending: householdUsersIsPending,
+    isError: householdUsersIsError,
+    error: householdUsersError,
+  } = useHouseholdUsers(householdId);
+  const {
+    data: extraResidents,
+    isPending: extraResidentsIsPending,
+    isError: extraResidentsIsError,
+    error: extraResidentsError,
+  } = useExtraResidents();
+  const { mutate: deleteExtraResidentMutation } = useDeleteExtraResident();
+
+  const handleRemoveExtraResident = (id: number) => {
+    deleteExtraResidentMutation(id, {
+      onError: (error) => {
+        console.error("Error removing extra resident:", error);
+      },
+    });
+  };
+
+  if (householdUsersIsPending || extraResidentsIsPending) {
+    return <LoadingSpinner />;
+  }
+
+  if (householdUsersIsError || extraResidentsIsError) {
+    return (
+      <>
+        <div className="text-center py-12 text-red-600">Kunne ikke hente husholdningsmedlemmer</div>
+        <div className="text-center py-12 text-red-600">
+          {householdUsersError?.message ?? extraResidentsError?.message}
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="font-medium">Medlemmer</h2>
+        <span className="text-sm text-muted-foreground">
+          {householdUsers.length + extraResidents.filter((r) => r.householdId === householdId).length} medlemmer
+        </span>
+      </div>
+
+      {householdUsers.map((user) => (
+        <MemberCard
+          key={`user-${user.id}`}
+          name={user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.username}
+          image={user.picture}
+        />
+      ))}
+
+      {extraResidents
+        .filter((resident) => resident.householdId === householdId)
+        .map((resident) => (
+          <MemberCard
+            key={`resident-${resident.id}`}
+            name={resident.name}
+            type={resident.typeId === 4 ? "animal" : "person"}
+            onRemove={() => handleRemoveExtraResident(resident.id)}
+          />
+        ))}
+
+      <AddMemberDialog householdId={householdId} />
+    </div>
+  );
+}

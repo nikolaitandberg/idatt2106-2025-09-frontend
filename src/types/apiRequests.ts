@@ -1,9 +1,9 @@
-import { Food } from "./household";
+import { Food, FoodType, Household } from "./household";
 import { MapObject, MapObjectType } from "./map";
 
 export type CreateMapObjectTypeRequest = Omit<MapObjectType, "id">;
 
-export type AddUserToHouseRequest = { username: string; householdId: number };
+export type AddUserToHouseRequest = { userId: string };
 
 export type AddExtraResidentRequest = {
   householdId: number;
@@ -14,3 +14,10 @@ export type CreateMapObjectRequest = Omit<MapObject, "id">;
 export type EditMapObjectRequest = MapObject;
 
 export type AddHouseholdFoodRequest = Omit<Food, "id">;
+export type EditHouseholdInfoRequest = Omit<Household, "waterAmountLiters" | "lastWaterChangeDate">;
+
+export type CreateFoodTypeRequest = Omit<FoodType, "id">;
+export type ResetPasswordRequest = {
+  key: string;
+  newPassword: string;
+};

@@ -5,7 +5,7 @@ import { Dog, X } from "lucide-react";
 
 type MemberCardProps = {
   name: string;
-  avatarUrl?: string;
+  image?: string;
   type?: "person" | "animal" | "child";
   onRemove?: () => void;
 };
@@ -18,14 +18,14 @@ function getInitials(name: string) {
     .join("");
 }
 
-export default function MemberCard({ name, avatarUrl, type = "person", onRemove }: MemberCardProps) {
+export default function MemberCard({ name, image, type = "person", onRemove }: MemberCardProps) {
   const initials = getInitials(name);
 
   let avatarContent;
 
-  if (avatarUrl) {
+  if (image) {
     avatarContent = (
-      <Image src={avatarUrl} alt={name} width={40} height={40} className="object-cover w-full h-full rounded-full" />
+      <Image src={image} alt={name} width={40} height={40} className="object-cover w-full h-full rounded-full" />
     );
   } else if (type === "animal") {
     avatarContent = <Dog className="w-4 h-4 text-foreground" />;
