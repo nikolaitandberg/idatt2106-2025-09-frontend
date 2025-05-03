@@ -1,24 +1,19 @@
 import { API_BASE_URL } from "@/types/constants";
 import { User } from "@/types/user";
 import Fetch, { FetchFunction, useFetch } from "@/util/fetch";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { ResetPasswordRequest } from "@/types";
+import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { ApiError, ResetPasswordRequest } from "@/types";
 
-export const getProfile = async (userId: number, fetcher: FetchFunction = Fetch): Promise<User | null> => {
-  try {
-    const res = await fetcher<User>(`${API_BASE_URL}/user/${userId}`);
-    return res ?? null;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
+export const getProfile = async (userId: number, fetcher: FetchFunction = Fetch): Promise<User> => {
+  return await fetcher<User>(`${API_BASE_URL}/user/${userId}`);
 };
 
-export const useProfile = (userId: number) => {
+export const useProfile = (userId: number, options?: Omit<UseQueryOptions<User, ApiError>, "queryKey" | "queryFn">) => {
   const fetcher = useFetch();
 
   return useQuery({
-    queryKey: ["user", "profile"],
+    ...options,
+    queryKey: ["user", "profile", userId],
     queryFn: () => getProfile(userId, fetcher),
   });
 };
