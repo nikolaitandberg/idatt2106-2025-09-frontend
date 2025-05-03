@@ -1,8 +1,9 @@
 import { API_BASE_URL } from "@/types/constants";
 import { User } from "@/types/user";
 import Fetch, { FetchFunction, useFetch } from "@/util/fetch";
-import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, UseQueryOptions } from "@tanstack/react-query";
 import { ApiError, ResetPasswordRequest } from "@/types";
+import { UpdatePositionSharingRequest } from "@/types/setting";
 
 export const getProfile = async (userId: number, fetcher: FetchFunction = Fetch): Promise<User> => {
   return await fetcher<User>(`${API_BASE_URL}/user/${userId}`);
@@ -13,7 +14,7 @@ export const useProfile = (userId: number, options?: Omit<UseQueryOptions<User, 
 
   return useQuery({
     ...options,
-    queryKey: ["user", "profile", userId],
+    queryKey: ["user", userId],
     queryFn: () => getProfile(userId, fetcher),
   });
 };
@@ -47,5 +48,44 @@ export const useResetPassword = () => {
 
   return useMutation({
     mutationFn: async (req: ResetPasswordRequest) => resetPassword(req, fetcher),
+  });
+};
+
+export const updateUserPositionSharing = async (req: UpdatePositionSharingRequest, fetcher: FetchFunction = Fetch) => {
+  await fetcher<void>(`${API_BASE_URL}/user/${req.userId}/position-sharing`, {
+    method: "PATCH",
+    body: JSON.stringify({
+      sharePositionHousehold: req.sharePositionHousehold,
+      sharePositionGroup: req.sharePositionGroup,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useUpdateUserPositionSharing = () => {
+  const fetcher = useFetch();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (req: UpdatePositionSharingRequest) => updateUserPositionSharing(req, fetcher),
+    onMutate: (req: UpdatePositionSharingRequest) => {
+      const previousUser = queryClient.getQueryData<User>(["user", req.userId]);
+      if (previousUser) {
+        queryClient.setQueryData<User>(["user", req.userId], {
+          ...previousUser,
+          sharePositionHousehold: req.sharePositionHousehold,
+          sharePositionGroup: req.sharePositionGroup,
+        });
+      }
+      return { previousUser };
+    },
+    onError: (err, req, context) => {
+      if (context?.previousUser) {
+        queryClient.setQueryData<User>(["user", req.userId], context.previousUser);
+      }
+    },
+    onSuccess: (data, req) => {
+      queryClient.invalidateQueries({ queryKey: ["user", req.userId] });
+    },
   });
 };
