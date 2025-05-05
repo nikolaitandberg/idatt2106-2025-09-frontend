@@ -1,28 +1,33 @@
-"use client";
-
-import { useParams, useRouter } from "next/navigation";
-import { useInfoPageById } from "@/actions/learning";
+import { getInfoPageById } from "@/actions/learning";
 import { Button } from "@/components/ui/button";
 import MarkdownRenderer from "@/components/ui/markdownRenderer";
+import Link from "next/link";
 
-export default function ScenarioPage() {
-  const params = useParams();
-  const id = parseInt(params.id as string, 10);
-  const router = useRouter();
+export default async function ScenarioPage({ params }: { params: { id: string } }) {
+  const id = parseInt(await params.id);
 
-  const { data: infoPage, isLoading, isError } = useInfoPageById(id);
+  const infoPage = await getInfoPageById(id);
 
-  if (isLoading) return <div>Laster scenario...</div>;
-  if (isError || !infoPage) return <div>Scenario ikke funnet.</div>;
+  if (!infoPage) {
+    return (
+      <div className="min-h-screen bg-background text-foreground px-4 py-10 flex justify-center">
+        <div className="w-full max-w-5xl">
+          <h1 className="text-3xl font-bold text-left">Scenario ikke funnet</h1>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground px-4 py-10 flex justify-center">
       <div className="w-full max-w-5xl">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-3xl font-bold text-left">{infoPage.title}</h1>
-          <Button variant="default" size="lg" onClick={() => router.push(`/learning/${id}/quiz`)}>
-            Ta Quiz
-          </Button>
+          <Link href={`/learning/${id}/quiz`}>
+            <Button variant="default" size="lg">
+              Ta Quiz
+            </Button>
+          </Link>
         </div>
 
         <hr className="border-border mb-6" />
@@ -32,12 +37,16 @@ export default function ScenarioPage() {
         </div>
         <div className="flex items-center justify-between mt-12">
           <div className="flex gap-4">
-            <Button variant="default" size="lg" onClick={() => router.push(`/learning`)}>
-              Tilbake til scenarioer
-            </Button>
-            <Button variant="default" size="lg" onClick={() => router.push(`/learning/${id}/quiz`)}>
-              Ta Quiz
-            </Button>
+            <Link href={`/learning`}>
+              <Button variant="default" size="lg">
+                Tilbake til scenarioer
+              </Button>
+            </Link>
+            <Link href={`/learning/${id}/quiz`}>
+              <Button variant="default" size="lg">
+                Ta Quiz
+              </Button>
+            </Link>
           </div>
           <div>
             <p className="text-sm text-foreground">

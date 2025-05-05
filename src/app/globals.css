@@ -7,7 +7,8 @@
   --primary: #1f2a44;
   --primary-foreground: #ffffff;
   --secondary: #84dfe9;
-  --secondary-foreground: #0a0a0a;
+  --secondary-foreground: #8684e9;
+  --secondary-foreground-muted: rgba(134, 132, 233, 0.35);
 
   --accent: #e6f7f9;
   --accent-foreground: #1f2a44;
@@ -25,6 +26,8 @@
 
   --font-geist-sans: Arial, Helvetica, sans-serif;
   --font-geist-mono: monospace;
+
+  --skeleton: oklch(87% 0 0);
 }
 
 @theme inline {
@@ -36,6 +39,7 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-foreground-muted: var(--secondary-foreground-muted);
 
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
@@ -52,6 +56,8 @@
   --color-progress-high: var(--progress-high);
 
   --color-destructive: var(--color-red-500);
+
+  --color-skeleton: var(--skeleton);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);

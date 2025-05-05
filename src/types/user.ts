@@ -13,3 +13,9 @@ export interface User {
   admin: boolean;
   superAdmin: boolean;
 }
+
+export type UserLocation = {
+  userId: number;
+  latitude: number;
+  longitude: number;
+};
