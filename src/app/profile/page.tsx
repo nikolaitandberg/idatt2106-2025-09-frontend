@@ -1,7 +1,8 @@
 "use client";
-import { useProfile } from "@/actions/user";
+import { useProfile, useUpdateUserPositionSharing } from "@/actions/user";
 import { Button } from "@/components/ui/button";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
+import { Switch } from "@/components/ui/Switch";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
@@ -22,11 +23,12 @@ export default function ProfilePageWrapper() {
     redirect("/login");
   }
 
-  return <ProfilePage userId={session.data.user.userId} />;
+  return <ProfilePage userId={session.data.user?.userId} />;
 }
 
 function ProfilePage({ userId }: { userId: number }) {
   const { data: profile, isLoading, error } = useProfile(userId);
+  const { mutate: updateUserPositionSharing } = useUpdateUserPositionSharing();
 
   if (isLoading) {
     return (
@@ -54,6 +56,20 @@ function ProfilePage({ userId }: { userId: number }) {
       </div>
     );
   }
+
+  const handlePositionSharingChange = ({
+    sharePositionHousehold,
+    sharePositionGroup,
+  }: {
+    sharePositionHousehold: boolean;
+    sharePositionGroup: boolean;
+  }) => {
+    updateUserPositionSharing({
+      userId: profile.id,
+      sharePositionHousehold,
+      sharePositionGroup,
+    });
+  };
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
@@ -111,16 +127,56 @@ function ProfilePage({ userId }: { userId: number }) {
 
           <div className="bg-gray-50 p-4 rounded-lg">
             <p className="text-sm text-gray-500">Posisjonsdeling</p>
-            <div className="flex gap-4 mt-2">
+            <div className="flex flex-col gap-4 mt-2">
               <div className="flex items-center gap-2">
+                <Switch
+                  name="sharePositionHousehold"
+                  checked={profile.sharePositionHousehold}
+                  onCheckedChange={(checked) => {
+                    handlePositionSharingChange({
+                      sharePositionHousehold: checked,
+                      sharePositionGroup: profile.sharePositionGroup,
+                    });
+                  }}
+                />
+                <label
+                  htmlFor="sharePositionHousehold"
+                  className="cursor-pointer select-none"
+                  onClick={() =>
+                    handlePositionSharingChange({
+                      sharePositionHousehold: !profile.sharePositionHousehold,
+                      sharePositionGroup: profile.sharePositionGroup,
+                    })
+                  }>
+                  Husholdning
+                </label>
                 <span
                   className={`w-3 h-3 rounded-full ${profile.sharePositionHousehold ? "bg-green-500" : "bg-red-500"}`}></span>
-                <span>Husholdning: {profile.sharePositionHousehold ? "På" : "Av"}</span>
               </div>
               <div className="flex items-center gap-2">
+                <Switch
+                  name="sharePositionGroup"
+                  checked={profile.sharePositionGroup}
+                  onCheckedChange={(checked) => {
+                    handlePositionSharingChange({
+                      sharePositionHousehold: profile.sharePositionHousehold,
+                      sharePositionGroup: checked,
+                    });
+                  }}
+                />
+                <label
+                  htmlFor="sharePositionHousehold"
+                  className="cursor-pointer select-none"
+                  onClick={() =>
+                    handlePositionSharingChange({
+                      sharePositionHousehold: profile.sharePositionHousehold,
+                      sharePositionGroup: !profile.sharePositionGroup,
+                    })
+                  }>
+                  Gruppe
+                </label>
                 <span
                   className={`w-3 h-3 rounded-full ${profile.sharePositionGroup ? "bg-green-500" : "bg-red-500"}`}></span>
-                <span>Gruppe: {profile.sharePositionGroup ? "På" : "Av"}</span>
               </div>
             </div>
           </div>

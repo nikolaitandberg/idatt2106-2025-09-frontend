@@ -1,18 +1,33 @@
-export interface Event {
+export type Event = {
+  name?: string;
   id: number;
-  info_page_id: number | null;
+  infoPageId?: number;
   latitude: number;
   longitude: number;
   radius: number;
-  start_time: string;
-  end_time: string | null;
+  startTime: string;
+  endTime?: string;
   severityId: number;
-  recomendation: string | null;
-}
+  recommendation?: string;
+};
 
-export interface Severity {
+export type Severity = {
   id: number;
   colour: string;
   name: string | null;
   description: string | null;
-}
+};
+
+export type InfoPage = {
+  id: number;
+  title: string;
+  content: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Quiz = {
+  id: number;
+  infoPageId: number | null;
+  name: string | null;
+};

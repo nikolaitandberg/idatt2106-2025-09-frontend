@@ -6,7 +6,7 @@ import { Token } from "@/types";
 /**
  * A function that can be used to fetch data with the token in the Authorization header.
  */
-export type FetchFunction = <T>(input: string | URL | globalThis.Request, init?: RequestInit) => Promise<T | null>;
+export type FetchFunction = <T>(input: string | URL | globalThis.Request, init?: RequestInit) => Promise<T>;
 
 /**
  * Sends a fetch request with the token in the Authorization header.
@@ -16,12 +16,12 @@ export type FetchFunction = <T>(input: string | URL | globalThis.Request, init?:
 export const Fetch: FetchFunction = async <T>(
   input: string | URL | globalThis.Request,
   init?: RequestInit,
-): Promise<T | null> => {
+): Promise<T> => {
   return await FetchParse<T>(input, init, await auth());
 };
 export default Fetch;
 
-async function extractResponseContent<T>(res: Response): Promise<T | null> {
+async function extractResponseContent<T>(res: Response): Promise<T> {
   const text = await res.text();
 
   try {
@@ -48,7 +48,9 @@ export async function FetchParse<T>(
   if (!res.ok) {
     if (res.status === 401) {
       // The user is not authenticated, ensure that the auth state is updated
-      signOut();
+      signOut({
+        redirect: false,
+      });
       throw new ApiError("Unauthorized", res.status);
     }
 
@@ -61,7 +63,7 @@ export async function FetchParse<T>(
   }
 
   if (res.status === 204) {
-    return null;
+    return null as T;
   }
 
   return extractResponseContent<T>(res);

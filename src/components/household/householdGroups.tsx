@@ -1,7 +1,7 @@
 import { Button } from "../ui/button";
 import GroupCard from "../group/groupCard";
 
-export default function HouseholdGroups({ householdId }: { householdId: number }) {
+export default function HouseholdGroups() {
   return (
     <div className="space-y-4">
       <h2 className="font-medium">Grupper</h2>

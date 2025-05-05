@@ -2,7 +2,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useCreateHousehold } from "@/actions/household";
 import { FormEvent, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useProfile } from "@/actions/user";
 import { useRouter } from "next/navigation";
 import { Home, Plus } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,7 +18,7 @@ export default function CreateHouseholdForm() {
   const [city, setCity] = useState("");
   const session = useSession();
   const username = session.data?.sub;
-  const { refetch: refetchProfile } = useProfile(session.data?.user.userId || 0);
+  // const { refetch: refetchProfile } = useProfile(session.data?.user.userId || 0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [inviteKey, setInviteKey] = useState("");
   const router = useRouter();
@@ -42,7 +41,7 @@ export default function CreateHouseholdForm() {
 
     createHousehold(
       {
-        adress: fullAddress,
+        address: fullAddress,
         longitude: 0,
         latitude: 0,
         waterAmountLiters: 0,
@@ -51,8 +50,10 @@ export default function CreateHouseholdForm() {
       },
       {
         onSuccess: async () => {
+          await queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
           await queryClient.invalidateQueries({ queryKey: ["profile"] });
-          await refetchProfile();
+
+          router.refresh();
         },
         onError: (error) => {
           console.error("Error creating household:", error);
