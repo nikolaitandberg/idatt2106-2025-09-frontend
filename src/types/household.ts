@@ -14,6 +14,7 @@ export type Household = {
   latitude: number;
   waterAmountLiters: number;
   lastWaterChangeDate: string;
+  nextWaterChangeDate: string;
   levelOfPreparedness: {
     levelOfPreparedness: number;
     levelOfPreparednessFood: number;
