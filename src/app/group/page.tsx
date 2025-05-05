@@ -54,7 +54,7 @@ export default function UserGroupsPage() {
 
   return (
     <div className="max-w-6xl mx-auto p-8 space-y-8">
-      <h1 className="text-3xl font-bold text-center">Dine grupper</h1>
+      <h1 className="text-3xl font-bold text-center">Dine beredskapsgrupper</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -79,8 +79,8 @@ export default function UserGroupsPage() {
           })}
         </div>
 
-        <div className="bg-white rounded-lg shadow p-4 border">
-          <h2 className="text-xl font-semibold mb-4">Gruppeinvitasjoner</h2>
+        <div className="rounded-lg border border-border shadow-sm bg-white p-4 space-y-2 text-sm hover:shadow transition-shadow">
+        <h2 className="text-xl font-semibold mb-4">Gruppeinvitasjoner</h2>
 
           {invitesPending && <p>Laster invitasjoner...</p>}
 
