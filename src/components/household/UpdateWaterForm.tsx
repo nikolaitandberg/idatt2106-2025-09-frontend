@@ -9,10 +9,12 @@ export default function UpdateWaterForm({ household, onClose }: { household: Hou
 
   const defaultValues = {
     amount: household.waterAmountLiters,
+    date: new Date(household.lastWaterChangeDate),
   };
 
   const schema = z.object({
-    amount: z.number().min(0, { message: "Vannmengde må være minst 1 liter" }),
+    amount: z.number().min(0, { message: "Vannmengde må være 0 eller mer." }),
+    date: z.date(),
   });
 
   const form = useAppForm({
@@ -25,7 +27,7 @@ export default function UpdateWaterForm({ household, onClose }: { household: Hou
         {
           id: household.id,
           waterAmountLiters: value.amount,
-          lastWaterChangeDate: new Date().toISOString(),
+          lastWaterChangeDate: value.date.toISOString(),
         },
         {
           onSuccess: () => {
@@ -43,6 +45,7 @@ export default function UpdateWaterForm({ household, onClose }: { household: Hou
       <form.AppField name="amount">
         {(field) => <field.NumberInput label="Mengde vann å legge til (liter)" />}
       </form.AppField>
+      <form.AppField name="date">{(field) => <field.DatePicker label="Siste dato vann ble byttet" />}</form.AppField>
 
       <form.AppForm>
         <div className="flex justify-end gap-2">
