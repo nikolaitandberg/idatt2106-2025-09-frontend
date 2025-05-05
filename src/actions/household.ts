@@ -7,7 +7,7 @@ import {
   AddUserToHouseRequest,
   AddExtraResidentRequest,
   AddHouseholdFoodRequest,
-  EditHouseholdInfoRequest,
+  EditHouseholdInfoRequest, EditHouseholdWaterRequest
 } from "@/types/apiRequests";
 import { ExtraResidentResponse } from "@/types/extraResident";
 import { useSession } from "next-auth/react";
@@ -257,6 +257,26 @@ export const useEditHouseholdInfo = () => {
 
   return useMutation<void, Error, EditHouseholdInfoRequest>({
     mutationFn: (data) => editHouseholdInfo(data, fetcher),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
+    },
+  });
+};
+
+export const updateHouseholdWater = async (req: EditHouseholdWaterRequest, fetcher: FetchFunction = Fetch): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/households/${req.id}`, {
+    method: "PUT",
+    body: JSON.stringify(req),
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useUpdateHouseholdWater = () => {
+  const fetcher = useFetch();
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, EditHouseholdWaterRequest>({
+    mutationFn: (data) => updateHouseholdWater(data, fetcher),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
     },
