@@ -18,6 +18,7 @@ export default function HouseholdFood({ household }: Readonly<{ household: House
   const { data: householdFood } = useHouseholdFood(household.id);
   const { mutate: updateHouseholdFood } = useAddHouseholdFood();
   const [addNewFoodDialogOpen, setAddNewFoodDialogOpen] = useState(false);
+  const [waterDialogOpen, setWaterDialogOpen] = useState(false);
   const queryClient = useQueryClient();
 
   const alertType = useMemo<{ type: "warning" | "info" | "success" | "critical"; message: string }>(() => {
@@ -75,12 +76,12 @@ export default function HouseholdFood({ household }: Readonly<{ household: House
             </div>
             <div className="text-sm text-muted-foreground">
               {Math.floor(
-                (new Date(household.lastWaterChangeDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24),
+                (new Date(household.nextWaterChangeDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24),
               )}{" "}
               dager til neste vannbytte
             </div>
             <div className="text-sm font-medium">{household.waterAmountLiters} L</div>
-            <Dialog>
+            <Dialog open={waterDialogOpen} onOpenChange={setWaterDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
                   <Plus className="w-4 h-4 mr-1" /> Legg til vann
@@ -88,7 +89,7 @@ export default function HouseholdFood({ household }: Readonly<{ household: House
               </DialogTrigger>
               <DialogContent>
                 <DialogTitle>Oppdater vannmengde</DialogTitle>
-                <UpdateWaterForm household={household} />
+                <UpdateWaterForm household={household} onClose={() => setWaterDialogOpen(false)} />
               </DialogContent>
             </Dialog>
           </div>

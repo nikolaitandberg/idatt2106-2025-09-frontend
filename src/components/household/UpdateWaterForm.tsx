@@ -1,56 +1,56 @@
-import { useState } from "react";
-import { Button } from "../ui/button";
-import { DialogClose, DialogFooter } from "../ui/dialog";
 import { Household } from "@/types/household";
 import { useUpdateHouseholdWater } from "@/actions/household";
+import { z } from "zod";
+import useAppForm from "@/util/formContext";
+import FormError from "../ui/form/formError";
 
-export default function UpdateWaterForm({ household }: { household: Household }) {
-  const [amount, setAmount] = useState<number>(0);
-  const { mutate: updateWater, isPending } = useUpdateHouseholdWater();
+export default function UpdateWaterForm({ household, onClose }: { household: Household; onClose?: () => void }) {
+  const { mutate: updateWater, error } = useUpdateHouseholdWater();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (amount <= 0) return;
-
-    updateWater(
-      {
-        id: household.id,
-        waterAmountLiters: household.waterAmountLiters + amount,
-        lastWaterChangeDate: new Date().toISOString(),
-      },
-      {
-        onSuccess: () => {
-          // Close dialog by finding and clicking the DialogClose button
-          const closeButton = document.querySelector('[role="dialog"] button[data-state="closed"]');
-          if (closeButton instanceof HTMLButtonElement) closeButton.click();
-        },
-      },
-    );
+  const defaultValues = {
+    amount: household.waterAmountLiters,
   };
 
+  const schema = z.object({
+    amount: z.number().min(0, { message: "Vannmengde må være minst 1 liter" }),
+  });
+
+  const form = useAppForm({
+    defaultValues,
+    validators: {
+      onChange: schema,
+    },
+    onSubmit: async ({ value }) => {
+      updateWater(
+        {
+          id: household.id,
+          waterAmountLiters: value.amount,
+          lastWaterChangeDate: new Date().toISOString(),
+        },
+        {
+          onSuccess: () => {
+            if (onClose) {
+              onClose();
+            }
+          },
+        },
+      );
+    },
+  });
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <label htmlFor="waterAmount" className="text-sm font-medium">
-          Mengde vann å legge til (liter)
-        </label>
-        <input
-          id="waterAmount"
-          type="number"
-          className="w-full border rounded p-2"
-          value={amount}
-          onChange={(e) => setAmount(Number(e.target.value))}
-          min="1"
-        />
-      </div>
-      <DialogFooter>
-        <DialogClose asChild>
-          <Button variant="outline">Avbryt</Button>
-        </DialogClose>
-        <Button type="submit" disabled={amount <= 0 || isPending}>
-          {isPending ? "Oppdaterer..." : "Lagre"}
-        </Button>
-      </DialogFooter>
-    </form>
+    <div className="space-y-4">
+      <form.AppField name="amount">
+        {(field) => <field.NumberInput label="Mengde vann å legge til (liter)" />}
+      </form.AppField>
+
+      <form.AppForm>
+        <div className="flex justify-end gap-2">
+          <form.SubmitButton>Lagre</form.SubmitButton>
+        </div>
+      </form.AppForm>
+
+      <FormError error={error?.message} />
+    </div>
   );
 }

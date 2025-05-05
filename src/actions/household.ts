@@ -7,7 +7,8 @@ import {
   AddUserToHouseRequest,
   AddExtraResidentRequest,
   AddHouseholdFoodRequest,
-  EditHouseholdInfoRequest, EditHouseholdWaterRequest
+  EditHouseholdInfoRequest,
+  EditHouseholdWaterRequest,
 } from "@/types/apiRequests";
 import { ExtraResidentResponse } from "@/types/extraResident";
 import { useSession } from "next-auth/react";
@@ -263,7 +264,10 @@ export const useEditHouseholdInfo = () => {
   });
 };
 
-export const updateHouseholdWater = async (req: EditHouseholdWaterRequest, fetcher: FetchFunction = Fetch): Promise<void> => {
+export const updateHouseholdWater = async (
+  req: EditHouseholdWaterRequest,
+  fetcher: FetchFunction = Fetch,
+): Promise<void> => {
   await fetcher<void>(`${API_BASE_URL}/households/${req.id}`, {
     method: "PUT",
     body: JSON.stringify(req),

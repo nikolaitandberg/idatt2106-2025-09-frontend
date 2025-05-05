@@ -21,7 +21,7 @@ export type EditHouseholdInfoRequest = Omit<
 >;
 export type EditHouseholdWaterRequest = Omit<
   Household,
-"address" | "latitude" | "longitude" | "levelOfPreparedness"
+  "address" | "latitude" | "longitude" | "levelOfPreparedness" | "nextWaterChangeDate"
 >;
 
 export type CreateFoodTypeRequest = Omit<FoodType, "id">;
