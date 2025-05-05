@@ -1,4 +1,5 @@
 import { mapIcons } from "@/util/icons";
+import { Event } from "./event";
 
 /**
  * A map object
@@ -39,3 +40,37 @@ export type MapObjectType = {
   name: string;
   icon: keyof typeof mapIcons;
 };
+
+export type MapObjectCreatedMessage = {
+  eventType: "created";
+  payload: MapObject;
+};
+
+export type MapObjectUpdatedMessage = {
+  eventType: "updated";
+  payload: MapObject;
+};
+
+export type MapObjectDeletedMessage = {
+  eventType: "deleted";
+  payload: number;
+};
+
+export type MapObjectWebsocketMessage = MapObjectCreatedMessage | MapObjectUpdatedMessage | MapObjectDeletedMessage;
+
+export type EventCreatedMessage = {
+  eventType: "created";
+  payload: Event;
+};
+
+export type EventUpdatedMessage = {
+  eventType: "updated";
+  payload: Event;
+};
+
+export type EventDeletedMessage = {
+  eventType: "deleted";
+  payload: Event;
+};
+
+export type EventWebsocketMessage = EventCreatedMessage | EventUpdatedMessage | EventDeletedMessage;
