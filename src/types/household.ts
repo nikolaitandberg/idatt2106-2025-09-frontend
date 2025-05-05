@@ -52,6 +52,5 @@ export interface HouseholdGroupMember {
   name: string;
   address: string;
   peopleCount: number;
-  petCount?: number;
   isHome?: boolean;
 }
