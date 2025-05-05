@@ -3,14 +3,7 @@
 import { useState } from "react";
 import { useAddHouseholdToGroup } from "@/actions/group";
 import { Button } from "../ui/button";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogFooter,
-  DialogTitle,
-  DialogClose,
-} from "../ui/dialog";
+import { Dialog, DialogTrigger, DialogContent, DialogFooter, DialogTitle, DialogClose } from "../ui/dialog";
 import TextInput from "../ui/textinput";
 import { showToast } from "../ui/toaster";
 
@@ -42,9 +35,8 @@ export default function InviteHouseholdDialog({ groupId }: { groupId: number }) 
             variant: "error",
           });
           setOpen(false);
-
         },
-      }
+      },
     );
   };
 

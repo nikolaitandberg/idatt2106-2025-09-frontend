@@ -35,7 +35,6 @@ export const useMyGroupMemberships = () => {
   });
 };
 
-
 export const getGroupById = async (id: number, fetcher: FetchFunction = Fetch): Promise<GroupDetails> => {
   const res = await fetcher<GroupDetails>(`${API_BASE_URL}/emergency-groups/summary/group/${id}`);
   if (!res) throw new Error("Could not fetch group");
@@ -154,10 +153,7 @@ export const inviteHouseholdToGroup = async (
   });
 };
 
-export const addHouseholdToGroup = async (
-  data: GroupInviteRequest,
-  fetcher: FetchFunction = Fetch,
-): Promise<void> => {
+export const addHouseholdToGroup = async (data: GroupInviteRequest, fetcher: FetchFunction = Fetch): Promise<void> => {
   await fetcher<void>(`${API_BASE_URL}/group-households/invite`, {
     method: "POST",
     body: JSON.stringify(data),
@@ -183,11 +179,7 @@ export const getGroupInvitesForMyHousehold = async (fetcher: FetchFunction): Pro
   return res;
 };
 
-
-export const acceptGroupInvite = async (
-  groupId: number,
-  fetcher: FetchFunction = Fetch,
-): Promise<void> => {
+export const acceptGroupInvite = async (groupId: number, fetcher: FetchFunction = Fetch): Promise<void> => {
   await fetcher<void>(`${API_BASE_URL}/group-households/accept`, {
     method: "POST",
     body: JSON.stringify(groupId),

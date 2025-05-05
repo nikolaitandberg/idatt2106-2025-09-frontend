@@ -5,16 +5,10 @@ import { HouseholdGroupMember } from "@/types/household";
 import { useHouseholdUsers, useExtraResidents } from "@/actions/household";
 
 export default function HouseholdCard({ id, name, address, isHome = false }: HouseholdGroupMember) {
-  const {
-    data: users = [],
-  } = useHouseholdUsers(id);
-  const {
-    data: extraResidents = [],
-  } = useExtraResidents();
+  const { data: users = [] } = useHouseholdUsers(id);
+  const { data: extraResidents = [] } = useExtraResidents();
 
-  const totalMembers =
-    (users?.length ?? 0) +
-    (extraResidents?.filter((r) => r.householdId === id).length ?? 0);
+  const totalMembers = (users?.length ?? 0) + (extraResidents?.filter((r) => r.householdId === id).length ?? 0);
 
   return (
     <div className="rounded-lg border border-border shadow-sm p-4 w-[280px] bg-white">
@@ -33,7 +27,7 @@ export default function HouseholdCard({ id, name, address, isHome = false }: Hou
       <p className="flex items-center gap-1 text-sm text-muted-foreground">
         <Users className="w-3.5 h-3.5 inline-block mr-1" />
         {`${totalMembers} medlem${totalMembers !== 1 ? "mer" : ""}`}
-        </p>
+      </p>
     </div>
   );
 }

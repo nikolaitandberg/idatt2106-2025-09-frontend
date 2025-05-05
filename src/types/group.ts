@@ -64,4 +64,3 @@ export type GroupInvite = {
   groupId: number;
   householdId: number;
 };
-
