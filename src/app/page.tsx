@@ -7,8 +7,8 @@ import { useEvents } from "@/actions/event";
 import MapObject from "@/components/map/mapObject";
 import MapEvent from "@/components/map/mapEvent";
 import { useDebounce, useDebouncedCallback } from "use-debounce";
-import { useMemo, useRef, useState } from "react";
-import { MapBounds } from "@/types/map";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { EventWebsocketMessage, MapBounds, MapObject as MapObjectType, MapObjectWebsocketMessage } from "@/types/map";
 import MapComponent from "@/components/map/mapComponent";
 import UserPositionDisplay, { UserPositionDisplayRef } from "@/components/map/userPositionDisplay";
 import MapToolBar from "@/components/map/mapToolbar";
@@ -19,6 +19,9 @@ import { useLastKnownLocations, useUpdateUserLocation } from "@/actions/location
 import { useSession } from "next-auth/react";
 import useSettings from "@/components/settingsProvider";
 import MapUsers from "@/components/map/mapUsers";
+import useSocket from "@/components/socketProvider";
+import { useQueryClient } from "@tanstack/react-query";
+import { UserLocation } from "@/types/user";
 
 export default function Home() {
   const [bounds, setBounds] = useState<MapBounds>({} as MapBounds);
@@ -28,6 +31,7 @@ export default function Home() {
 
   const session = useSession();
   const settings = useSettings();
+  const queryClient = useQueryClient();
 
   const { mutate: findMapObject } = useClosestMapObject();
   const { mutate: updateUserLocation } = useUpdateUserLocation();
@@ -39,6 +43,97 @@ export default function Home() {
   const { data: lastKnownLocations } = useLastKnownLocations(myHousehold?.id ?? 0, {
     enabled: !!myHousehold?.id,
   });
+
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!myHousehold?.id) return;
+
+    const subscription = socket.subscribe(
+      `/topic/location/${myHousehold.id}`,
+      (data: { userId: number; latitude: number; longitude: number }) => {
+        if (!session.data?.user.userId) return;
+        if (data.userId === session.data.user.userId) return;
+
+        console.log("Updating location", data);
+        queryClient.setQueryData(["location", "last-known"], (oldData: UserLocation[]) => {
+          if (!oldData) return [{ userId: data.userId, latitude: data.latitude, longitude: data.longitude }];
+
+          const newData = oldData.filter((object) => object.userId !== data.userId);
+          console.log("old data", oldData);
+          console.log("new data", newData);
+          return [...newData, { userId: data.userId, latitude: data.latitude, longitude: data.longitude }];
+        });
+        console.log(queryClient.getQueryData(["location", "last-known"]));
+      },
+    );
+
+    return () => {
+      subscription?.subscription?.unsubscribe();
+    };
+  }, [myHousehold?.id]);
+
+  useEffect(() => {
+    const sub = socket.subscribe<MapObjectWebsocketMessage>("/topic/map-object/all", (data) => {
+      if (data.eventType === "deleted") {
+        queryClient.setQueryData(["map", "mapObjects"], (oldData: MapObjectType[] | undefined) => {
+          if (!oldData) return [];
+          const newData = oldData.filter((object) => object.id !== data.payload);
+          return newData;
+        });
+      } else if (data.eventType === "created") {
+        queryClient.setQueryData(["map", "mapObjects"], (oldData: MapObjectType[] | undefined) => {
+          if (!oldData) return [data.payload];
+          data.payload.id = oldData[oldData.length - 1].id + 1;
+          return [...oldData, data.payload];
+        });
+      } else if (data.eventType === "updated") {
+        queryClient.setQueryData(["map", "mapObjects"], (oldData: MapObjectType[] | undefined) => {
+          if (!oldData) return [data.payload];
+          const newData = oldData.filter((object) => object.id !== data.payload.id);
+          return [...newData, data.payload];
+        });
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["map", "mapObjects"] });
+    });
+
+    return () => {
+      sub?.subscription?.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    const sub = socket.subscribe<EventWebsocketMessage>("/topic/events", (data) => {
+      queryClient.invalidateQueries({ queryKey: ["event", "events"] });
+
+      if (data.eventType === "deleted") {
+        queryClient.setQueryData(["event", "events"], (oldData: MapObjectType[] | undefined) => {
+          if (!oldData) return [];
+          const newData = oldData.filter((object) => object.id !== data.payload.id);
+          return newData;
+        });
+      } else if (data.eventType === "created") {
+        queryClient.setQueryData(["event", "events"], (oldData: MapObjectType[] | undefined) => {
+          if (!oldData) return [data.payload];
+          data.payload.id = oldData[oldData.length - 1].id + 1;
+          return [...oldData, data.payload];
+        });
+      } else if (data.eventType === "updated") {
+        queryClient.setQueryData(["event", "events"], (oldData: MapObjectType[] | undefined) => {
+          if (!oldData) return [data.payload];
+          const newData = oldData.filter((object) => object.id !== data.payload.id);
+          return [...newData, data.payload];
+        });
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["event", "events"] });
+    });
+
+    return () => {
+      sub?.subscription?.unsubscribe();
+    };
+  }, []);
 
   const debouncedPositionUpdate = useDebouncedCallback((position: GeolocationPosition) => {
     if (!session.data?.user.userId) return;

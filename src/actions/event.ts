@@ -59,7 +59,7 @@ export const useEvents = (bounds: MapBounds) => {
   const fetcher = useFetch();
 
   return useQuery({
-    queryKey: ["event", "events", bounds],
+    queryKey: ["event", "events"],
     queryFn: () => getEvents(bounds, fetcher),
     placeholderData: keepPreviousData,
   });
