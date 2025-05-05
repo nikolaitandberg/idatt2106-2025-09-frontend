@@ -35,3 +35,33 @@ export interface EditGroupRequest {
   name: string;
   description: string;
 }
+
+export type SharedFoodResponse = {
+  typeId: number;
+  typeName: string;
+  unit: string;
+  totalAmount: number;
+  totalCalories: number;
+  batches: {
+    id: number;
+    amount: number;
+    expirationDate: string;
+  }[];
+};
+
+export type ShareFoodRequest = {
+  foodId: number;
+  groupHouseholdId: number;
+  amount: number;
+};
+
+export type GroupInviteRequest = {
+  householdId: number;
+  groupId: number;
+};
+
+export type GroupInvite = {
+  groupId: number;
+  householdId: number;
+};
+
