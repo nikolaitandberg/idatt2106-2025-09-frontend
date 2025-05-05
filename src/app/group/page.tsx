@@ -1,10 +1,11 @@
 "use client";
 
-import { useMyGroupMemberships, getGroupById } from "@/actions/group";
-import GroupCard from "@/components/ui/groupCard";
-import { useQueries } from "@tanstack/react-query";
+import { useMyGroupMemberships, getGroupById, getGroupInvitesForMyHousehold } from "@/actions/group";
+import GroupCard from "@/components/group/groupCard";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { useFetch } from "@/util/fetch";
+import { useQueries, useQuery } from "@tanstack/react-query";
+import InviteCard from "@/components/group/groupInviteCard";
 
 export default function UserGroupsPage() {
   const fetcher = useFetch();
@@ -16,6 +17,16 @@ export default function UserGroupsPage() {
       queryFn: () => getGroupById(relation.groupId, fetcher),
       enabled: !!relations,
     })),
+  });
+
+  const {
+    data: invites,
+    isPending: invitesPending,
+    isError: invitesError,
+    error: invitesErrorMessage,
+  } = useQuery({
+    queryKey: ["group-invites", "my-household"],
+    queryFn: () => getGroupInvitesForMyHousehold(fetcher),
   });
 
   if (isPending) {
@@ -30,8 +41,8 @@ export default function UserGroupsPage() {
     return <div className="text-red-500 text-center mt-8">Kunne ikke hente gruppemedlemskap: {error?.message}</div>;
   }
 
-  const allLoaded = groupQueries.every((q) => q.isSuccess);
-  const anyError = groupQueries.some((q) => q.isError);
+  const allLoaded = groupQueries.every((q) => q.isSuccess) && !invitesPending && !invitesError;
+  const anyError = groupQueries.some((q) => q.isError) || invitesError;
 
   if (!allLoaded && !anyError) {
     return (
@@ -42,29 +53,51 @@ export default function UserGroupsPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto p-8 space-y-8">
+    <div className="max-w-6xl mx-auto p-8 space-y-8">
       <h1 className="text-3xl font-bold text-center">Dine grupper</h1>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {groupQueries.map((query, index) => {
-          if (query.isSuccess) {
-            const group = query.data;
+      <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {groupQueries.map((query, index) => {
+            if (query.isSuccess) {
+              const group = query.data;
+              return (
+                <GroupCard
+                  key={group.groupId}
+                  id={group.groupId}
+                  name={group.groupName}
+                  households={group.totalHouseholds}
+                  members={group.totalResidents + group.totalExtraResidents}
+                />
+              );
+            }
             return (
-              <GroupCard
-                key={group.groupId}
-                id={group.groupId}
-                name={group.groupName}
-                households={group.totalHouseholds}
-                members={group.totalResidents + group.totalExtraResidents}
-              />
+              <div key={index} className="text-red-500 text-sm">
+                Kunne ikke hente gruppe-ID {relations?.[index].groupId}
+              </div>
             );
-          }
-          return (
-            <div key={index} className="text-red-500 text-sm">
-              Kunne ikke hente gruppe-ID {relations?.[index].groupId}
-            </div>
-          );
-        })}
+          })}
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-4 border">
+          <h2 className="text-xl font-semibold mb-4">Gruppeinvitasjoner</h2>
+
+          {invitesPending && <p>Laster invitasjoner...</p>}
+
+          {invitesError && (
+            <p className="text-red-500">Feil ved henting av invitasjoner: {invitesErrorMessage?.message}</p>
+          )}
+
+          {!invitesPending && invites && invites.length > 0 && (
+            <ul className="space-y-2 text-sm">
+              {invites.map((invite) => (
+                <InviteCard key={`${invite.groupId}-${invite.householdId}`} invite={invite} />
+              ))}
+            </ul>
+          )}
+
+          {!invitesPending && invites?.length === 0 && <p className="text-gray-500">Ingen invitasjoner funnet.</p>}
+        </div>
       </div>
     </div>
   );
