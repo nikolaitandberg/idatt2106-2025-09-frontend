@@ -1,7 +1,6 @@
 "use client";
 
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 import { FetchFunction, Fetch, useFetch } from "@/util/fetch";
 import { API_BASE_URL } from "@/types/constants";
 import {
@@ -25,15 +24,14 @@ export const getMyGroupMemberships = async (fetcher: FetchFunction = Fetch): Pro
 
 export const useMyGroupMemberships = () => {
   const fetcher = useFetch();
-  const session = useSession();
 
   return useQuery({
     retry: false,
     queryKey: ["group-households", "my-groups"],
     queryFn: () => getMyGroupMemberships(fetcher),
-    enabled: session.status !== "loading",
   });
 };
+
 
 export const getGroupById = async (id: number, fetcher: FetchFunction = Fetch): Promise<GroupDetails> => {
   const res = await fetcher<GroupDetails>(`${API_BASE_URL}/emergency-groups/summary/group/${id}`);
@@ -178,9 +176,10 @@ export const useAddHouseholdToGroup = () => {
 
 export const getGroupInvitesForMyHousehold = async (fetcher: FetchFunction): Promise<GroupInvite[]> => {
   const res = await fetcher<GroupInvite[]>(`${API_BASE_URL}/group-invite/household`);
-  if (!res) throw new Error("Kunne ikke hente gruppeinvitasjoner for din husholdning");
+  if (!res) return [];
   return res;
 };
+
 
 export const acceptGroupInvite = async (
   groupId: number,
@@ -201,7 +200,7 @@ export const useAcceptInvite = () => {
     mutationFn: (groupId) => acceptGroupInvite(groupId, fetcher),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["group-households", "my-groups"] });
-      queryClient.invalidateQueries({ queryKey: ["group", "invites"] });
+      queryClient.invalidateQueries({ queryKey: ["group-invites", "my-household"] });
     },
   });
 };
