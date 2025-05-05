@@ -3,8 +3,8 @@
 import { useParams, useRouter } from "next/navigation";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Pencil, LogOut, Users, Apple, CirclePlus, Home, UserPlus } from "lucide-react";
-import GroupHouseholdCard from "@/components/ui/groupHouseholdCard";
+import { Pencil, LogOut, Users, Apple, Home, UserPlus } from "lucide-react";
+import GroupHouseholdCard from "@/components/group/groupHouseholdCard";
 import { getGroupById, useGroupHouseholds, useLeaveGroup, useMyGroupMemberships } from "@/actions/group";
 import { useMyHousehold } from "@/actions/household";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
@@ -15,6 +15,8 @@ import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/
 import EditGroupForm from "@/components/ui/editGroupForm";
 import { useQuery } from "@tanstack/react-query";
 import { useFetch } from "@/util/fetch";
+import GroupSharedFood from "@/components/group/groupSharedFood";
+import InviteHouseholdDialog from "@/components/group/inviteHouseholdDialog";
 
 export default function GroupPage() {
   const params = useParams();
@@ -165,15 +167,22 @@ export default function GroupPage() {
               ))}
             </div>
 
-            <Button variant="outline" className="flex items-center gap-2">
-              Inviter en husholdning
-              <CirclePlus className="h-4 w-4" />
-            </Button>
+            <InviteHouseholdDialog groupId={groupId} />
           </div>
         </TabsContent>
 
         <TabsContent value="matvarer">
-          <p className="text-muted-foreground mt-4">Matvarer kommer snart</p>
+          <div className="flex flex-col items-center mt-6 space-y-6">
+            <h2 className="text-2xl font-semibold">Delt mat i gruppen</h2>
+            <div className="flex flex-wrap justify-center gap-6 w-full">
+              {households?.map((h) => (
+                <div key={h.id} className="w-full max-w-xl space-y-2">
+                  <h3 className="text-lg font-medium">{h.name}</h3>
+                  <GroupSharedFood groupHouseholdId={h.id} />
+                </div>
+              ))}
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
