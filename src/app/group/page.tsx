@@ -7,10 +7,11 @@ import { useFetch } from "@/util/fetch";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import InviteCard from "@/components/group/groupInviteCard";
 import { useSession } from "next-auth/react";
+import CreateGroupDialog from "@/components/group/createGroupDialog";
 
 export default function UserGroupsPage() {
   const session = useSession();
-  
+
   const fetcher = useFetch();
   const { data: relations, isPending, isError, error } = useMyGroupMemberships();
 
@@ -30,7 +31,7 @@ export default function UserGroupsPage() {
   } = useQuery({
     queryKey: ["group-invites", "my-household"],
     queryFn: () => getGroupInvitesForMyHousehold(fetcher),
-    enabled: session.status !== "loading"
+    enabled: session.status !== "loading",
   });
 
   if (isPending) {
@@ -58,7 +59,10 @@ export default function UserGroupsPage() {
 
   return (
     <div className="max-w-6xl mx-auto p-8 space-y-8">
-      <h1 className="text-3xl font-bold text-center">Dine beredskapsgrupper</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold">Dine beredskapsgrupper</h1>
+        <CreateGroupDialog />
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -84,7 +88,7 @@ export default function UserGroupsPage() {
         </div>
 
         <div className="rounded-lg border border-border shadow-sm bg-white p-4 space-y-2 text-sm hover:shadow transition-shadow">
-        <h2 className="text-xl font-semibold mb-4">Gruppeinvitasjoner</h2>
+          <h2 className="text-xl font-semibold mb-4">Gruppeinvitasjoner</h2>
 
           {invitesPending && <p>Laster invitasjoner...</p>}
 
@@ -100,7 +104,7 @@ export default function UserGroupsPage() {
             </ul>
           )}
 
-          {!invitesPending && invites?.length === 0 && <p className="text-gray-500">Ingen invitasjoner funnet.</p>}
+          {!invitesPending && invites?.length === 0 && <p className="text-gray-500">Du har ingen invitasjoner.</p>}
         </div>
       </div>
     </div>
