@@ -4,7 +4,7 @@ import { Event } from "./event";
 
 export type CreateMapObjectTypeRequest = Omit<MapObjectType, "id">;
 
-export type AddUserToHouseRequest = { userId: string };
+export type AddUserToHouseRequest = { username: string };
 
 export type AddExtraResidentRequest = {
   householdId: number;
