@@ -18,7 +18,7 @@ import { useSession } from "next-auth/react";
 export const getMyGroupMemberships = async (fetcher: FetchFunction = Fetch): Promise<GroupHouseholdRelation[]> => {
   const res = await fetcher<GroupHouseholdRelation[]>(`${API_BASE_URL}/group-households/my-groups`);
   if (!res) {
-    throw new Error("Failed to fetch group-household relations");
+    throw new Error("Kunne ikke hente gruppemedlemskap");
   }
   return res;
 };
@@ -45,7 +45,7 @@ export const getGroupById = async (id: number, fetcher: FetchFunction = Fetch): 
 export const getGroupDetails = async (groupId: number, fetcher: FetchFunction = Fetch): Promise<GroupDetails> => {
   const res = await fetcher<GroupDetails>(`${API_BASE_URL}/emergency-groups/summary/group/${groupId}`);
   if (!res) {
-    throw new Error("Failed to fetch group details");
+    throw new Error("Kunne ikke hente gruppe");
   }
   return res;
 };
@@ -67,7 +67,7 @@ export const getGroupHouseholds = async (
 ): Promise<GroupHousehold[]> => {
   const res = await fetcher<GroupHousehold[]>(`${API_BASE_URL}/group-households/group/${groupId}`);
   if (!res) {
-    throw new Error("Failed to fetch households in group");
+    throw new Error("Kunne ikke hente husholdninger i gruppen");
   }
   return res;
 };
