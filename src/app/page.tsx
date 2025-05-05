@@ -6,7 +6,7 @@ import { useClosestMapObject, useMapObjects, useMapObjectTypes } from "@/actions
 import { useEvents } from "@/actions/event";
 import MapObject from "@/components/map/mapObject";
 import MapEvent from "@/components/map/mapEvent";
-import { useDebounce } from "use-debounce";
+import { useDebounce, useDebouncedCallback } from "use-debounce";
 import { useMemo, useRef, useState } from "react";
 import { MapBounds } from "@/types/map";
 import MapComponent from "@/components/map/mapComponent";
@@ -15,18 +15,52 @@ import MapToolBar from "@/components/map/mapToolbar";
 import { useMyHousehold } from "@/actions/household";
 import MyHouseholdMapObject from "@/components/map/myHouseholdMapObject";
 import { showToast } from "@/components/ui/toaster";
+import { useLastKnownLocations, useUpdateUserLocation } from "@/actions/location";
+import { useSession } from "next-auth/react";
+import useSettings from "@/components/settingsProvider";
+import MapUsers from "@/components/map/mapUsers";
 
 export default function Home() {
   const [bounds, setBounds] = useState<MapBounds>({} as MapBounds);
   const [debouncedBounds] = useDebounce(bounds, 100);
   const [selectedMapObjectTypes, setSelectedMapObjectTypes] = useState<number[]>([]);
   const [hasSelectedMapObjectTypes, setHasSelectedMapObjectTypes] = useState(false);
+
+  const session = useSession();
+  const settings = useSettings();
+
   const { mutate: findMapObject } = useClosestMapObject();
+  const { mutate: updateUserLocation } = useUpdateUserLocation();
 
   const { data: events, isFetching: eventsIsFetching } = useEvents(debouncedBounds);
   const { data: mapObjects, isFetching: mapObjectsIsFetching } = useMapObjects(debouncedBounds);
   const { data: mapObjectTypes, isFetching: mapObjectTypesIsFetching } = useMapObjectTypes();
   const { data: myHousehold } = useMyHousehold();
+  const { data: lastKnownLocations } = useLastKnownLocations(myHousehold?.id ?? 0, {
+    enabled: !!myHousehold?.id,
+  });
+
+  const debouncedPositionUpdate = useDebouncedCallback((position: GeolocationPosition) => {
+    if (!session.data?.user.userId) return;
+    if (!settings.sharePositionHousehold && !settings.sharePositionHouseholdGroup) return;
+
+    updateUserLocation(
+      {
+        userId: session.data?.user.userId,
+        longitude: position.coords.longitude,
+        latitude: position.coords.latitude,
+      },
+      {
+        onError: () => {
+          showToast({
+            title: "Feil",
+            description: "Kunne ikke oppdatere posisjonen din",
+            variant: "error",
+          });
+        },
+      },
+    );
+  }, 1000);
 
   const mapRef = useRef<MapRef>(null);
   const positionRef = useRef<UserPositionDisplayRef>(null);
@@ -87,6 +121,7 @@ export default function Home() {
             {renderedMapObjects}
             {renderedEvents}
             {myHousehold && <MyHouseholdMapObject household={myHousehold} />}
+            <MapUsers userLocations={lastKnownLocations} />
             <UserPositionDisplay
               ref={positionRef}
               onInitialPosition={(pos) => {
@@ -97,7 +132,7 @@ export default function Home() {
                 });
               }}
               onPositionChange={(pos) => {
-                console.log("Position changed:", pos);
+                debouncedPositionUpdate(pos);
               }}
             />
           </MapComponent>
