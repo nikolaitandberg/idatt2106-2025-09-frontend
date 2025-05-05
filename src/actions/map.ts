@@ -41,7 +41,7 @@ export const useMapObjects = (bounds: MapBounds) => {
   const fetcher = useFetch();
 
   return useQuery({
-    queryKey: ["map", "mapObjects"],
+    queryKey: ["map", "mapObjects", bounds],
     queryFn: () => getMapObjects(bounds, fetcher),
     placeholderData: keepPreviousData,
   });
