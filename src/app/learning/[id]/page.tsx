@@ -3,8 +3,8 @@ import { Button } from "@/components/ui/button";
 import MarkdownRenderer from "@/components/ui/markdownRenderer";
 import Link from "next/link";
 
-export default async function ScenarioPage({ params }: { params: { id: string } }) {
-  const id = parseInt(await params.id);
+export default async function ScenarioPage({ params }: { params: Promise<{ id: string }> }) {
+  const id = parseInt((await params).id);
 
   const infoPage = await getInfoPageById(id);
 
