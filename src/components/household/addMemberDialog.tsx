@@ -37,29 +37,29 @@ export function AddMemberDialog({ householdId }: { householdId: number }) {
           <TabsContent value="existing">
             <AddExistingMemberForm
               onSubmit={async (req) => {
-                  await new Promise((resolve) => {
-                    addExistingMember(req, {
-                      onSuccess: () => {
-                        showToast({
-                          title: "Bruker invitert",
-                          description: `${req.username} er nå invitert til husholdningen`,
-                          variant: "success",
-                        });
-                      },
-                      onError: (error) => {
-                        const errorMessage = error instanceof Error ? error.message : "Kunne ikke invitere bruker";
-                        console.log(errorMessage)
+                await new Promise((resolve) => {
+                  addExistingMember(req, {
+                    onSuccess: () => {
+                      showToast({
+                        title: "Bruker invitert",
+                        description: `${req.username} er nå invitert til husholdningen`,
+                        variant: "success",
+                      });
+                    },
+                    onError: (error) => {
+                      const errorMessage = error instanceof Error ? error.message : "Kunne ikke invitere bruker";
+                      console.log(errorMessage);
 
-                          showToast({
-                            title: "Feil ved invitasjon",
-                            description: errorMessage,
-                            variant: "error",
-                          });
-                      },
-                      onSettled: resolve,
-                    });
+                      showToast({
+                        title: "Feil ved invitasjon",
+                        description: errorMessage,
+                        variant: "error",
+                      });
+                    },
+                    onSettled: resolve,
                   });
-                  setOpen(false);
+                });
+                setOpen(false);
               }}
             />
           </TabsContent>
