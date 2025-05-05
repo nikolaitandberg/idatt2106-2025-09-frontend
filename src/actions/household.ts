@@ -24,12 +24,16 @@ export const getHousehold = async (id: number, fetcher: FetchFunction = Fetch): 
   }
 };
 
-export const getMyHousehold = async (fetcher: FetchFunction = Fetch): Promise<GetHouseholdResonse> => {
-  const res = await fetcher<GetHouseholdResonse>(`${API_BASE_URL}/households/my-household`);
-  if (!res) {
-    throw new ApiError("Failed to fetch household data");
+export const getMyHousehold = async (fetcher: FetchFunction = Fetch): Promise<GetHouseholdResonse | null> => {
+  try {
+    const res = await fetcher<GetHouseholdResonse>(`${API_BASE_URL}/households/my-household`);
+    return res ?? null;
+  } catch (error) {
+    if (error instanceof ApiError && error.code === 404) {
+      return { id: 0 } as GetHouseholdResonse;
+    }
+    throw error;
   }
-  return res;
 };
 
 export const useMyHousehold = () => {

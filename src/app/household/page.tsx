@@ -21,7 +21,7 @@ export default function HouseholdPageWrapper() {
     return <div className="text-center py-12 text-red-600">Kunne ikke hente profildata</div>;
   }
 
-  if (!household.id || household.id <= 0) {
+  if (!household || household.id <= 0) {
     return <CreateHouseholdForm />;
   }
 

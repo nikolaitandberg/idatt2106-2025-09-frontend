@@ -51,8 +51,10 @@ export default function CreateHouseholdForm() {
       },
       {
         onSuccess: async () => {
+          await queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
           await queryClient.invalidateQueries({ queryKey: ["profile"] });
-          await refetchProfile();
+
+          router.refresh();
         },
         onError: (error) => {
           console.error("Error creating household:", error);
