@@ -1,4 +1,4 @@
-import { ImageIcon, Plus } from "lucide-react";
+import { Plus, Droplets } from "lucide-react";
 import Alert from "../ui/alert";
 import ProgressBar from "../ui/progressbar";
 import { useAddHouseholdFood, useHouseholdFood } from "@/actions/household";
@@ -12,6 +12,7 @@ import { useMemo, useState } from "react";
 import AddNewFoodForm from "./AddNewFoodForm";
 import { useQueryClient } from "@tanstack/react-query";
 import HouseholdKits from "./HouseholdKits";
+import UpdateWaterForm from "@/components/household/UpdateWaterForm";
 
 export default function HouseholdFood({ household }: Readonly<{ household: Household }>) {
   const { data: householdFood } = useHouseholdFood(household.id);
@@ -68,7 +69,7 @@ export default function HouseholdFood({ household }: Readonly<{ household: House
           <div className="flex justify-between items-center border p-4 rounded shadow-sm bg-white">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
-                <ImageIcon className="w-4 h-4 text-muted-foreground" />
+                <Droplets className="w-4 h-4 text-muted-foreground" />
               </div>
               <span className="text-sm">Vann</span>
             </div>
@@ -79,6 +80,17 @@ export default function HouseholdFood({ household }: Readonly<{ household: House
               dager til neste vannbytte
             </div>
             <div className="text-sm font-medium">{household.waterAmountLiters} L</div>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Plus className="w-4 h-4 mr-1" /> Legg til vann
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogTitle>Oppdater vannmengde</DialogTitle>
+                <UpdateWaterForm household={household} />
+              </DialogContent>
+            </Dialog>
           </div>
         </section>
 
