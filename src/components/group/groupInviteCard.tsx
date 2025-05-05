@@ -42,7 +42,7 @@ export default function InviteCard({ invite }: InviteCardProps) {
   }
 
   return (
-    <div className="rounded-lg border border-border shadow-sm bg-white p-4 space-y-2 text-sm hover:shadow transition-shadow">
+      <div className="rounded-lg border border-border shadow-sm bg-white p-4 space-y-2 text-sm hover:shadow transition-shadow">
       <div className="text-sm">
         Du er invitert til å bli med i gruppe <strong>{invite.groupId}</strong>.
       </div>
