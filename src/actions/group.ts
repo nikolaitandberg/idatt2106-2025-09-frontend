@@ -4,7 +4,15 @@ import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { FetchFunction, Fetch, useFetch } from "@/util/fetch";
 import { API_BASE_URL } from "@/types/constants";
-import { GroupDetails, GroupHouseholdRelation, GroupHousehold, EditGroupRequest } from "@/types/group";
+import {
+  GroupDetails,
+  GroupHouseholdRelation,
+  GroupHousehold,
+  EditGroupRequest,
+  SharedFoodResponse,
+  GroupInviteRequest,
+  GroupInvite,
+} from "@/types/group";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const getMyGroupMemberships = async (fetcher: FetchFunction = Fetch): Promise<GroupHouseholdRelation[]> => {
@@ -111,6 +119,89 @@ export const useEditGroup = () => {
     mutationFn: (data) => editGroup(data, fetcher),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["group", "details", variables.id] });
+    },
+  });
+};
+
+export const getSharedFood = async (
+  groupHouseholdId: number,
+  fetcher: FetchFunction = Fetch,
+): Promise<SharedFoodResponse[]> => {
+  const res = await fetcher<SharedFoodResponse[]>(`${API_BASE_URL}/shared-food/summary/detailed/${groupHouseholdId}`);
+  if (!res) throw new Error("Kunne ikke hente delt mat");
+  return res;
+};
+
+export const useSharedFood = (groupHouseholdId: number) => {
+  const fetcher = useFetch();
+
+  return useQuery<SharedFoodResponse[]>({
+    queryKey: ["shared-food", groupHouseholdId],
+    queryFn: () => getSharedFood(groupHouseholdId, fetcher),
+    enabled: !!groupHouseholdId,
+  });
+};
+
+export const inviteHouseholdToGroup = async (
+  req: GroupInviteRequest,
+  fetcher: FetchFunction = Fetch,
+): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/group-households/invite`, {
+    method: "POST",
+    body: JSON.stringify(req),
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const addHouseholdToGroup = async (
+  data: GroupInviteRequest,
+  fetcher: FetchFunction = Fetch,
+): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/group-households/invite`, {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useAddHouseholdToGroup = () => {
+  const fetcher = useFetch();
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, GroupInviteRequest>({
+    mutationFn: (data) => addHouseholdToGroup(data, fetcher),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["group", "households", variables.groupId] });
+    },
+  });
+};
+
+export const getGroupInvitesForMyHousehold = async (fetcher: FetchFunction): Promise<GroupInvite[]> => {
+  const res = await fetcher<GroupInvite[]>(`${API_BASE_URL}/group-invite/household`);
+  if (!res) throw new Error("Kunne ikke hente gruppeinvitasjoner for din husholdning");
+  return res;
+};
+
+export const acceptGroupInvite = async (
+  groupId: number,
+  fetcher: FetchFunction = Fetch,
+): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/group-households/accept`, {
+    method: "POST",
+    body: JSON.stringify(groupId),
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useAcceptInvite = () => {
+  const fetcher = useFetch();
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, number>({
+    mutationFn: (groupId) => acceptGroupInvite(groupId, fetcher),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["group-households", "my-groups"] });
+      queryClient.invalidateQueries({ queryKey: ["group", "invites"] });
     },
   });
 };
