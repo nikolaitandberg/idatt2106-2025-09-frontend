@@ -30,7 +30,7 @@ export default function InviteCard({ invite }: InviteCardProps) {
   if (accepted) {
     return (
       <div className="p-4 border rounded bg-green-50 text-green-800">
-        Du har godtatt invitasjon til gruppe <strong>{group?.groupName ?? invite.groupId}</strong>.
+        Du har godtatt invitasjon til gruppen <strong>{group?.groupName ?? invite.groupId}</strong>.
       </div>
     );
   }

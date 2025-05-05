@@ -64,8 +64,8 @@ export default function UserGroupsPage() {
         <CreateGroupDialog />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] gap-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="flex flex-col lg:flex-row gap-8 items-start">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:w-3/5">
           {groupQueries.map((query, index) => {
             if (query.isSuccess) {
               const group = query.data;
@@ -87,7 +87,7 @@ export default function UserGroupsPage() {
           })}
         </div>
 
-        <div className="rounded-lg border border-border shadow-sm bg-white p-4 space-y-2 text-sm hover:shadow transition-shadow">
+        <div className="rounded-lg border border-border shadow-sm bg-white p-4 space-y-2 text-sm hover:shadow transition-shadow lg:w-2/5">
           <h2 className="text-xl font-semibold mb-4">Gruppeinvitasjoner</h2>
 
           {invitesPending && <p>Laster invitasjoner...</p>}
