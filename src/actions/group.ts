@@ -13,6 +13,7 @@ import {
   GroupInvite,
 } from "@/types/group";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 
 export const getMyGroupMemberships = async (fetcher: FetchFunction = Fetch): Promise<GroupHouseholdRelation[]> => {
   const res = await fetcher<GroupHouseholdRelation[]>(`${API_BASE_URL}/group-households/my-groups`);
@@ -24,11 +25,13 @@ export const getMyGroupMemberships = async (fetcher: FetchFunction = Fetch): Pro
 
 export const useMyGroupMemberships = () => {
   const fetcher = useFetch();
+  const session = useSession();
 
   return useQuery({
     retry: false,
     queryKey: ["group-households", "my-groups"],
     queryFn: () => getMyGroupMemberships(fetcher),
+    enabled: session.status !== "loading",
   });
 };
 

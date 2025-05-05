@@ -6,8 +6,11 @@ import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { useFetch } from "@/util/fetch";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import InviteCard from "@/components/group/groupInviteCard";
+import { useSession } from "next-auth/react";
 
 export default function UserGroupsPage() {
+  const session = useSession();
+  
   const fetcher = useFetch();
   const { data: relations, isPending, isError, error } = useMyGroupMemberships();
 
@@ -15,7 +18,7 @@ export default function UserGroupsPage() {
     queries: (relations ?? []).map((relation) => ({
       queryKey: ["group", "details", relation.groupId],
       queryFn: () => getGroupById(relation.groupId, fetcher),
-      enabled: !!relations,
+      enabled: !!relation && session.status !== "loading",
     })),
   });
 
@@ -27,6 +30,7 @@ export default function UserGroupsPage() {
   } = useQuery({
     queryKey: ["group-invites", "my-household"],
     queryFn: () => getGroupInvitesForMyHousehold(fetcher),
+    enabled: session.status !== "loading"
   });
 
   if (isPending) {
