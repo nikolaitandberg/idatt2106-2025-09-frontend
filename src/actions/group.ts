@@ -207,3 +207,25 @@ export const useAcceptInvite = () => {
     },
   });
 };
+
+export const createGroup = async (
+  data: { name: string; description: string },
+  fetcher: FetchFunction = Fetch,
+): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/emergency-groups`, {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useCreateGroup = () => {
+  const fetcher = useFetch();
+  const queryClient = useQueryClient();
+  return useMutation<void, Error, { name: string; description: string }>({
+    mutationFn: (data) => createGroup(data, fetcher),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["group-households", "my-groups"] });
+    },
+  });
+};
