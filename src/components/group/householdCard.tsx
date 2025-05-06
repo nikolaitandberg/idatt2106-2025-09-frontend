@@ -15,7 +15,7 @@ export default function HouseholdCard({ id, name, address, isHome = false }: Hou
       <h3 className="text-lg font-medium flex items-center justify-between">
         {name}
         {isHome && (
-          <span className="text-xs text-white bg-muted px-2 py-0.5 text-foreground rounded-full bg-primary">
+          <span className="text-xs text-white px-2 py-0.5 rounded-full bg-primary">
             Ditt hjem
           </span>
         )}
