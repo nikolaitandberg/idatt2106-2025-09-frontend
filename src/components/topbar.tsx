@@ -4,8 +4,9 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import { TopbarCard } from "@/components/ui/topbarCard";
-import { CircleUserRound, ShieldUser, GraduationCap, House, Users, Menu, X } from "lucide-react";
+import { CircleUserRound, GraduationCap, House, Users, Menu, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { AdminMenuPopover } from "@/components/adminMenuPopover";
 
 export default function Topbar() {
   const session = useSession();
@@ -28,7 +29,7 @@ export default function Topbar() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center justify-end">
-          {session?.data?.user?.isAdmin && <TopbarCard icon={ShieldUser} text="Admin" href="/admin" />}
+          {session?.data?.user?.isAdmin && <AdminMenuPopover />}
           <TopbarCard icon={GraduationCap} text="Læring" href="/learning" />
           {session?.status === "authenticated" ? (
             <>
@@ -56,12 +57,6 @@ export default function Topbar() {
         className="md:hidden overflow-hidden transition-all duration-300 ease-in-out"
         style={{ height: `${menuHeight}px` }}>
         <div ref={mobileMenuRef} className="flex flex-col bg-white">
-          {session?.data?.user?.isAdmin && (
-            <Link href="/admin" className="px-4 py-3 flex items-center space-x-2 hover:bg-gray-100">
-              <ShieldUser size={20} />
-              <span>Admin</span>
-            </Link>
-          )}
           <Link href="/learning" className="px-4 py-3 flex items-center space-x-2 hover:bg-gray-100">
             <GraduationCap size={20} />
             <span>Læring</span>
