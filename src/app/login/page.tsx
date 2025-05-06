@@ -5,11 +5,13 @@ import Link from "next/link";
 import PasswordResetDialog from "@/components/login/PasswordResetDialog";
 import useAppForm from "@/util/formContext";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnUrl = searchParams.get("returnUrl") || "/";
   const [loginError, setLoginError] = useState<string | null>(null);
 
   const loginSchema = z.object({
@@ -23,11 +25,11 @@ export default function LoginPage() {
       username,
       password,
       redirect: false,
-      callbackUrl: "/",
+      callbackUrl: returnUrl,
     });
 
     if (loginResponse?.ok) {
-      router.replace("/");
+      router.replace(returnUrl);
       return;
     }
 
