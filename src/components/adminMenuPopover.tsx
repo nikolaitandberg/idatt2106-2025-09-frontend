@@ -1,7 +1,7 @@
 "use client";
 
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ShieldUser, MapPin, CircleAlert, Newspaper, ChevronDown } from "lucide-react";
+import { ShieldUser, MapPin, CircleAlert, ChevronDown } from "lucide-react";
 import { ElementType, useState, MouseEvent } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -42,7 +42,6 @@ export function AdminMenuPopover() {
   } | null>(null);
 
   const menuItems = [
-    { icon: Newspaper, text: "Nyheter", href: "/admin/news" },
     { icon: MapPin, text: "Kart", href: "/admin/map" },
     { icon: CircleAlert, text: "Scenario", href: "/admin/scenario" },
     { icon: ShieldUser, text: "Ny admin", href: "/admin/new-admin" },
