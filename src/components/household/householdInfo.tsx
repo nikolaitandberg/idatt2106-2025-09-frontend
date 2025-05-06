@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, MapPin, Pencil } from "lucide-react";
+import { Home, LogOut, MapPin, Pencil } from "lucide-react";
 import { Household } from "@/types/household";
 import HouseholdUsers from "./householdUsers";
 import HouseholdGroups from "./householdGroups";
@@ -127,7 +127,9 @@ export default function HouseholdInfo({ household }: { household: Household }) {
         description="Er du sikker på at du vil forlate husholdningen?"
       />
       <Button variant="outline" size="fullWidth" onClick={() => setConfirmLeaveOpen(true)}>
-        Forlat husholdning
+        <div className="flex items-center gap-2">
+          Forlat husholdning <LogOut strokeWidth={1.5} size={15} />
+        </div>
       </Button>
 
       <hr className="border-border" />
