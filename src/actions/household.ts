@@ -1,6 +1,6 @@
 import { ApiError, GetHouseholdFoodResponse, GetHouseholdResonse } from "@/types/apiResponses";
 import { API_BASE_URL } from "@/types/constants";
-import { Household, UserResponse } from "@/types/household";
+import { HouseholdInvite, UserResponse } from "@/types/household";
 import Fetch, { FetchFunction, useFetch } from "@/util/fetch";
 import { useQuery, UseQueryOptions, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -9,6 +9,7 @@ import {
   AddHouseholdFoodRequest,
   EditHouseholdInfoRequest,
   EditHouseholdWaterRequest,
+  CreateHouseholdRequest,
 } from "@/types/apiRequests";
 import { ExtraResidentResponse } from "@/types/extraResident";
 import { useSession } from "next-auth/react";
@@ -91,7 +92,7 @@ export const useExtraResidents = (options?: UseQueryOptions<ExtraResidentRespons
 };
 
 export const createHousehold = async (
-  household: Omit<Household, "id" | "levelOfPreparedness">,
+  household: CreateHouseholdRequest,
   fetcher: FetchFunction = Fetch,
 ): Promise<void> => {
   await fetcher<void>(`${API_BASE_URL}/households/register`, {
@@ -215,9 +216,13 @@ export const useDeleteHouseholdFood = () => {
 
 export const useCreateHousehold = () => {
   const fetcher = useFetch();
+  const queryClient = useQueryClient();
 
-  return useMutation<void, Error, Omit<Household, "id" | "levelOfPreparedness"> & { username?: string }>({
+  return useMutation<void, Error, CreateHouseholdRequest>({
     mutationFn: (data) => createHousehold(data, fetcher),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
+    },
   });
 };
 
@@ -283,5 +288,21 @@ export const useUpdateHouseholdWater = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
     },
+  });
+};
+
+export const getHouseholdInvites = async (fetcher: FetchFunction = Fetch): Promise<HouseholdInvite[]> => {
+  const res = await fetcher<HouseholdInvite[]>(`${API_BASE_URL}/household-invites/user`);
+  return res ?? [];
+};
+
+export const useMyHouseholdInvites = () => {
+  const fetcher = useFetch();
+  const session = useSession();
+
+  return useQuery<HouseholdInvite[], Error>({
+    queryKey: ["household", "invites"],
+    queryFn: () => getHouseholdInvites(fetcher),
+    enabled: session.status !== "loading",
   });
 };

@@ -23,6 +23,7 @@ export type EditHouseholdWaterRequest = Omit<
   Household,
   "address" | "latitude" | "longitude" | "levelOfPreparedness" | "nextWaterChangeDate"
 >;
+export type CreateHouseholdRequest = Omit<Household, "id" | "levelOfPreparedness" | "nextWaterChangeDate">;
 
 export type CreateFoodTypeRequest = Omit<FoodType, "id">;
 export type ResetPasswordRequest = {

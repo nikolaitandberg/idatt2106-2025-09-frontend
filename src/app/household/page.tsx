@@ -3,8 +3,8 @@
 import { useMyHousehold } from "@/actions/household";
 import HouseholdFood from "@/components/household/HouseholdFood";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
-import CreateHouseholdForm from "@/components/household/CreateJoinHouseholdForm";
 import HouseholdInfo from "@/components/household/householdInfo";
+import { redirect } from "next/navigation";
 
 export default function HouseholdPageWrapper() {
   const { data: household, isPending, isError } = useMyHousehold();
@@ -18,7 +18,7 @@ export default function HouseholdPageWrapper() {
   }
 
   if (!household) {
-    return <CreateHouseholdForm />;
+    redirect("/household/join");
   }
 
   if (isError) {
