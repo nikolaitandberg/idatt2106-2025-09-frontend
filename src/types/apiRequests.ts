@@ -22,7 +22,7 @@ export type EditHouseholdInfoRequest = Omit<
 >;
 export type EditHouseholdWaterRequest = Omit<
   Household,
-  "address" | "latitude" | "longitude" | "levelOfPreparedness" | "nextWaterChangeDate"
+  "address" | "latitude" | "longitude" | "levelOfPreparedness" | "nextWaterChangeDate" | "name"
 >;
 export type CreateHouseholdRequest = Omit<Household, "id" | "levelOfPreparedness" | "nextWaterChangeDate"> & {
   username: string;
