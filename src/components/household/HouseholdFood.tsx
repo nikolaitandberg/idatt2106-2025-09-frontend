@@ -1,3 +1,5 @@
+"use client";
+
 import { Plus, Droplets } from "lucide-react";
 import Alert from "../ui/alert";
 import ProgressBar from "../ui/progressbar";

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function admin() {
-  return redirect("/admin/news");
+  return redirect("/admin/map");
 }
