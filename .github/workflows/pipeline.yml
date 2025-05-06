@@ -106,3 +106,4 @@ jobs:
         uses: cypress-io/github-action@v6
         with:
           working-directory: frontend
+          install: false
