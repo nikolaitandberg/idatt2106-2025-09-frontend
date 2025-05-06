@@ -18,12 +18,16 @@ export default function GroupCard({ id, name, households, members }: GroupCardPr
 
         <div className="flex items-center gap-2 text-muted-foreground">
           <Home className="w-4 h-4" />
-          <span>{households} husholdninger</span>
+          <span>
+            {households} {households === 1 ? "husholdning" : "husholdninger"}
+          </span>
         </div>
 
         <div className="flex items-center gap-2 text-muted-foreground">
           <Users className="w-4 h-4" />
-          <span>{members} medlemmer</span>
+          <span>
+            {members} {members === 1 ? "medlem" : "medlemmer"}
+          </span>
         </div>
       </div>
     </Link>
