@@ -1,8 +1,8 @@
 "use client";
 
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ShieldUser, MapPin, CircleAlert, Newspaper } from "lucide-react";
-import { ElementType, useState } from "react";
+import { ShieldUser, MapPin, CircleAlert, Newspaper, ChevronDown } from "lucide-react";
+import { ElementType, useState, MouseEvent } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
@@ -17,7 +17,7 @@ const AdminMenuItem = ({
   text: string;
   href: string;
   index: number;
-  onClick: () => void;
+  onClick: (e: MouseEvent) => void;
 }) => (
   <motion.div
     initial={{ opacity: 0, y: -5 }}
@@ -27,7 +27,7 @@ const AdminMenuItem = ({
       delay: index * 0.02,
       ease: "easeOut",
     }}>
-    <Link href={href} className="flex items-center gap-2 p-2 rounded hover:bg-slate-100" onClick={onClick}>
+    <Link href={href} className="flex items-center gap-2 p-2 rounded hover:bg-slate-100" onClick={(e) => onClick(e)}>
       <Icon size={18} />
       <span>{text}</span>
     </Link>
@@ -36,6 +36,10 @@ const AdminMenuItem = ({
 
 export function AdminMenuPopover() {
   const [open, setOpen] = useState(false);
+  const [hoverTimeout, setHoverTimeout] = useState<{
+    timeoutId: NodeJS.Timeout;
+    lastEnteredTime: number;
+  } | null>(null);
 
   const menuItems = [
     { icon: Newspaper, text: "Nyheter", href: "/admin/news" },
@@ -44,39 +48,66 @@ export function AdminMenuPopover() {
     { icon: ShieldUser, text: "Ny admin", href: "/admin/new-admin" },
   ];
 
+  const handleMouseEnter = () => {
+    if (hoverTimeout?.timeoutId) clearTimeout(hoverTimeout.timeoutId);
+    setOpen(true);
+    setHoverTimeout({ timeoutId: setTimeout(() => {}, 0), lastEnteredTime: Date.now() });
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimeout?.timeoutId) clearTimeout(hoverTimeout.timeoutId);
+    const timeoutId = setTimeout(() => {
+      setOpen(false);
+    }, 300);
+    setHoverTimeout({ timeoutId, lastEnteredTime: hoverTimeout?.lastEnteredTime || Date.now() });
+  };
+
   const handleItemClick = () => {
     setOpen(false);
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger className="flex items-center hover:underline hover:cursor-pointer group px-4 py-2">
-        <ShieldUser className="w-7 h-7" />
-        <span className="ml-2 transition-all duration-200">Admin</span>
-      </PopoverTrigger>
-      <PopoverContent className="w-48 p-0 overflow-hidden" sideOffset={8} asChild>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{
-            opacity: 1,
-            scale: 1,
-            transition: {
-              duration: 0.1,
-            },
-          }}
-          className="p-2 space-y-1">
-          {menuItems.map((item, index) => (
-            <AdminMenuItem
-              key={item.href}
-              icon={item.icon}
-              text={item.text}
-              href={item.href}
-              index={index}
-              onClick={handleItemClick}
-            />
-          ))}
-        </motion.div>
-      </PopoverContent>
+    <Popover
+      open={open}
+      onOpenChange={(open) => {
+        if (Date.now() - (hoverTimeout?.lastEnteredTime || 0) < 350) {
+          return;
+        }
+        if (!open && hoverTimeout?.timeoutId) {
+          clearTimeout(hoverTimeout.timeoutId);
+        }
+        setOpen(open);
+      }}>
+      <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+        <PopoverTrigger className="flex items-center hover:underline hover:cursor-pointer group px-4 py-2">
+          <ShieldUser className="w-7 h-7" />
+          <span className="ml-2 transition-all duration-200">Admin</span>
+          <ChevronDown className={`ml-1 w-4 h-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+        </PopoverTrigger>
+        <PopoverContent className="w-48 p-0 overflow-hidden" sideOffset={8} asChild>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+              transition: {
+                duration: 0.1,
+              },
+            }}
+            className="p-2 space-y-1">
+            {menuItems.map((item, index) => (
+              <AdminMenuItem
+                key={item.href}
+                icon={item.icon}
+                text={item.text}
+                href={item.href}
+                index={index}
+                onClick={handleItemClick}
+              />
+            ))}
+          </motion.div>
+        </PopoverContent>
+      </div>
     </Popover>
   );
 }
