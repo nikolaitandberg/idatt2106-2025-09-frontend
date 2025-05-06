@@ -17,11 +17,21 @@ export default function HouseholdInfo({ household }: { household: Household }) {
 
   const schema = z.object({
     address: z.string().min(1, { message: "Husholdningen må ha en adresse" }),
+    name: z.string().min(1, { message: "Husholdningen må ha et navn" }),
+    position: z.object({
+      longitude: z.number(),
+      latitude: z.number(),
+    }),
   });
 
   const editForm = useAppForm({
     defaultValues: {
       address: household.address,
+      name: household.name,
+      position: {
+        longitude: household.longitude,
+        latitude: household.latitude,
+      },
     },
     validators: {
       onChange: schema,
@@ -32,8 +42,10 @@ export default function HouseholdInfo({ household }: { household: Household }) {
           {
             id: household.id,
             address: value.address,
-            latitude: household.latitude,
-            longitude: household.longitude,
+            latitude: value.position.latitude,
+            longitude: value.position.longitude,
+            nextWaterChangeDate: household.nextWaterChangeDate,
+            name: value.name,
           },
           {
             onSettled: resolve,
@@ -61,6 +73,8 @@ export default function HouseholdInfo({ household }: { household: Household }) {
           <DialogContent>
             <DialogTitle>Rediger husholdning</DialogTitle>
             <editForm.AppField name="address">{(field) => <field.TextInput label="Adresse" />}</editForm.AppField>
+            <editForm.AppField name="name">{(field) => <field.TextInput label="Navn" />}</editForm.AppField>
+            <editForm.AppField name="position">{(field) => <field.PositionSelector />}</editForm.AppField>
             <editForm.AppForm>
               <editForm.SubmitButton>Lagre endringer</editForm.SubmitButton>
             </editForm.AppForm>
