@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMyGroupMemberships } from "@/actions/group";
 import { useMyHousehold } from "@/actions/household";
@@ -11,8 +11,10 @@ import UserGroupList from "@/components/group/userGroupList";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { showToast } from "@/components/ui/toaster";
+import CreateGroupDialog from "@/components/group/createGroupDialog";
 
 export default function UserGroupsPage() {
+  const [dialogOpen, setDialogOpen] = useState(false);
   const { data: household, isPending: loadingHousehold } = useMyHousehold();
   const { data: relations, isPending, isError, error } = useMyGroupMemberships();
   const router = useRouter();
@@ -53,7 +55,7 @@ export default function UserGroupsPage() {
       <main className="flex-1 p-8 space-y-8">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-semibold">Dine beredskapsgrupper</h1>
-          <Button onClick={() => router.push("/groups/create")}>
+          <Button onClick={() => setDialogOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Opprett ny gruppe
           </Button>
@@ -65,6 +67,8 @@ export default function UserGroupsPage() {
       <aside className="w-[400px] bg-white border-l border-border p-6 space-y-8">
         <GroupInvites />
       </aside>
+
+      <CreateGroupDialog open={dialogOpen} onOpenChange={setDialogOpen} />
     </div>
   );
 }
