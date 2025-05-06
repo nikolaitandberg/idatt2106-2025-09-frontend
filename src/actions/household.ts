@@ -304,5 +304,46 @@ export const useMyHouseholdInvites = () => {
     queryKey: ["household", "invites"],
     queryFn: () => getHouseholdInvites(fetcher),
     enabled: session.status !== "loading",
+    retry: false,
+  });
+};
+
+export const acceptHouseholdInvite = async (householdId: number, fetcher: FetchFunction = Fetch): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/households/accept`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ householdId }),
+  });
+};
+
+export const useAcceptHouseholdInvite = () => {
+  const fetcher = useFetch();
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, number>({
+    mutationFn: (householdId) => acceptHouseholdInvite(householdId, fetcher),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["household", "invites"] });
+    },
+  });
+};
+
+export const declineHouseholdInvite = async (householdId: number, fetcher: FetchFunction = Fetch): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/households/reject`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ householdId }),
+  });
+};
+
+export const useDeclineHouseholdInvite = () => {
+  const fetcher = useFetch();
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, number>({
+    mutationFn: (householdId) => declineHouseholdInvite(householdId, fetcher),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["household", "invites"] });
+    },
   });
 };

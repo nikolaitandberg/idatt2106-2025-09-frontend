@@ -9,18 +9,12 @@ import useAppForm from "@/util/formContext";
 import { z } from "zod";
 import { CreateHouseholdRequest } from "@/types";
 import { showToast } from "@/components/ui/toaster";
-import HouseholdInviteCard from "@/components/household/HouseholdInviteCard";
-import LoadingSpinner from "@/components/ui/loadingSpinner";
+import HouseholdInviteCard, { HouseholdInviteCardSkeleton } from "@/components/household/HouseholdInviteCard";
 
 export default function CreateHouseholdForm() {
   const { mutate: createHousehold, isError, error } = useCreateHousehold();
   const { data: household } = useMyHousehold();
-  const {
-    data: myInvites,
-    isPending: invitesIsPending,
-    isError: invitesIsError,
-    invitesError,
-  } = useMyHouseholdInvites();
+  const { data: myInvites, isPending: invitesIsPending } = useMyHouseholdInvites();
 
   const shema = z.object({
     address: z.string().min(1, { message: "Adresse må fylles ut" }),
@@ -88,19 +82,23 @@ export default function CreateHouseholdForm() {
         </TabsList>
 
         <TabsContent value="join">
-          {invitesIsPending ? (
-            <div className="flex justify-center items-center min-h-[200px]">
-              <LoadingSpinner />
-            </div>
-          ) : (
-            <>
-              {myInvites?.length === 0 ? (
-                <div className="text-center text-muted-foreground">Ingen invitasjoner</div>
-              ) : (
-                myInvites?.map((invite) => <HouseholdInviteCard key={invite.householdId} invite={invite} />)
-              )}
-            </>
-          )}
+          <div className="flex flex-col gap-4 mb-4">
+            {invitesIsPending ? (
+              <>
+                {[1, 2].map((i) => (
+                  <HouseholdInviteCardSkeleton key={i} />
+                ))}
+              </>
+            ) : (
+              <>
+                {myInvites?.length === 0 || !myInvites ? (
+                  <div className="text-center text-muted-foreground">Ingen invitasjoner</div>
+                ) : (
+                  myInvites?.map((invite) => <HouseholdInviteCard key={invite.householdId} invite={invite} />)
+                )}
+              </>
+            )}
+          </div>
         </TabsContent>
 
         <TabsContent value="create">
