@@ -4,6 +4,7 @@ import Fetch, { FetchFunction, useFetch } from "@/util/fetch";
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from "@tanstack/react-query";
 import { ApiError, ResetPasswordRequest } from "@/types";
 import { UpdatePositionSharingRequest } from "@/types/setting";
+import { userUpdateRequest } from "@/types/apiRequests";
 
 export const getProfile = async (userId: number, fetcher: FetchFunction = Fetch): Promise<User> => {
   return await fetcher<User>(`${API_BASE_URL}/user/${userId}`);
@@ -86,6 +87,38 @@ export const useUpdateUserPositionSharing = () => {
     },
     onSuccess: (data, req) => {
       queryClient.invalidateQueries({ queryKey: ["user", req.userId] });
+    },
+  });
+};
+
+export const updateUser = async (req: userUpdateRequest, fetcher: FetchFunction = Fetch) => {
+  await fetcher<void>(`${API_BASE_URL}/user/${req.id}`, {
+    method: "PUT",
+    body: JSON.stringify(req),
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useUpdateUser = () => {
+  const fetcher = useFetch();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (req: userUpdateRequest) => updateUser(req, fetcher),
+    onMutate: (req: userUpdateRequest) => {
+      const previousUser = queryClient.getQueryData<User>(["user", req.id]);
+      if (previousUser) {
+        queryClient.setQueryData<User>(["user", req.id], { ...previousUser, ...req });
+      }
+      return { previousUser };
+    },
+    onError: (err, req, context) => {
+      if (context?.previousUser) {
+        queryClient.setQueryData<User>(["user", req.id], context.previousUser);
+      }
+    },
+    onSuccess: (data, req) => {
+      queryClient.invalidateQueries({ queryKey: ["user", req.id] });
     },
   });
 };

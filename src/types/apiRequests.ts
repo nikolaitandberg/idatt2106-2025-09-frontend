@@ -1,6 +1,7 @@
 import { Food, FoodType, Household } from "./household";
 import { MapObject, MapObjectType } from "./map";
 import { Event } from "./event";
+import { User } from "./user";
 
 export type CreateMapObjectTypeRequest = Omit<MapObjectType, "id">;
 
@@ -31,3 +32,16 @@ export type ResetPasswordRequest = {
 };
 
 export type CreateEventRequest = Omit<Event, "id">;
+
+export type userUpdateRequest = Omit<
+  User,
+  | "admin"
+  | "superAdmin"
+  | "householdId"
+  | "emailConfirmed"
+  | "password"
+  | "picture"
+  | "username"
+  | "sharePositionHousehold"
+  | "sharePositionGroup"
+>;
