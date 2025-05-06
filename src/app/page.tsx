@@ -55,16 +55,13 @@ export default function Home() {
         if (!session.data?.user.userId) return;
         if (data.userId === session.data.user.userId) return;
 
-        console.log("Updating location", data);
         queryClient.setQueryData(["location", "last-known"], (oldData: UserLocation[]) => {
           if (!oldData) return [{ userId: data.userId, latitude: data.latitude, longitude: data.longitude }];
 
           const newData = oldData.filter((object) => object.userId !== data.userId);
-          console.log("old data", oldData);
-          console.log("new data", newData);
+
           return [...newData, { userId: data.userId, latitude: data.latitude, longitude: data.longitude }];
         });
-        console.log(queryClient.getQueryData(["location", "last-known"]));
       },
     );
 
