@@ -245,13 +245,10 @@ export const editHouseholdInfo = async (
   req: EditHouseholdInfoRequest,
   fetcher: FetchFunction = Fetch,
 ): Promise<void> => {
+  console.log(req);
   await fetcher<void>(`${API_BASE_URL}/households/${req.id}`, {
     method: "PUT",
-    body: JSON.stringify({
-      address: req.address,
-      longitude: req.longitude,
-      latitude: req.latitude,
-    }),
+    body: JSON.stringify(req),
     headers: { "Content-Type": "application/json" },
   });
 };

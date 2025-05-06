@@ -26,8 +26,8 @@ export default function HouseholdInfo({ household }: { household: Household }) {
 
   const editForm = useAppForm({
     defaultValues: {
-      address: household.address,
-      name: household.name,
+      address: household.address ?? "",
+      name: household.name ?? "",
       position: {
         longitude: household.longitude,
         latitude: household.latitude,
@@ -37,6 +37,7 @@ export default function HouseholdInfo({ household }: { household: Household }) {
       onChange: schema,
     },
     onSubmit: async ({ value }) => {
+      console.log(value);
       await new Promise((resolve) => {
         updateHousehold(
           {
@@ -62,7 +63,7 @@ export default function HouseholdInfo({ household }: { household: Household }) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Home className="w-5 h-5" />
-          <h1 className="text-xl font-semibold">Din husholdning</h1>
+          <h1 className="text-xl font-semibold">{household.name ?? "Husholdning uten navn"}</h1>
         </div>
         <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
           <DialogTrigger asChild>
