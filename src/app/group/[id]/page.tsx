@@ -5,7 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Pencil, LogOut, Users, Apple, Home, UserPlus } from "lucide-react";
 import GroupHouseholdCard from "@/components/group/groupHouseholdCard";
-import { getGroupById, useGroupHouseholds, useLeaveGroup, useMyGroupMemberships } from "@/actions/group";
+import { getGroupById, useGroupHouseholds, useLeaveGroup, useMyGroupMemberships, useSharedFood } from "@/actions/group";
 import { useMyHousehold } from "@/actions/household";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { showToast } from "@/components/ui/toaster";
@@ -15,8 +15,8 @@ import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/
 import EditGroupForm from "@/components/ui/editGroupForm";
 import { useQuery } from "@tanstack/react-query";
 import { useFetch } from "@/util/fetch";
-import GroupSharedFood from "@/components/group/groupSharedFood";
 import InviteHouseholdDialog from "@/components/group/inviteHouseholdDialog";
+import GroupSharedFoodAccordion from "@/components/group/groupFoodAccordion";
 
 export default function GroupPage() {
   const params = useParams();
@@ -33,6 +33,7 @@ export default function GroupPage() {
   });
   const { data: households, isPending: loadingHouseholds } = useGroupHouseholds(groupId);
   const { data: myHousehold } = useMyHousehold();
+  const {data: sharedFood} = useSharedFood(groupId);
 
   const [isLeaveDialogOpen, setIsLeaveDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -92,8 +93,7 @@ export default function GroupPage() {
             <div className="flex items-center gap-2">
               <UserPlus className="w-4 h-4" />
               <span>
-                {group?.totalExtraResidents} ekstra medlem
-                {group?.totalExtraResidents === 1 ? "" : "mer"}
+                {group?.totalExtraResidents} ekstra medlem{group?.totalExtraResidents === 1 ? "" : "mer"}
               </span>
             </div>
           )}
@@ -174,13 +174,8 @@ export default function GroupPage() {
         <TabsContent value="matvarer">
           <div className="flex flex-col items-center mt-6 space-y-6">
             <h2 className="text-2xl font-semibold">Delt mat i gruppen</h2>
-            <div className="flex flex-wrap justify-center gap-6 w-full">
-              {households?.map((h) => (
-                <div key={h.id} className="w-full max-w-xl space-y-2">
-                  <h3 className="text-lg font-medium">{h.name}</h3>
-                  <GroupSharedFood groupHouseholdId={h.id} />
-                </div>
-              ))}
+            <div className="w-full max-w-2xl">
+            <GroupSharedFoodAccordion foodByHousehold={sharedFood ?? []} />
             </div>
           </div>
         </TabsContent>

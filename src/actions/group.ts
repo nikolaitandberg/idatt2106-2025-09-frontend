@@ -8,9 +8,9 @@ import {
   GroupHouseholdRelation,
   GroupHousehold,
   EditGroupRequest,
-  SharedFoodResponse,
   GroupInviteRequest,
   GroupInvite,
+  SharedFoodByHousehold,
 } from "@/types/group";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
@@ -126,21 +126,23 @@ export const useEditGroup = () => {
 export const getSharedFood = async (
   groupHouseholdId: number,
   fetcher: FetchFunction = Fetch,
-): Promise<SharedFoodResponse[]> => {
-  const res = await fetcher<SharedFoodResponse[]>(`${API_BASE_URL}/shared-food/summary/detailed/${groupHouseholdId}`);
+): Promise<SharedFoodByHousehold[]> => {
+  const res = await fetcher<SharedFoodByHousehold[]>(`${API_BASE_URL}/shared-food/summary/detailed/group/${groupHouseholdId}`);
   if (!res) throw new Error("Kunne ikke hente delt mat");
   return res;
 };
 
-export const useSharedFood = (groupHouseholdId: number) => {
+
+export const useSharedFood = (groupHouseholdId?: number) => {
   const fetcher = useFetch();
 
-  return useQuery<SharedFoodResponse[]>({
+  return useQuery<SharedFoodByHousehold[], Error>({
     queryKey: ["shared-food", groupHouseholdId],
-    queryFn: () => getSharedFood(groupHouseholdId, fetcher),
+    queryFn: () => getSharedFood(groupHouseholdId!, fetcher),
     enabled: !!groupHouseholdId,
   });
 };
+
 
 export const inviteHouseholdToGroup = async (
   req: GroupInviteRequest,

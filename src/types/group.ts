@@ -46,8 +46,10 @@ export type SharedFoodResponse = {
     id: number;
     amount: number;
     expirationDate: string;
+    householdId: number;
   }[];
 };
+
 
 export type ShareFoodRequest = {
   foodId: number;
@@ -63,4 +65,25 @@ export type GroupInviteRequest = {
 export type GroupInvite = {
   groupId: number;
   householdId: number;
+};
+
+export type SharedFoodSummary = {
+  typeId: number;
+  typeName: string;
+  unit: string;
+  totalAmount: number;
+};
+
+export type SharedFoodByHousehold = {
+  typeId: number;
+  typeName: string;
+  unit: string;
+  totalAmount: number;
+  totalCalories: number;
+  batches: {
+    id: number;
+    amount: number;
+    expirationDate: string;
+    householdId: number;
+  }[];
 };
