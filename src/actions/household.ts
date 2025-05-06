@@ -8,6 +8,7 @@ import {
   AddExtraResidentRequest,
   AddHouseholdFoodRequest,
   EditHouseholdInfoRequest,
+  EditHouseholdWaterRequest,
 } from "@/types/apiRequests";
 import { ExtraResidentResponse } from "@/types/extraResident";
 import { useSession } from "next-auth/react";
@@ -24,12 +25,15 @@ export const getHousehold = async (id: number, fetcher: FetchFunction = Fetch): 
   }
 };
 
-export const getMyHousehold = async (fetcher: FetchFunction = Fetch): Promise<GetHouseholdResonse> => {
-  const res = await fetcher<GetHouseholdResonse>(`${API_BASE_URL}/households/my-household`);
-  if (!res) {
-    throw new ApiError("Failed to fetch household data");
+export const getMyHousehold = async (fetcher: FetchFunction = Fetch): Promise<GetHouseholdResonse | null> => {
+  try {
+    return (await fetcher<GetHouseholdResonse>(`${API_BASE_URL}/households/my-household`)) ?? null;
+  } catch (error) {
+    if (error instanceof ApiError && error.code === 404) {
+      return null;
+    }
+    throw error;
   }
-  return res;
 };
 
 export const useMyHousehold = () => {
@@ -101,7 +105,7 @@ export const useHousehold = (id: number, options?: UseQueryOptions<GetHouseholdR
   const fetcher = useFetch();
 
   return useQuery<GetHouseholdResonse | null, Error>({
-    queryKey: ["household"],
+    queryKey: ["household", id],
     queryFn: () => getHousehold(id, fetcher),
     enabled: options?.enabled ?? true,
     ...options,
@@ -112,9 +116,9 @@ export const useHouseholdUsers = (id: number, options?: UseQueryOptions<UserResp
   const fetcher = useFetch();
 
   return useQuery<UserResponse[], Error>({
-    queryKey: ["household", "users"],
+    queryKey: ["household", "users", id],
     queryFn: () => getHouseholdUsers(id, fetcher),
-    enabled: options?.enabled ?? true,
+    enabled: !!id && (options?.enabled ?? true),
     ...options,
   });
 };
@@ -253,6 +257,29 @@ export const useEditHouseholdInfo = () => {
 
   return useMutation<void, Error, EditHouseholdInfoRequest>({
     mutationFn: (data) => editHouseholdInfo(data, fetcher),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
+    },
+  });
+};
+
+export const updateHouseholdWater = async (
+  req: EditHouseholdWaterRequest,
+  fetcher: FetchFunction = Fetch,
+): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/households/${req.id}`, {
+    method: "PUT",
+    body: JSON.stringify(req),
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useUpdateHouseholdWater = () => {
+  const fetcher = useFetch();
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, EditHouseholdWaterRequest>({
+    mutationFn: (data) => updateHouseholdWater(data, fetcher),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
     },

@@ -17,12 +17,12 @@ export default function HouseholdPageWrapper() {
     );
   }
 
-  if (isError) {
-    return <div className="text-center py-12 text-red-600">Kunne ikke hente profildata</div>;
+  if (!household) {
+    return <CreateHouseholdForm />;
   }
 
-  if (!household.id || household.id <= 0) {
-    return <CreateHouseholdForm />;
+  if (isError) {
+    return <div className="text-center py-12 text-red-600">Kunne ikke hente profildata</div>;
   }
 
   return (

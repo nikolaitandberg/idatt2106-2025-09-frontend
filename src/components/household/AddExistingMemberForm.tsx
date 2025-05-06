@@ -19,7 +19,7 @@ export default function AddExistingMemberForm({ onSubmit }: AddExistingMemberFor
       onChange: schema,
     },
     onSubmit: async ({ value }) => {
-      await onSubmit(value);
+      await onSubmit({ username: value.username });
     },
   });
 

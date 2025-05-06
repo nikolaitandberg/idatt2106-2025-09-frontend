@@ -10,10 +10,12 @@ export interface UserResponse {
 export type Household = {
   id: number;
   address: string;
+  name: string;
   longitude: number;
   latitude: number;
   waterAmountLiters: number;
   lastWaterChangeDate: string;
+  nextWaterChangeDate: string;
   levelOfPreparedness: {
     levelOfPreparedness: number;
     levelOfPreparednessFood: number;
@@ -45,3 +47,11 @@ export type FoodSummary = Omit<FoodType, "id" | "name"> & {
   totalCalories: number;
   batches: Omit<Food, "typeId" | "householdId">[];
 };
+
+export interface HouseholdGroupMember {
+  id: number;
+  name: string;
+  address: string;
+  peopleCount: number;
+  isHome?: boolean;
+}

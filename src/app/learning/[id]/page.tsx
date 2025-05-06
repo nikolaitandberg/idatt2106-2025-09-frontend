@@ -2,20 +2,15 @@ import { getInfoPageById } from "@/actions/learning";
 import { Button } from "@/components/ui/button";
 import MarkdownRenderer from "@/components/ui/markdownRenderer";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 
-export default async function ScenarioPage({ params }: { params: { id: string } }) {
-  const id = parseInt(await params.id);
+export default async function ScenarioPage({ params }: { params: Promise<{ id: string }> }) {
+  const id = parseInt((await params).id);
 
   const infoPage = await getInfoPageById(id);
 
   if (!infoPage) {
-    return (
-      <div className="min-h-screen bg-background text-foreground px-4 py-10 flex justify-center">
-        <div className="w-full max-w-5xl">
-          <h1 className="text-3xl font-bold text-left">Scenario ikke funnet</h1>
-        </div>
-      </div>
-    );
+    notFound();
   }
 
   return (

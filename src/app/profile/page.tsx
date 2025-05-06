@@ -1,12 +1,15 @@
 "use client";
 import { useProfile, useUpdateUserPositionSharing } from "@/actions/user";
+import { useMyHousehold } from "@/actions/household";
 import { Button } from "@/components/ui/button";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { Switch } from "@/components/ui/Switch";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
-import Image from "next/image";
+import { CircleUserRound, ShieldUser } from "lucide-react";
 import { redirect } from "next/navigation";
+import { useState } from "react";
+import { EditUserProfileForm } from "@/components/profile/editUserProfileForm";
 
 export default function ProfilePageWrapper() {
   const session = useSession();
@@ -28,7 +31,9 @@ export default function ProfilePageWrapper() {
 
 function ProfilePage({ userId }: { userId: number }) {
   const { data: profile, isLoading, error } = useProfile(userId);
+  const { data: household } = useMyHousehold();
   const { mutate: updateUserPositionSharing } = useUpdateUserPositionSharing();
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -75,24 +80,7 @@ function ProfilePage({ userId }: { userId: number }) {
     <div className="max-w-2xl mx-auto px-4 py-8">
       <div className="bg-white rounded-2xl shadow p-8">
         <div className="flex flex-col md:flex-row items-center gap-6">
-          <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-primary">
-            {profile.picture ? (
-              <Image
-                src={profile.picture}
-                alt={`${profile.firstName} ${profile.lastName}`}
-                fill
-                className="object-cover"
-              />
-            ) : (
-              <div className="w-full h-full bg-gray-200 flex justify-center items-center">
-                <span className="text-4xl text-gray-500">
-                  {profile.firstName?.[0]}
-                  {profile.lastName?.[0]}
-                </span>
-              </div>
-            )}
-          </div>
-
+          {profile.admin ? <ShieldUser size={96} strokeWidth={1} /> : <CircleUserRound size={96} strokeWidth={1} />}
           <div className="text-center md:text-left">
             <h1 className="text-3xl font-bold">
               {profile.firstName} {profile.lastName}
@@ -114,14 +102,15 @@ function ProfilePage({ userId }: { userId: number }) {
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-sm text-gray-500">E-post</p>
               <p className="font-medium">{profile.email}</p>
-              <span className={`text-xs ${profile.emailConfirmed ? "text-green-600" : "text-amber-600"}`}>
+              <span
+                className={`text-xs ${profile.emailConfirmed ? "text-green-600" : "text-red-600"} font-bold bg-gray-200 px-2 py-1 rounded-full mt-2`}>
                 {profile.emailConfirmed ? "Verifisert" : "Ikke verifisert"}
               </span>
             </div>
 
             <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-sm text-gray-500">Husholdnings-ID</p>
-              <p className="font-medium">{profile.householdId || "Ingen"}</p>
+              <p className="text-sm text-gray-500">Husholdning</p>
+              <p className="font-medium">{household?.address || "Ingen"}</p>
             </div>
           </div>
 
@@ -151,7 +140,7 @@ function ProfilePage({ userId }: { userId: number }) {
                   Husholdning
                 </label>
                 <span
-                  className={`w-3 h-3 rounded-full ${profile.sharePositionHousehold ? "bg-green-500" : "bg-red-500"}`}></span>
+                  className={`w-3 h-3 rounded-full ${profile.sharePositionHousehold ? "bg-green-600" : "bg-red-600"}`}></span>
               </div>
               <div className="flex items-center gap-2">
                 <Switch
@@ -176,13 +165,16 @@ function ProfilePage({ userId }: { userId: number }) {
                   Gruppe
                 </label>
                 <span
-                  className={`w-3 h-3 rounded-full ${profile.sharePositionGroup ? "bg-green-500" : "bg-red-500"}`}></span>
+                  className={`w-3 h-3 rounded-full ${profile.sharePositionGroup ? "bg-green-600" : "bg-red-600"}`}></span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-8 flex justify-end">
+        <div className="mt-8 flex justify-end gap-4">
+          <Button onClick={() => setEditDialogOpen(true)} variant="outline">
+            Rediger profil
+          </Button>
           <Button
             onClick={() =>
               signOut({
@@ -194,6 +186,9 @@ function ProfilePage({ userId }: { userId: number }) {
             Logg ut
           </Button>
         </div>
+        {profile && (
+          <EditUserProfileForm open={editDialogOpen} onClose={() => setEditDialogOpen(false)} user={profile} />
+        )}
       </div>
     </div>
   );

@@ -9,16 +9,13 @@ const getLastKnownLocations = async (householdId: number, fetcher: FetchFunction
 
 export const useLastKnownLocations = (
   householdId: number,
-  options: Omit<
-    UseQueryOptions<UserLocation[], Error, UserLocation[], [string, string, number]>,
-    "queryKey" | "queryFn"
-  >,
+  options: Omit<UseQueryOptions<UserLocation[], Error, UserLocation[], [string, string]>, "queryKey" | "queryFn">,
 ) => {
   const fetcher = useFetch();
 
   return useQuery({
     ...options,
-    queryKey: ["location", "last-known", householdId],
+    queryKey: ["location", "last-known"],
     queryFn: () => getLastKnownLocations(householdId, fetcher),
   });
 };

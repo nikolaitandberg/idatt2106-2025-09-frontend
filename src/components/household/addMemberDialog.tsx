@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useAddUserToHousehold, useAddExtraResident } from "@/actions/household";
 import AddExistingMemberForm from "./AddExistingMemberForm";
 import AddExtraResidentForm from "./AddExtraResidentForm";
+import { showToast } from "@/components/ui/toaster";
 
 export function AddMemberDialog({ householdId }: { householdId: number }) {
   const [open, setOpen] = useState(false);
@@ -38,6 +39,23 @@ export function AddMemberDialog({ householdId }: { householdId: number }) {
               onSubmit={async (req) => {
                 await new Promise((resolve) => {
                   addExistingMember(req, {
+                    onSuccess: () => {
+                      showToast({
+                        title: "Bruker invitert",
+                        description: `${req.username} er nå invitert til husholdningen`,
+                        variant: "success",
+                      });
+                    },
+                    onError: (error) => {
+                      const errorMessage = error instanceof Error ? error.message : "Kunne ikke invitere bruker";
+                      console.log(errorMessage);
+
+                      showToast({
+                        title: "Feil ved invitasjon",
+                        description: errorMessage,
+                        variant: "error",
+                      });
+                    },
                     onSettled: resolve,
                   });
                 });
