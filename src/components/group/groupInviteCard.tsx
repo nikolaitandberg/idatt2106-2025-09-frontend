@@ -50,7 +50,15 @@ export default function InviteCard({ invite }: InviteCardProps) {
           <LoadingSpinner />
         ) : (
           <>
-            Du er invitert til å bli med i gruppe <strong>{group?.groupName ?? invite.groupId}</strong>.
+            <p className="font-semibold">{group?.groupName ?? invite.groupId}</p>
+            <div className="flex items-center gap-2 mt-1 text-gray-700">
+              <span>
+                Det er {" "}
+                {group?.totalHouseholds ?? invite.groupId}{" "}
+                {group?.totalHouseholds === 1 ? "husholdning" : "husholdninger"}
+                {" "}i denne gruppen.
+              </span>
+            </div>
           </>
         )}
       </div>
