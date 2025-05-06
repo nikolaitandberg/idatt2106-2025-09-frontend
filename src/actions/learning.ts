@@ -1,12 +1,18 @@
 import { InfoPage, EditInfoPageRequest, CreateInfoPageRequest } from "@/types/learning";
 import { API_BASE_URL } from "@/types/constants";
 import Fetch, { FetchFunction, useFetch } from "@/util/fetch";
-import { useQuery, UseQueryOptions } from "@tanstack/react-query";
-import { useMutation } from "@tanstack/react-query";
+import { useQuery, UseQueryOptions, useMutation } from "@tanstack/react-query";
+import { ApiError } from "@/types";
 
 export const getAllInfoPages = async (fetcher: FetchFunction = Fetch): Promise<InfoPage[]> => {
-  const res = await fetcher<InfoPage[]>(`${API_BASE_URL}/info-page/all`);
-  return res ?? [];
+  try {
+    return (await fetcher<InfoPage[]>(`${API_BASE_URL}/info-page/all`)) ?? [];
+  } catch (error) {
+    if (error instanceof ApiError && error.code === 404) {
+      return [];
+    }
+    throw error;
+  }
 };
 
 export const useInfoPages = (options?: UseQueryOptions<InfoPage[], Error>) => {
