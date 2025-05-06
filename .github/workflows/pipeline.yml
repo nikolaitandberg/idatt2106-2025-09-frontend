@@ -104,6 +104,3 @@ jobs:
           sleep 10
       - name: Run Cypress Test
         uses: cypress-io/github-action@v6
-        with:
-          working-directory: frontend
-          install: false
