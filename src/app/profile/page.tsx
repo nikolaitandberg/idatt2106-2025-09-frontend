@@ -7,6 +7,8 @@ import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import { useState } from "react";
+import { EditUserProfileForm } from "@/components/profile/editUserProfileForm";
 
 export default function ProfilePageWrapper() {
   const session = useSession();
@@ -29,6 +31,7 @@ export default function ProfilePageWrapper() {
 function ProfilePage({ userId }: { userId: number }) {
   const { data: profile, isLoading, error } = useProfile(userId);
   const { mutate: updateUserPositionSharing } = useUpdateUserPositionSharing();
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -182,7 +185,10 @@ function ProfilePage({ userId }: { userId: number }) {
           </div>
         </div>
 
-        <div className="mt-8 flex justify-end">
+        <div className="mt-8 flex justify-end gap-4">
+          <Button onClick={() => setEditDialogOpen(true)} variant="outline">
+            Rediger profil
+          </Button>
           <Button
             onClick={() =>
               signOut({
@@ -194,6 +200,10 @@ function ProfilePage({ userId }: { userId: number }) {
             Logg ut
           </Button>
         </div>
+
+        {profile && (
+          <EditUserProfileForm open={editDialogOpen} onClose={() => setEditDialogOpen(false)} user={profile} />
+        )}
       </div>
     </div>
   );

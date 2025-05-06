@@ -35,5 +35,13 @@ export type CreateEventRequest = Omit<Event, "id">;
 
 export type userUpdateRequest = Omit<
   User,
-  "admin" | "superAdmin" | "householdId" | "emailConfirmed" | "password" | "picture" | "username"
+  | "admin"
+  | "superAdmin"
+  | "householdId"
+  | "emailConfirmed"
+  | "password"
+  | "picture"
+  | "username"
+  | "sharePositionHousehold"
+  | "sharePositionGroup"
 >;
