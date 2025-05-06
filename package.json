@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "cypress:open": "cypress open",
-    "cypress:run": "cypress run"
+    "test:e2e": "start-server-and-test \"npm run dev -- --port 3000\" http-get://localhost:3000 \"cypress run --e2e\"",
+    "test:e2e:dev": "start-server-and-test \"npm run dev -- --port 3000\" http://localhost:3000 \"cypress open --e2e\""
   },
   "dependencies": {
     "@stomp/stompjs": "^7.1.1",
