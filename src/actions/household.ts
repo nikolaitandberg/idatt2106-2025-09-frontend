@@ -344,3 +344,22 @@ export const useDeclineHouseholdInvite = () => {
     },
   });
 };
+
+export const leaveHousehold = async (fetcher: FetchFunction = Fetch): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/households/leave`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useLeaveHousehold = () => {
+  const fetcher = useFetch();
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error>({
+    mutationFn: () => leaveHousehold(fetcher),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
+    },
+  });
+};

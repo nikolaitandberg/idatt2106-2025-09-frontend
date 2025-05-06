@@ -10,7 +10,7 @@ import { HouseholdInvite } from "@/types/household";
 import { Button } from "../ui/button";
 import { showToast } from "../ui/toaster";
 import LoadingSpinner from "../ui/loadingSpinner";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface HouseholdInviteCardProps {
   invite: HouseholdInvite;
@@ -21,6 +21,8 @@ export default function HouseholdInviteCard({ invite }: HouseholdInviteCardProps
   const { data: householdUsers, isPending: householdUsersIsPending } = useHouseholdUsers(household?.id ?? 0);
   const { mutate: acceptInvite, isPending: acceptIsPending } = useAcceptHouseholdInvite();
   const { mutate: declineInvite, isPending: declineIsPending } = useDeclineHouseholdInvite();
+
+  const router = useRouter();
 
   return (
     <div className="flex flex-col bg-white rounded-lg p-4 shadow-md gap-4">
@@ -71,7 +73,7 @@ export default function HouseholdInviteCard({ invite }: HouseholdInviteCardProps
                   description: "Du har blitt med i husholdningen",
                   variant: "success",
                 });
-                redirect("/household");
+                router.replace("/household");
               },
               onError: () => {
                 showToast({

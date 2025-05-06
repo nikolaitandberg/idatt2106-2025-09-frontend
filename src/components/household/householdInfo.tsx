@@ -1,3 +1,5 @@
+"use client";
+
 import { Home, MapPin, Pencil } from "lucide-react";
 import { Household } from "@/types/household";
 import HouseholdUsers from "./householdUsers";
@@ -6,14 +8,21 @@ import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "../ui/dialog";
 import useAppForm from "@/util/formContext";
 import { z } from "zod";
-import { useEditHouseholdInfo } from "@/actions/household";
+import { useEditHouseholdInfo, useLeaveHousehold } from "@/actions/household";
 import FormError from "../ui/form/formError";
 import { useState } from "react";
+import ConfirmationDialog from "../ui/confirmationDialog";
+import { showToast } from "../ui/toaster";
+import { useRouter } from "next/navigation";
 
 export default function HouseholdInfo({ household }: { household: Household }) {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [confirmLeaveOpen, setConfirmLeaveOpen] = useState(false);
 
   const { mutate: updateHousehold, error } = useEditHouseholdInfo();
+  const { mutate: leaveHousehold, isPending: leaveHouseholdIsPending } = useLeaveHousehold();
+
+  const router = useRouter();
 
   const schema = z.object({
     address: z.string().min(1, { message: "Husholdningen må ha en adresse" }),
@@ -37,7 +46,6 @@ export default function HouseholdInfo({ household }: { household: Household }) {
       onChange: schema,
     },
     onSubmit: async ({ value }) => {
-      console.log(value);
       await new Promise((resolve) => {
         updateHousehold(
           {
@@ -88,6 +96,39 @@ export default function HouseholdInfo({ household }: { household: Household }) {
         <MapPin className="w-4 h-4" />
         <span>{household.address}</span>
       </div>
+
+      <ConfirmationDialog
+        open={confirmLeaveOpen}
+        onConfirm={() => {
+          leaveHousehold(undefined, {
+            onSuccess: () => {
+              setConfirmLeaveOpen(false);
+              showToast({
+                title: "Husholdning forlatt",
+                description: "Du har forlatt husholdningen",
+                variant: "success",
+              });
+              router.replace("/household/join");
+            },
+            onError: () => {
+              setConfirmLeaveOpen(false);
+              showToast({
+                title: "Kunne ikke forlate husholdning",
+                description: "Prøv igjen senere",
+                variant: "error",
+              });
+            },
+          });
+        }}
+        confirmIsPending={leaveHouseholdIsPending}
+        onCancel={() => setConfirmLeaveOpen(false)}
+        variant="warning"
+        title="Forlat husholdning"
+        description="Er du sikker på at du vil forlate husholdningen?"
+      />
+      <Button variant="outline" size="fullWidth" onClick={() => setConfirmLeaveOpen(true)}>
+        Forlat husholdning
+      </Button>
 
       <hr className="border-border" />
       <HouseholdUsers householdId={household.id} />

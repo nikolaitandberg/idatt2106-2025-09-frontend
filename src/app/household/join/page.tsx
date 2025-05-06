@@ -1,7 +1,6 @@
 "use client";
 
 import { useCreateHousehold, useMyHousehold, useMyHouseholdInvites } from "@/actions/household";
-import { redirect } from "next/navigation";
 import { Home, Plus } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FormSection from "@/components/ui/form/formSection";
@@ -10,11 +9,27 @@ import { z } from "zod";
 import { CreateHouseholdRequest } from "@/types";
 import { showToast } from "@/components/ui/toaster";
 import HouseholdInviteCard, { HouseholdInviteCardSkeleton } from "@/components/household/HouseholdInviteCard";
+import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { redirect, useRouter } from "next/navigation";
 
 export default function CreateHouseholdForm() {
   const { mutate: createHousehold, isError, error } = useCreateHousehold();
-  const { data: household } = useMyHousehold();
+  const { data: household, isFetching: householdIsFetching } = useMyHousehold();
   const { data: myInvites, isPending: invitesIsPending } = useMyHouseholdInvites();
+  const session = useSession();
+
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (householdIsFetching || !household) {
+      return;
+    }
+
+    setIsInitialLoad(false);
+  }, [householdIsFetching, household]);
 
   const shema = z.object({
     address: z.string().min(1, { message: "Adresse må fylles ut" }),
@@ -27,7 +42,7 @@ export default function CreateHouseholdForm() {
 
   const defaultValues: Omit<
     CreateHouseholdRequest,
-    "longitude" | "latitude" | "waterAmountLiters" | "lastWaterChangeDate"
+    "longitude" | "latitude" | "waterAmountLiters" | "lastWaterChangeDate" | "username"
   > & {
     position: {
       longitude: number;
@@ -48,18 +63,40 @@ export default function CreateHouseholdForm() {
       onChange: shema,
     },
     onSubmit: async ({ value }) => {
-      createHousehold({
-        address: value.address,
-        name: value.name,
-        longitude: value.position.longitude,
-        latitude: value.position.latitude,
-        lastWaterChangeDate: new Date().toISOString(),
-        waterAmountLiters: 0,
+      await new Promise((resolve) => {
+        createHousehold(
+          {
+            address: value.address,
+            name: value.name,
+            longitude: value.position.longitude,
+            latitude: value.position.latitude,
+            lastWaterChangeDate: new Date().toISOString(),
+            waterAmountLiters: 0,
+            username: session.data?.sub ?? "",
+          },
+          {
+            onSuccess: () => {
+              showToast({
+                title: "Husholdning opprettet",
+                description: "Du har nå opprettet en husholdning",
+              });
+              router.replace("/household");
+            },
+            onError: () => {
+              showToast({
+                title: "Noe gikk galt",
+                description: "Kunne ikke opprette husholdning",
+                variant: "error",
+              });
+            },
+            onSettled: resolve,
+          },
+        );
       });
     },
   });
 
-  if (household) {
+  if (household && isInitialLoad && !householdIsFetching) {
     showToast({
       title: "Du har allerede en husholdning",
       description: "Forlat husholdningen din før du oppretter en ny",

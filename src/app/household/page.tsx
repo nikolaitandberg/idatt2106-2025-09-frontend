@@ -5,9 +5,19 @@ import HouseholdFood from "@/components/household/HouseholdFood";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import HouseholdInfo from "@/components/household/householdInfo";
 import { redirect } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function HouseholdPageWrapper() {
-  const { data: household, isPending, isError } = useMyHousehold();
+  const { data: household, isPending, isError, isFetching } = useMyHousehold();
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  useEffect(() => {
+    if (isFetching || !household) {
+      return;
+    }
+
+    setIsInitialLoad(false);
+  }, [isFetching, household]);
 
   if (isPending) {
     return (
@@ -17,8 +27,16 @@ export default function HouseholdPageWrapper() {
     );
   }
 
-  if (!household) {
+  if (!household && isInitialLoad && !isFetching) {
     redirect("/household/join");
+  }
+
+  if (!household) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   if (isError) {
