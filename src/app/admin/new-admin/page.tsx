@@ -48,7 +48,6 @@ export default function AdminNews() {
           {/*</TableRow>*/}
         </TableBody>
       </Table>
-
     </div>
   );
 }
