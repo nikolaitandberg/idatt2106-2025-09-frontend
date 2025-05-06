@@ -106,7 +106,7 @@ export const useHousehold = (id: number, options?: UseQueryOptions<GetHouseholdR
   const fetcher = useFetch();
 
   return useQuery<GetHouseholdResonse | null, Error>({
-    queryKey: ["household"],
+    queryKey: ["household", id],
     queryFn: () => getHousehold(id, fetcher),
     enabled: options?.enabled ?? true,
     ...options,
@@ -117,9 +117,9 @@ export const useHouseholdUsers = (id: number, options?: UseQueryOptions<UserResp
   const fetcher = useFetch();
 
   return useQuery<UserResponse[], Error>({
-    queryKey: ["household", "users"],
+    queryKey: ["household", "users", id],
     queryFn: () => getHouseholdUsers(id, fetcher),
-    enabled: options?.enabled ?? true,
+    enabled: !!id && (options?.enabled ?? true),
     ...options,
   });
 };

@@ -1,5 +1,5 @@
 import { Button } from "../ui/button";
-import GroupCard from "../ui/groupCard";
+import GroupCard from "../group/groupCard";
 
 export default function HouseholdGroups() {
   return (
