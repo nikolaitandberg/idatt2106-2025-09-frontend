@@ -79,13 +79,13 @@ export default function Home() {
           return newData;
         });
       } else if (data.eventType === "created") {
-        queryClient.setQueryData(["map", "mapObjects"], (oldData: MapObjectType[] | undefined) => {
+        queryClient.setQueryData(["map", "mapObjects", bounds], (oldData: MapObjectType[] | undefined) => {
           if (!oldData) return [data.payload];
           data.payload.id = oldData[oldData.length - 1].id + 1;
           return [...oldData, data.payload];
         });
       } else if (data.eventType === "updated") {
-        queryClient.setQueryData(["map", "mapObjects"], (oldData: MapObjectType[] | undefined) => {
+        queryClient.setQueryData(["map", "mapObjects", bounds], (oldData: MapObjectType[] | undefined) => {
           if (!oldData) return [data.payload];
           const newData = oldData.filter((object) => object.id !== data.payload.id);
           return [...newData, data.payload];
@@ -102,22 +102,20 @@ export default function Home() {
 
   useEffect(() => {
     const sub = socket.subscribe<EventWebsocketMessage>("/topic/events", (data) => {
-      queryClient.invalidateQueries({ queryKey: ["event", "events"] });
-
       if (data.eventType === "deleted") {
-        queryClient.setQueryData(["event", "events"], (oldData: MapObjectType[] | undefined) => {
+        queryClient.setQueryData(["map", "mapObjects", bounds], (oldData: MapObjectType[] | undefined) => {
           if (!oldData) return [];
           const newData = oldData.filter((object) => object.id !== data.payload.id);
           return newData;
         });
       } else if (data.eventType === "created") {
-        queryClient.setQueryData(["event", "events"], (oldData: MapObjectType[] | undefined) => {
+        queryClient.setQueryData(["map", "mapObjects", bounds], (oldData: MapObjectType[] | undefined) => {
           if (!oldData) return [data.payload];
           data.payload.id = oldData[oldData.length - 1].id + 1;
           return [...oldData, data.payload];
         });
       } else if (data.eventType === "updated") {
-        queryClient.setQueryData(["event", "events"], (oldData: MapObjectType[] | undefined) => {
+        queryClient.setQueryData(["map", "mapObjects", bounds], (oldData: MapObjectType[] | undefined) => {
           if (!oldData) return [data.payload];
           const newData = oldData.filter((object) => object.id !== data.payload.id);
           return [...newData, data.payload];
