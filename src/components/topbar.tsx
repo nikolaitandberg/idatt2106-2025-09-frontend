@@ -4,8 +4,9 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import { TopbarCard } from "@/components/ui/topbarCard";
-import { CircleUserRound, ShieldUser, GraduationCap, House, Users, Menu, X } from "lucide-react";
+import { CircleUserRound, GraduationCap, House, Users, Menu, X } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { AdminMenuPopover } from "@/components/adminMenuPopover";
 
 export default function Topbar() {
   const session = useSession();
@@ -19,6 +20,10 @@ export default function Topbar() {
     }
   }, [isMenuOpen, session?.data?.user?.isAdmin, session?.status]);
 
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
+
   return (
     <div className="sticky top-0 z-50 bg-white shadow-md">
       <div className="flex items-center justify-between py-2 px-4 md:px-10">
@@ -28,7 +33,7 @@ export default function Topbar() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center justify-end">
-          {session?.data?.user?.isAdmin && <TopbarCard icon={ShieldUser} text="Admin" href="/admin" />}
+          {session?.data?.user?.isAdmin && <AdminMenuPopover />}
           <TopbarCard icon={GraduationCap} text="Læring" href="/learning" />
           {session?.status === "authenticated" ? (
             <>
@@ -56,33 +61,39 @@ export default function Topbar() {
         className="md:hidden overflow-hidden transition-all duration-300 ease-in-out"
         style={{ height: `${menuHeight}px` }}>
         <div ref={mobileMenuRef} className="flex flex-col bg-white">
-          {session?.data?.user?.isAdmin && (
-            <Link href="/admin" className="px-4 py-3 flex items-center space-x-2 hover:bg-gray-100">
-              <ShieldUser size={20} />
-              <span>Admin</span>
-            </Link>
-          )}
-          <Link href="/learning" className="px-4 py-3 flex items-center space-x-2 hover:bg-gray-100">
+          <Link
+            href="/learning"
+            className="px-4 py-3 flex items-center space-x-2 hover:bg-gray-100"
+            onClick={closeMenu}>
             <GraduationCap size={20} />
             <span>Læring</span>
           </Link>
           {session?.status === "authenticated" ? (
             <>
-              <Link href="/household" className="px-4 py-3 flex items-center space-x-2 hover:bg-gray-100">
+              <Link
+                href="/household"
+                className="px-4 py-3 flex items-center space-x-2 hover:bg-gray-100"
+                onClick={closeMenu}>
                 <House size={20} />
                 <span>Husholdning</span>
               </Link>
-              <Link href="/group" className="px-4 py-3 flex items-center space-x-2 hover:bg-gray-100">
+              <Link
+                href="/group"
+                className="px-4 py-3 flex items-center space-x-2 hover:bg-gray-100"
+                onClick={closeMenu}>
                 <Users size={20} />
                 <span>Beredskapsgruppe</span>
               </Link>
-              <Link href="/profile" className="px-4 py-3 flex items-center space-x-2 hover:bg-gray-100">
+              <Link
+                href="/profile"
+                className="px-4 py-3 flex items-center space-x-2 hover:bg-gray-100"
+                onClick={closeMenu}>
                 <CircleUserRound size={20} />
                 <span>Profil</span>
               </Link>
             </>
           ) : (
-            <Link href="/login" className="px-4 py-3 flex items-center space-x-2 hover:bg-gray-100">
+            <Link href="/login" className="px-4 py-3 flex items-center space-x-2 hover:bg-gray-100" onClick={closeMenu}>
               <CircleUserRound size={20} />
               <span>Logg inn</span>
             </Link>
