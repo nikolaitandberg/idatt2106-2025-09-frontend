@@ -1,19 +1,34 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useMyGroupMemberships } from "@/actions/group";
+import { useMyHousehold } from "@/actions/household";
 import CreateOrJoinGroupForm from "@/components/group/createJoinGroupForm";
 import GroupInvites from "@/components/group/groupInvites";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import UserGroupList from "@/components/group/userGroupList";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { showToast } from "@/components/ui/toaster";
 
 export default function UserGroupsPage() {
+  const { data: household, isPending: loadingHousehold } = useMyHousehold();
   const { data: relations, isPending, isError, error } = useMyGroupMemberships();
   const router = useRouter();
 
-  if (isPending) {
+  useEffect(() => {
+    if (!loadingHousehold && (!household || household.id <= 0)) {
+      showToast({
+        title: "Opprett husholdning",
+        description: "Du må opprette en husholdning for å kunne være med i en gruppe.",
+        variant: "info",
+      });
+      router.push("/household");
+    }
+  }, [household, loadingHousehold, router]);
+
+  if (loadingHousehold || isPending) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <LoadingSpinner />
