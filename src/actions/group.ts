@@ -221,3 +221,23 @@ export const useCreateGroup = () => {
     },
   });
 };
+
+export const rejectGroupInvite = async (groupId: number, fetcher: FetchFunction = Fetch): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/group-households/reject`, {
+    method: "POST",
+    body: JSON.stringify(groupId),
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useRejectInvite = () => {
+  const fetcher = useFetch();
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, number>({
+    mutationFn: (groupId) => rejectGroupInvite(groupId, fetcher),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["group-invites", "my-household"] });
+    },
+  });
+};
