@@ -19,11 +19,7 @@ export default function GroupMembersTab({ groupId, households }: Props) {
 
       <div className="flex flex-wrap justify-center gap-4">
         {households.map((h) => (
-          <GroupHouseholdCard
-            key={h.id}
-            householdId={h.householdId}
-            isHome={myHousehold?.id === h.householdId}
-          />
+          <GroupHouseholdCard key={h.id} householdId={h.householdId} isHome={myHousehold?.id === h.householdId} />
         ))}
       </div>
 

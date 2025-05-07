@@ -1,19 +1,10 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Apple, Users } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import {
-  getGroupById,
-  useGroupHouseholds,
-  useSharedFood,
-} from "@/actions/group";
+import { getGroupById, useGroupHouseholds, useSharedFood } from "@/actions/group";
 import { useFetch } from "@/util/fetch";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import GroupHeader from "@/components/group/groupHeader";

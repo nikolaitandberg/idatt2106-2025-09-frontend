@@ -50,7 +50,6 @@ export type SharedFoodResponse = {
   }[];
 };
 
-
 export type ShareFoodRequest = {
   foodId: number;
   groupHouseholdId: number;

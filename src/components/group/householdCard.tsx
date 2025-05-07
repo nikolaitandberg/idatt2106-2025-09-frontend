@@ -14,11 +14,7 @@ export default function HouseholdCard({ id, name, address, isHome = false }: Hou
     <div className="rounded-lg border border-border shadow-sm p-4 w-[280px] bg-white">
       <h3 className="text-lg font-medium flex items-center justify-between">
         {name}
-        {isHome && (
-          <span className="text-xs text-white px-2 py-0.5 rounded-full bg-primary">
-            Ditt hjem
-          </span>
-        )}
+        {isHome && <span className="text-xs text-white px-2 py-0.5 rounded-full bg-primary">Ditt hjem</span>}
       </h3>
       <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1 mb-1">
         <MapPin className="w-3.5 h-3.5 inline-block mr-1" />

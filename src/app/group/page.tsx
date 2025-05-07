@@ -39,11 +39,7 @@ export default function UserGroupsPage() {
   }
 
   if (isError) {
-    return (
-      <div className="text-red-600 text-center py-12">
-        Kunne ikke hente gruppedata: {error?.message}
-      </div>
-    );
+    return <div className="text-red-600 text-center py-12">Kunne ikke hente gruppedata: {error?.message}</div>;
   }
 
   if (!relations || relations.length === 0) {

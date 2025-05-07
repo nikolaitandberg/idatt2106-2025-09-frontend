@@ -1,17 +1,7 @@
 "use client";
 
-import {
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-} from "@/components/ui/accordion";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ImageIcon, Calendar, ArrowRightLeft } from "lucide-react";
 import { useHousehold, useMyHousehold } from "@/actions/household";
 import { cn } from "@/util/cn";
@@ -35,29 +25,21 @@ const isExpiringSoon = (expirationDate: string) => {
   return diffDays >= 0 && diffDays < 7;
 };
 
-export default function GroupSharedFoodAccordion({
-  foodByHousehold,
-}: GroupFoodAccordionProps) {
+export default function GroupSharedFoodAccordion({ foodByHousehold }: GroupFoodAccordionProps) {
   const { data: myHousehold } = useMyHousehold();
   const [openDialogForId, setOpenDialogForId] = useState<number | null>(null);
 
   return (
     <Accordion type="multiple" className="w-full space-y-2">
       {foodByHousehold.map((group) => (
-        <AccordionItem
-          key={group.typeId}
-          value={group.typeId.toString()}
-          className="rounded-lg overflow-hidden border"
-        >
+        <AccordionItem key={group.typeId} value={group.typeId.toString()} className="rounded-lg overflow-hidden border">
           <AccordionTrigger className="bg-white px-4 py-3 hover:no-underline">
             <div className="flex justify-between items-center w-full">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
                   <ImageIcon className="w-4 h-4 text-muted-foreground" />
                 </div>
-                <span className="text-sm font-medium text-foreground">
-                  {group.typeName}
-                </span>
+                <span className="text-sm font-medium text-foreground">{group.typeName}</span>
               </div>
               <span className="text-sm text-muted-foreground">
                 {group.totalAmount} {group.unit}
@@ -74,9 +56,8 @@ export default function GroupSharedFoodAccordion({
                   key={index}
                   className={cn(
                     "grid grid-cols-[1fr_150px_80px_auto] items-center px-4 py-2 border-t gap-2",
-                    index % 2 === 0 ? "bg-white" : "bg-muted/20"
-                  )}
-                >
+                    index % 2 === 0 ? "bg-white" : "bg-muted/20",
+                  )}>
                   <span className="text-sm text-foreground">
                     <HouseholdName householdId={batch.householdId} />
                   </span>
@@ -84,11 +65,8 @@ export default function GroupSharedFoodAccordion({
                   <span
                     className={cn(
                       "flex items-center justify-center gap-1 text-sm",
-                      isExpiringSoon(batch.expirationDate)
-                        ? "text-yellow-500"
-                        : "text-muted-foreground"
-                    )}
-                  >
+                      isExpiringSoon(batch.expirationDate) ? "text-yellow-500" : "text-muted-foreground",
+                    )}>
                     <Calendar className="w-4 h-4" />
                     {batch.expirationDate}
                   </span>
@@ -100,15 +78,9 @@ export default function GroupSharedFoodAccordion({
                   {isOwner && (
                     <Dialog
                       open={openDialogForId === batch.id}
-                      onOpenChange={(open) =>
-                        setOpenDialogForId(open ? batch.id : null)
-                      }
-                    >
+                      onOpenChange={(open) => setOpenDialogForId(open ? batch.id : null)}>
                       <DialogTrigger asChild>
-                        <button
-                          className="p-1 rounded bg-red-100 hover:bg-red-200 transition"
-                          title="Flytt tilbake"
-                        >
+                        <button className="p-1 rounded bg-red-100 hover:bg-red-200 transition" title="Flytt tilbake">
                           <ArrowRightLeft className="w-4 h-4 text-red-500" />
                         </button>
                       </DialogTrigger>
@@ -134,4 +106,3 @@ export default function GroupSharedFoodAccordion({
     </Accordion>
   );
 }
-
