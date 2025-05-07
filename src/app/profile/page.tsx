@@ -4,12 +4,11 @@ import { useMyHousehold } from "@/actions/household";
 import { Button } from "@/components/ui/button";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { Switch } from "@/components/ui/Switch";
-import { useSession } from "next-auth/react";
-import { signOut } from "next-auth/react";
-import { CircleUserRound, ShieldUser } from "lucide-react";
+import { useSession, signOut } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { useState } from "react";
 import { EditUserProfileForm } from "@/components/profile/editUserProfileForm";
+import { UserAvatarFromUserId } from "@/components/ui/UserAvatar";
 
 export default function ProfilePageWrapper() {
   const session = useSession();
@@ -80,7 +79,10 @@ function ProfilePage({ userId }: { userId: number }) {
     <div className="max-w-2xl mx-auto px-4 py-8">
       <div className="bg-white rounded-2xl shadow p-8">
         <div className="flex flex-col md:flex-row items-center gap-6">
-          {profile.admin ? <ShieldUser size={96} strokeWidth={1} /> : <CircleUserRound size={96} strokeWidth={1} />}
+          <UserAvatarFromUserId
+            userId={profile.id}
+            className="w-24 h-24 md:w-32 md:h-32 text-3xl stroke-1 md:stroke-[0.5]"
+          />
           <div className="text-center md:text-left">
             <h1 className="text-3xl font-bold">
               {profile.firstName} {profile.lastName}

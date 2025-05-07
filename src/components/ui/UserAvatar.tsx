@@ -42,7 +42,12 @@ export default function UserAvatar(props: Readonly<UserAvatarProps>) {
 
 export function UserAvatarFromUserId({ userId, className }: { userId: number; className?: string }) {
   const { data: user, isPending } = useProfile(userId);
-  if (!user || isPending) {
+
+  if (isPending) {
+    return <CircleUserRound className={cn("animate-pulse stroke-foreground-muted duration-75", className)} />;
+  }
+
+  if (!user) {
     return <CircleUserRound className={className} />;
   }
 

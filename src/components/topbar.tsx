@@ -30,7 +30,7 @@ export default function Topbar() {
         </div>
         <Link href="/profile" className="flex flex-row items-center ml-4">
           <UserAvatarFromUserId
-            className="size-12 border border-neutral-600 text-md"
+            className="size-12 border-neutral-600 text-md stroke-[0.8]"
             userId={session?.data?.user?.userId ?? 0}
           />
         </Link>
