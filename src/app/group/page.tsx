@@ -1,40 +1,36 @@
 "use client";
 
-import { useMyGroupMemberships, getGroupById, getGroupInvitesForMyHousehold } from "@/actions/group";
-import GroupCard from "@/components/group/groupCard";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMyGroupMemberships } from "@/actions/group";
+import { useMyHousehold } from "@/actions/household";
+import CreateOrJoinGroupForm from "@/components/group/createJoinGroupForm";
+import GroupInvites from "@/components/group/groupInvites";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
-import { useFetch } from "@/util/fetch";
-import { useQueries, useQuery } from "@tanstack/react-query";
-import InviteCard from "@/components/group/groupInviteCard";
-import { useSession } from "next-auth/react";
+import UserGroupList from "@/components/group/userGroupList";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { showToast } from "@/components/ui/toaster";
 import CreateGroupDialog from "@/components/group/createGroupDialog";
 
 export default function UserGroupsPage() {
-  const session = useSession();
-
-  const fetcher = useFetch();
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const { data: household, isPending: loadingHousehold } = useMyHousehold();
   const { data: relations, isPending, isError, error } = useMyGroupMemberships();
+  const router = useRouter();
 
-  const groupQueries = useQueries({
-    queries: (relations ?? []).map((relation) => ({
-      queryKey: ["group", "details", relation.groupId],
-      queryFn: () => getGroupById(relation.groupId, fetcher),
-      enabled: !!relation && session.status !== "loading",
-    })),
-  });
+  useEffect(() => {
+    if (!loadingHousehold && (!household || household.id <= 0)) {
+      showToast({
+        title: "Opprett husholdning",
+        description: "Du må opprette en husholdning for å kunne være med i en gruppe.",
+        variant: "info",
+      });
+      router.push("/household");
+    }
+  }, [household, loadingHousehold, router]);
 
-  const {
-    data: invites,
-    isPending: invitesPending,
-    isError: invitesError,
-    error: invitesErrorMessage,
-  } = useQuery({
-    queryKey: ["group-invites", "my-household"],
-    queryFn: () => getGroupInvitesForMyHousehold(fetcher),
-    enabled: session.status !== "loading",
-  });
-
-  if (isPending) {
+  if (loadingHousehold || isPending) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <LoadingSpinner />
@@ -43,70 +39,32 @@ export default function UserGroupsPage() {
   }
 
   if (isError) {
-    return <div className="text-red-500 text-center mt-8">Kunne ikke hente gruppemedlemskap: {error?.message}</div>;
+    return <div className="text-red-600 text-center py-12">Kunne ikke hente gruppedata: {error?.message}</div>;
   }
 
-  const allLoaded = groupQueries.every((q) => q.isSuccess) && !invitesPending && !invitesError;
-  const anyError = groupQueries.some((q) => q.isError) || invitesError;
-
-  if (!allLoaded && !anyError) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <LoadingSpinner />
-      </div>
-    );
+  if (!relations || relations.length === 0) {
+    return <CreateOrJoinGroupForm />;
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-8 space-y-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Dine beredskapsgrupper</h1>
-        <CreateGroupDialog />
-      </div>
-
-      <div className="flex flex-col lg:flex-row gap-8 items-start">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:w-3/5">
-          {groupQueries.map((query, index) => {
-            if (query.isSuccess) {
-              const group = query.data;
-              return (
-                <GroupCard
-                  key={group.groupId}
-                  id={group.groupId}
-                  name={group.groupName}
-                  households={group.totalHouseholds}
-                  members={group.totalResidents + group.totalExtraResidents}
-                />
-              );
-            }
-            return (
-              <div key={index} className="text-red-500 text-sm">
-                Kunne ikke hente gruppe-ID {relations?.[index].groupId}
-              </div>
-            );
-          })}
+    <div className="min-h-screen flex bg-background text-foreground">
+      <main className="flex-1 p-8 space-y-8">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-semibold">Dine beredskapsgrupper</h1>
+          <Button onClick={() => setDialogOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Opprett ny gruppe
+          </Button>
         </div>
 
-        <div className="rounded-lg border border-border shadow-sm bg-white p-4 space-y-2 text-sm hover:shadow transition-shadow lg:w-2/5">
-          <h2 className="text-xl font-semibold mb-4">Gruppeinvitasjoner</h2>
+        <UserGroupList />
+      </main>
 
-          {invitesPending && <p>Laster invitasjoner...</p>}
+      <aside className="w-[400px] bg-white border-l border-border p-6 space-y-8">
+        <GroupInvites />
+      </aside>
 
-          {invitesError && (
-            <p className="text-red-500">Feil ved henting av invitasjoner: {invitesErrorMessage?.message}</p>
-          )}
-
-          {!invitesPending && invites && invites.length > 0 && (
-            <ul className="space-y-2 text-sm">
-              {invites.map((invite) => (
-                <InviteCard key={`${invite.groupId}-${invite.householdId}`} invite={invite} />
-              ))}
-            </ul>
-          )}
-
-          {!invitesPending && invites?.length === 0 && <p className="text-gray-500">Du har ingen invitasjoner.</p>}
-        </div>
-      </div>
+      <CreateGroupDialog open={dialogOpen} onOpenChange={setDialogOpen} />
     </div>
   );
 }

@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { Dialog, DialogTrigger, DialogContent, DialogFooter, DialogTitle, DialogClose } from "../ui/dialog";
-import { Button } from "../ui/button";
+import { Dialog, DialogTrigger, DialogContent, DialogFooter, DialogTitle } from "../ui/dialog";
 import { showToast } from "../ui/toaster";
 import useAppForm from "@/util/formContext";
 import { useCreateGroup } from "@/actions/group";
@@ -10,8 +8,13 @@ import FormSection from "../ui/form/formSection";
 import FormError from "../ui/form/formError";
 import { z } from "zod";
 
-export default function CreateGroupDialog() {
-  const [open, setOpen] = useState(false);
+export default function CreateGroupDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   const { mutate: createGroup, error } = useCreateGroup();
 
   const schema = z.object({
@@ -36,7 +39,7 @@ export default function CreateGroupDialog() {
               description: `"${value.name}" ble opprettet.`,
               variant: "success",
             });
-            setOpen(false);
+            onOpenChange(false);
           },
           onError: () => {
             showToast({
@@ -52,9 +55,9 @@ export default function CreateGroupDialog() {
   });
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        <Button>Opprett ny gruppe</Button>
+        <div />
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Ny gruppe</DialogTitle>
@@ -66,9 +69,6 @@ export default function CreateGroupDialog() {
 
         <form.AppForm>
           <DialogFooter className="mt-4">
-            <DialogClose asChild>
-              <Button variant="ghost">Avbryt</Button>
-            </DialogClose>
             <form.SubmitButton>Opprett</form.SubmitButton>
           </DialogFooter>
         </form.AppForm>

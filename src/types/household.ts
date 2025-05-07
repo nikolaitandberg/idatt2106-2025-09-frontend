@@ -55,3 +55,8 @@ export interface HouseholdGroupMember {
   peopleCount: number;
   isHome?: boolean;
 }
+
+export type HouseholdInvite = {
+  householdId: number;
+  userId: number;
+};

@@ -1,3 +1,5 @@
+"use client";
+
 import { useCreateFoodType, useFoodTypes } from "@/actions/food";
 import { useFieldContext } from "@/util/formContext";
 import ComboBox from "../comboBox";

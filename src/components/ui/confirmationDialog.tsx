@@ -43,13 +43,9 @@ export default function ConfirmationDialog({
             {cancelText}
           </Button>
           <Button
+            variant={variant === "critical" ? "destructive" : "default"}
             size="fullWidth"
-            className={cn(
-              "px-4 py-2",
-              variant === "critical"
-                ? "bg-red-500 text-white hover:bg-red-600"
-                : "bg-blue-500 text-white hover:bg-blue-600",
-            )}
+            className={cn("px-4 py-2")}
             onClick={() => {
               onConfirm();
             }}>

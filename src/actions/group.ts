@@ -8,9 +8,9 @@ import {
   GroupHouseholdRelation,
   GroupHousehold,
   EditGroupRequest,
-  SharedFoodResponse,
   GroupInviteRequest,
   GroupInvite,
+  SharedFoodByHousehold,
 } from "@/types/group";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
@@ -126,18 +126,20 @@ export const useEditGroup = () => {
 export const getSharedFood = async (
   groupHouseholdId: number,
   fetcher: FetchFunction = Fetch,
-): Promise<SharedFoodResponse[]> => {
-  const res = await fetcher<SharedFoodResponse[]>(`${API_BASE_URL}/shared-food/summary/detailed/${groupHouseholdId}`);
+): Promise<SharedFoodByHousehold[]> => {
+  const res = await fetcher<SharedFoodByHousehold[]>(
+    `${API_BASE_URL}/shared-food/summary/detailed/group/${groupHouseholdId}`,
+  );
   if (!res) throw new Error("Kunne ikke hente delt mat");
   return res;
 };
 
-export const useSharedFood = (groupHouseholdId: number) => {
+export const useSharedFood = (groupHouseholdId?: number) => {
   const fetcher = useFetch();
 
-  return useQuery<SharedFoodResponse[]>({
+  return useQuery<SharedFoodByHousehold[], Error>({
     queryKey: ["shared-food", groupHouseholdId],
-    queryFn: () => getSharedFood(groupHouseholdId, fetcher),
+    queryFn: () => getSharedFood(groupHouseholdId!, fetcher),
     enabled: !!groupHouseholdId,
   });
 };
@@ -218,6 +220,56 @@ export const useCreateGroup = () => {
     mutationFn: (data) => createGroup(data, fetcher),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["group-households", "my-groups"] });
+    },
+  });
+};
+
+export const rejectGroupInvite = async (groupId: number, fetcher: FetchFunction = Fetch): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/group-households/reject`, {
+    method: "POST",
+    body: JSON.stringify(groupId),
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useRejectInvite = () => {
+  const fetcher = useFetch();
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, number>({
+    mutationFn: (groupId) => rejectGroupInvite(groupId, fetcher),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["group-invites", "my-household"] });
+    },
+  });
+};
+
+export const unshareSharedFood = async (
+  foodId: number,
+  groupHouseholdId: number,
+  amount: number,
+  fetcher: FetchFunction = Fetch,
+): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/shared-food/unshare`, {
+    method: "POST",
+    body: JSON.stringify({
+      foodId,
+      groupHouseholdId,
+      amount,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useUnshareSharedFood = () => {
+  const fetcher = useFetch();
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, { foodId: number; groupHouseholdId: number; amount: number }>({
+    mutationFn: ({ foodId, groupHouseholdId, amount }) => unshareSharedFood(foodId, groupHouseholdId, amount, fetcher),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["shared-food"] });
+      queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
     },
   });
 };
