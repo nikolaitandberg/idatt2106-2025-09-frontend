@@ -9,12 +9,12 @@ import { z } from "zod";
 
 export default function UnshareForm({
   foodId,
-  groupHouseholdId,
+  groupId,
   maxAmount,
   onClose,
 }: {
   foodId: number;
-  groupHouseholdId: number;
+  groupId: number;
   maxAmount: number;
   onClose: () => void;
 }) {
@@ -22,7 +22,7 @@ export default function UnshareForm({
 
   const schema = z.object({
     amount: z
-      .number({ invalid_type_error: "Må vær et tall" })
+      .number({ invalid_type_error: "Må være et tall" })
       .min(1, "Må være minst 1")
       .max(maxAmount, `Må være maks ${maxAmount}`),
   });
@@ -35,7 +35,7 @@ export default function UnshareForm({
         unshare(
           {
             foodId,
-            groupHouseholdId,
+            groupId,
             amount: value.amount,
           },
           {
@@ -66,7 +66,7 @@ export default function UnshareForm({
     <>
       <FormSection>
         <form.AppField name="amount">
-          {(field) => <field.NumberInput label={`Antall (maks ${maxAmount})`} {...{ min: 1, max: maxAmount }} />}
+          {(field) => <field.NumberInput label={`Antall (maks ${maxAmount})`} />}
         </form.AppField>
       </FormSection>
 

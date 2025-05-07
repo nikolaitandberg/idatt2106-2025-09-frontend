@@ -9,7 +9,8 @@ import { useState } from "react";
 import { SharedFoodByHousehold } from "@/types/group";
 import UnshareForm from "@/components/group/unshareDialog";
 
-type GroupFoodAccordionProps = {
+type GroupSharedFoodAccordionProps = {
+  groupId: number; // <-- Ny prop
   foodByHousehold: SharedFoodByHousehold[];
 };
 
@@ -25,7 +26,7 @@ const isExpiringSoon = (expirationDate: string) => {
   return diffDays >= 0 && diffDays < 7;
 };
 
-export default function GroupSharedFoodAccordion({ foodByHousehold }: GroupFoodAccordionProps) {
+export default function GroupSharedFoodAccordion({ groupId, foodByHousehold }: GroupSharedFoodAccordionProps) {
   const { data: myHousehold } = useMyHousehold();
   const [openDialogForId, setOpenDialogForId] = useState<number | null>(null);
 
@@ -90,7 +91,7 @@ export default function GroupSharedFoodAccordion({ foodByHousehold }: GroupFoodA
 
                         <UnshareForm
                           foodId={batch.id}
-                          groupHouseholdId={batch.groupHouseholdId}
+                          groupId={groupId}
                           maxAmount={batch.amount}
                           onClose={() => setOpenDialogForId(null)}
                         />
