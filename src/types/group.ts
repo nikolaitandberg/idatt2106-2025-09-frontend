@@ -85,5 +85,6 @@ export type SharedFoodByHousehold = {
     amount: number;
     expirationDate: string;
     householdId: number;
+    groupHouseholdId: number;
   }[];
 };

@@ -118,7 +118,7 @@ export default function GroupSharedFoodAccordion({
 
                         <UnshareForm
                           foodId={batch.id}
-                          groupHouseholdId={batch.householdId}
+                          groupHouseholdId={batch.groupHouseholdId}
                           maxAmount={batch.amount}
                           onClose={() => setOpenDialogForId(null)}
                         />
