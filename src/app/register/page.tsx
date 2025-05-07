@@ -108,7 +108,7 @@ export default function Register() {
           {(field) => <field.TextInput label="Gjenta passord" type="password" />}
         </form.AppField>
         <div className="flex justify-center">
-          <ReCAPTCHA ref={recaptchaRef} sitekey={siteKey ?? ""} onChange={handleRecaptchaChange} />
+          <ReCAPTCHA ref={recaptchaRef} sitekey="6LdlVjErAAAAACRTldkSvu5z6j2wU7eMWxbFxXwY" onChange={handleRecaptchaChange} />
         </div>
         {recaptchaError && <div className="text-red-500 text-sm text-center">{recaptchaError}</div>}
         <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
