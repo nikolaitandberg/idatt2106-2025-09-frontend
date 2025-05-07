@@ -31,25 +31,28 @@ export function InviteAdminForm({ open, onClose }: InviteAdminFormProps) {
       onChange: schema,
     },
     onSubmit: async ({ value }) => {
-      inviteAdmin(
-        {
-          username: value.username,
-        },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["admin", "invite"] });
-            showToast({
-              title: "Invitasjon sendt",
-              description: `Invitasjon til ${value.username} er sendt`,
-              variant: "success",
-            });
-            onClose();
+      await new Promise((resolve) => {
+        inviteAdmin(
+          {
+            username: value.username,
           },
-          onError: (error) => {
-            setError(error.message);
+          {
+            onSuccess: () => {
+              queryClient.invalidateQueries({ queryKey: ["admin", "invite"] });
+              showToast({
+                title: "Invitasjon sendt",
+                description: `Invitasjon til ${value.username} er sendt`,
+                variant: "success",
+              });
+              onClose();
+            },
+            onError: (error) => {
+              setError(error.message);
+            },
+            onSettled: resolve,
           },
-        },
-      );
+        );
+      });
     },
   });
 
