@@ -10,7 +10,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   }
 
   return (
-    <div className="flex h-full flex-1">
+    <div className="flex h-full flex-1 min-w-10/12 mx-auto p-4">
       <div className="flex-1/2 p-6">{children}</div>
     </div>
   );
