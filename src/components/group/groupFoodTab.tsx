@@ -14,9 +14,7 @@ export default function GroupFoodTab({ groupId, sharedFood }: Props) {
       <h2 className="text-2xl font-semibold">Delt mat i gruppen</h2>
       <div className="w-full max-w-2xl">
         {isEmpty ? (
-          <p className="text-muted-foreground text-center">
-            Det er ingen delte matvarer i denne gruppen.
-          </p>
+          <p className="text-muted-foreground text-center">Det er ingen delte matvarer i denne gruppen.</p>
         ) : (
           <GroupSharedFoodAccordion groupId={groupId} foodByHousehold={sharedFood} />
         )}

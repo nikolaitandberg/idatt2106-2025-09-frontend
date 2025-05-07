@@ -66,9 +66,7 @@ export default function UnshareForm({
     <>
       <FormSection>
         <form.AppField name="amount">
-          {(field) => (
-            <field.NumberInput label={`Antall (maks ${maxAmount})`} />
-          )}
+          {(field) => <field.NumberInput label={`Antall (maks ${maxAmount})`} />}
         </form.AppField>
       </FormSection>
 
