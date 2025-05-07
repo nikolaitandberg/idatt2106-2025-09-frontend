@@ -6,7 +6,6 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Users } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import FormSection from "@/components/ui/form/formSection";
 import InviteCard from "@/components/group/groupInviteCard";
@@ -17,7 +16,7 @@ export default function CreateOrJoinGroupForm() {
   const queryClient = useQueryClient();
   const router = useRouter();
   const fetcher = useFetch();
-  const { mutate: createGroup, isPending } = useCreateGroup();
+  const { mutate: createGroup } = useCreateGroup();
 
   const {
     data: invites,
@@ -75,10 +74,7 @@ export default function CreateOrJoinGroupForm() {
               <form.AppField name="name">{(field) => <field.TextInput label="Navn" />}</form.AppField>
               <form.AppField name="description">{(field) => <field.TextInput label="Beskrivelse" />}</form.AppField>
             </FormSection>
-
-            <Button type="submit" size="fullWidth" disabled={isPending}>
-              {isPending ? <LoadingSpinner /> : "Opprett gruppe"}
-            </Button>
+            <form.SubmitButton>Lag gruppe</form.SubmitButton>
           </form.AppForm>
         </TabsContent>
 
