@@ -1,7 +1,6 @@
 "use client";
 
-import { Dialog, DialogTrigger, DialogContent, DialogFooter, DialogTitle, DialogClose } from "../ui/dialog";
-import { Button } from "../ui/button";
+import { Dialog, DialogTrigger, DialogContent, DialogFooter, DialogTitle } from "../ui/dialog";
 import { showToast } from "../ui/toaster";
 import useAppForm from "@/util/formContext";
 import { useCreateGroup } from "@/actions/group";
@@ -70,9 +69,6 @@ export default function CreateGroupDialog({
 
         <form.AppForm>
           <DialogFooter className="mt-4">
-            <DialogClose asChild>
-              <Button variant="ghost">Avbryt</Button>
-            </DialogClose>
             <form.SubmitButton>Opprett</form.SubmitButton>
           </DialogFooter>
         </form.AppForm>

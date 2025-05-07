@@ -3,24 +3,21 @@
 import { useCreateGroup, getGroupInvitesForMyHousehold } from "@/actions/group";
 import { useFetch } from "@/util/fetch";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Users, Plus } from "lucide-react";
+import { Users } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import TextInput from "@/components/ui/textinput";
 import { Button } from "@/components/ui/button";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
-import FormSection from "../ui/form/formSection";
+import FormSection from "@/components/ui/form/formSection";
 import InviteCard from "@/components/group/groupInviteCard";
+import { z } from "zod";
+import useAppForm from "@/util/formContext";
 
 export default function CreateOrJoinGroupForm() {
   const queryClient = useQueryClient();
-  const { mutate: createGroup, isPending } = useCreateGroup();
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
   const fetcher = useFetch();
+  const { mutate: createGroup, isPending } = useCreateGroup();
 
   const {
     data: invites,
@@ -32,29 +29,32 @@ export default function CreateOrJoinGroupForm() {
     queryFn: () => getGroupInvitesForMyHousehold(fetcher),
   });
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    setErrorMessage(null);
+  const schema = z.object({
+    name: z.string().min(1, "Navn er påkrevd"),
+    description: z.string().min(1, "Beskrivelse er påkrevd"),
+  });
 
-    if (!name || !description) {
-      setErrorMessage("Vennligst fyll ut navn og beskrivelse");
-      return;
-    }
-
-    createGroup(
-      { name, description },
-      {
-        onSuccess: async () => {
-          await queryClient.invalidateQueries({ queryKey: ["group-households", "my-groups"] });
-          router.refresh();
-        },
-        onError: (error) => {
-          console.error("Error creating group:", error);
-          setErrorMessage("Kunne ikke opprette gruppe. Prøv igjen senere.");
-        },
-      },
-    );
-  };
+  const form = useAppForm({
+    defaultValues: { name: "", description: "" },
+    validators: { onChange: schema },
+    onSubmit: async ({ value }) => {
+      await new Promise<void>((resolve) => {
+        createGroup(
+          {
+            name: value.name,
+            description: value.description,
+          },
+          {
+            onSuccess: async () => {
+              await queryClient.invalidateQueries({ queryKey: ["group-households", "my-groups"] });
+              router.refresh();
+            },
+            onSettled: resolve,
+          },
+        );
+      });
+    },
+  });
 
   return (
     <div className="w-md mx-auto p-6 bg-white rounded-lg shadow-md mt-8">
@@ -70,40 +70,26 @@ export default function CreateOrJoinGroupForm() {
         </TabsList>
 
         <TabsContent value="create">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form.AppForm>
             <FormSection title="Gruppeinformasjon">
-              <TextInput label="Navn" name="name" initialValue={name} onChange={setName} />
-              <TextInput label="Beskrivelse" name="description" initialValue={description} onChange={setDescription} />
+              <form.AppField name="name">{(field) => <field.TextInput label="Navn" />}</form.AppField>
+              <form.AppField name="description">{(field) => <field.TextInput label="Beskrivelse" />}</form.AppField>
             </FormSection>
 
-            {errorMessage && (
-              <div className="p-3 bg-red-100 border border-red-300 text-red-700 rounded-md">{errorMessage}</div>
-            )}
-
             <Button type="submit" size="fullWidth" disabled={isPending}>
-              {isPending ? (
-                <LoadingSpinner />
-              ) : (
-                <>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Opprett gruppe
-                </>
-              )}
+              {isPending ? <LoadingSpinner /> : "Opprett gruppe"}
             </Button>
-          </form>
+          </form.AppForm>
         </TabsContent>
 
         <TabsContent value="join">
           {isInvitesPending && <LoadingSpinner />}
-
           {isInvitesError && (
             <div className="text-red-500 p-4">Feil ved henting av invitasjoner: {invitesError?.message}</div>
           )}
-
           {!isInvitesPending && invites?.length === 0 && (
             <p className="text-gray-500">Du har ingen invitasjoner for øyeblikket.</p>
           )}
-
           {!isInvitesPending && invites && (
             <ul className="space-y-2 text-sm">
               {invites.map((invite) => (
