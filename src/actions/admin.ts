@@ -51,7 +51,7 @@ export const deleteAdminInvite = async (req: { username: string }, fetcher: Fetc
     body: JSON.stringify(req),
     headers: { "Content-Type": "application/json" },
   });
-}
+};
 
 export const useDeleteAdminInvite = () => {
   const fetcher = useFetch();
