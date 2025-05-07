@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function FeatureCard({
   icon,
@@ -18,9 +19,11 @@ export default function FeatureCard({
         <div>
           <h2 className="text-xl font-semibold">{title}</h2>
           <p className="text-sm text-muted-foreground mt-1">{description}</p>
-          <Button variant="link" className="mt-2 px-0" asChild>
-            <a href={href}>Gå til {title.toLowerCase()}</a>
-          </Button>
+          <Link href={href}>
+            <Button variant="link" className="mt-2 px-0">
+              Gå til {title.toLowerCase()}
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
