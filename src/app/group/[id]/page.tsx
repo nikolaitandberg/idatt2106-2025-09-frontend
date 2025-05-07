@@ -54,7 +54,7 @@ export default function GroupPage() {
         </TabsContent>
 
         <TabsContent value="matvarer">
-          <GroupFoodTab sharedFood={sharedFood ?? []} />
+          <GroupFoodTab groupId={groupId} sharedFood={sharedFood ?? []} />
         </TabsContent>
       </Tabs>
     </div>

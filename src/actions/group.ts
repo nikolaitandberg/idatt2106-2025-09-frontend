@@ -246,17 +246,13 @@ export const useRejectInvite = () => {
 
 export const unshareSharedFood = async (
   foodId: number,
-  groupHouseholdId: number,
+  groupId: number,
   amount: number,
   fetcher: FetchFunction = Fetch,
 ): Promise<void> => {
   await fetcher<void>(`${API_BASE_URL}/shared-food/unshare`, {
     method: "POST",
-    body: JSON.stringify({
-      foodId,
-      groupHouseholdId,
-      amount,
-    }),
+    body: JSON.stringify({ foodId, amount, groupId }),
     headers: { "Content-Type": "application/json" },
   });
 };
@@ -265,8 +261,8 @@ export const useUnshareSharedFood = () => {
   const fetcher = useFetch();
   const queryClient = useQueryClient();
 
-  return useMutation<void, Error, { foodId: number; groupHouseholdId: number; amount: number }>({
-    mutationFn: ({ foodId, groupHouseholdId, amount }) => unshareSharedFood(foodId, groupHouseholdId, amount, fetcher),
+  return useMutation<void, Error, { foodId: number; groupId: number; amount: number }>({
+    mutationFn: ({ foodId, groupId, amount }) => unshareSharedFood(foodId, groupId, amount, fetcher),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["shared-food"] });
       queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
