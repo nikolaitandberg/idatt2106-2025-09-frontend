@@ -58,7 +58,6 @@ export default function CreateGroupDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
-        {/* Denne knappen brukes ikke, men må være til stede for Dialog */}
         <div />
       </DialogTrigger>
       <DialogContent>
