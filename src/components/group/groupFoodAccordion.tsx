@@ -91,7 +91,7 @@ export default function GroupSharedFoodAccordion({ groupId, foodByHousehold }: G
 
                         <UnshareForm
                           foodId={batch.id}
-                          groupId={groupId} // <-- bruker prop
+                          groupId={groupId}
                           maxAmount={batch.amount}
                           onClose={() => setOpenDialogForId(null)}
                         />
