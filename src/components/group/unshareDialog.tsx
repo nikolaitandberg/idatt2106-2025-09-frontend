@@ -53,6 +53,7 @@ export default function UnshareForm({
                 description: "Kunne ikke flytte tilbake mat.",
                 variant: "error",
               });
+              onClose();
             },
             onSettled: resolve,
           },
