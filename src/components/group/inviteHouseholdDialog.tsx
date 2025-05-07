@@ -31,7 +31,7 @@ export default function InviteHouseholdDialog({ groupId }: { groupId: number }) 
         onError: () => {
           showToast({
             title: "Feil",
-            description: "Kunne ikke sende invitasjon.",
+            description: "Husholdning er allerede invitert eller med i gruppen.",
             variant: "error",
           });
           setOpen(false);
