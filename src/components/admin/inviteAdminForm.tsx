@@ -13,7 +13,7 @@ interface InviteAdminFormProps {
 }
 
 export function InviteAdminForm({ open, onClose }: InviteAdminFormProps) {
-  const [error, setError] = useState<string | undefined>(undefined);
+  const [error] = useState<string | undefined>(undefined);
   const queryClient = useQueryClient();
   const { mutate: inviteAdmin } = useInviteAdmin();
 
@@ -47,7 +47,12 @@ export function InviteAdminForm({ open, onClose }: InviteAdminFormProps) {
               onClose();
             },
             onError: (error) => {
-              setError(error.message);
+              showToast({
+                title: "Feil",
+                description: error.message || "Kunne ikke sende invitasjon",
+                variant: "error",
+              });
+              onClose();
             },
             onSettled: resolve,
           },
