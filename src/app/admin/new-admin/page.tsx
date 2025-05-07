@@ -9,6 +9,8 @@ import { showToast } from "@/components/ui/toaster";
 import { cn } from "@/util/cn";
 import type { User } from "@/types/user";
 import { ConfirmAdminActionDialog } from "@/components/admin/confirmAdminActionDialog";
+import { notFound } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 type ActionType = "removeAdmin" | "cancelInvite";
 
@@ -23,7 +25,11 @@ export default function NewAdmin() {
   const { mutate: deleteAdmin, isPending: isDeleting } = useDeleteAdmin();
   const { mutate: deleteAdminInvite, isPending: isDeletingInvite } = useDeleteAdminInvite();
 
-  console.log("Admin list:", adminList);
+  const session = useSession();
+
+  if (!session?.data?.user.isSuperAdmin && session?.status !== "loading") {
+    notFound();
+  }
 
   const openConfirmation = (username: string, type: ActionType) => {
     setSelectedAdmin(username);
