@@ -1,9 +1,8 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 
-import { sendLoginRequest } from "@/actions/auth";
+import { sendLoginRequest, verifyToken } from "@/actions/auth";
 import { Token } from "@/types";
-import { API_BASE_URL } from "@/types/constants";
 import { jwtDecode } from "jwt-decode";
 import type { GetServerSidePropsContext, NextApiRequest, NextApiResponse } from "next";
 import type { NextAuthOptions } from "next-auth";
@@ -24,27 +23,6 @@ const decodeToken = (token: string) => {
   };
 };
 
-const verifyToken = async (token: string) => {
-  try {
-    const res = await fetch(`${API_BASE_URL}/auth/test`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!res.ok) {
-      return false;
-    }
-
-    return true;
-  } catch (e) {
-    console.error(e);
-    return false;
-  }
-};
-
 export const config = {
   providers: [
     CredentialsProvider({
@@ -55,7 +33,7 @@ export const config = {
         password: { type: "password" },
       },
       async authorize(credentials) {
-        const res = await sendLoginRequest(credentials?.username || "", credentials?.password || "");
+        const res = await sendLoginRequest(credentials?.username ?? "", credentials?.password ?? "");
         if (res.success) {
           return decodeToken(res.token);
         }

@@ -66,3 +66,31 @@ export async function sendRegisterRequest(
     token: data.token,
   };
 }
+
+/**
+ * Verifies a token by sending a request to the backend
+ *
+ * @param token The token to verify
+ * @returns true if the token is valid, false otherwise
+ */
+export const verifyToken = async (token: string) => {
+  console.log("Verifying token");
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/test`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      return false;
+    }
+
+    return true;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+};
