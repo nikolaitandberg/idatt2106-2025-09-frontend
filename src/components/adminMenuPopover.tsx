@@ -58,7 +58,7 @@ export function AdminMenuPopover() {
     const timeoutId = setTimeout(() => {
       setOpen(false);
     }, 300);
-    setHoverTimeout({ timeoutId, lastEnteredTime: hoverTimeout?.lastEnteredTime || Date.now() });
+    setHoverTimeout({ timeoutId, lastEnteredTime: hoverTimeout?.lastEnteredTime ?? Date.now() });
   };
 
   const handleItemClick = () => {
@@ -79,9 +79,13 @@ export function AdminMenuPopover() {
       }}>
       <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
         <PopoverTrigger className="flex items-center hover:underline hover:cursor-pointer group px-4 py-2">
-          <ShieldUser className="w-7 h-7" />
-          <span className="ml-2 transition-all duration-200">Admin</span>
-          <ChevronDown className={`ml-1 w-4 h-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+          <div className="flex flex-col md:flex-row items-center gap-1">
+            <ShieldUser className="md:w-7 md:h-7" />
+            <span className="transition-all duration-200">Admin</span>
+          </div>
+          <ChevronDown
+            className={`ml-1 w-4 h-4 transition-transform duration-200 hidden md:visible ${open ? "rotate-180" : ""}`}
+          />
         </PopoverTrigger>
         <PopoverContent className="w-48 p-0 overflow-hidden" sideOffset={8} asChild>
           <motion.div

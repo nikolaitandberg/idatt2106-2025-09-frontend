@@ -10,9 +10,9 @@ interface TopbarCardProps {
 export function TopbarCard({ icon: Icon, text, href }: TopbarCardProps) {
   return (
     <Link href={href}>
-      <div className="px-4 py-2 flex items-center gap-2 hover:underline transition-colors">
-        {Icon && <Icon className="w-7 h-7" />}
-        <span>{text}</span>
+      <div className="flex flex-col md:flex-row items-center gap-1 hover:underline transition-colors">
+        {Icon && <Icon className="md:w-7 md:h-7" />}
+        <span className="text-sm md:text-base">{text}</span>
       </div>
     </Link>
   );
