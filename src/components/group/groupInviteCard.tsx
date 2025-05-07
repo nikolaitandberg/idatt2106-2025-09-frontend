@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Button } from "../ui/button";
 import LoadingSpinner from "../ui/loadingSpinner";
 import { showToast } from "../ui/toaster";
+import { House } from "lucide-react";
 
 interface InviteCardProps {
   invite: GroupInvite;
@@ -74,6 +75,10 @@ export default function InviteCard({ invite }: InviteCardProps) {
     );
   }
 
+  if (loadingGroup) {
+    return <GroupInviteCardSkeleton />;
+  }
+
   return (
     <div className="rounded-lg border border-border shadow-sm bg-white p-4 space-y-2 text-sm hover:shadow transition-shadow">
       <div className="text-sm">
@@ -82,10 +87,11 @@ export default function InviteCard({ invite }: InviteCardProps) {
         ) : (
           <>
             <p className="font-semibold">{group?.groupName ?? invite.groupId}</p>
-            <div className="flex items-center gap-2 mt-1 text-gray-700">
+            <div className="flex flex-row items-center gap-2 mt-1 text-gray-700">
+              <House className="w-4 h-4" />
               <span>
-                Det er {group?.totalHouseholds ?? invite.groupId}{" "}
-                {group?.totalHouseholds === 1 ? "husholdning" : "husholdninger"} i denne gruppen.
+                {group?.totalHouseholds ?? invite.groupId}{" "}
+                {group?.totalHouseholds === 1 ? "husholdning" : "husholdninger"}
               </span>
             </div>
           </>
@@ -96,6 +102,28 @@ export default function InviteCard({ invite }: InviteCardProps) {
           Godta
         </Button>
         <Button size="sm" variant="outline" onClick={handleDecline} disabled={isRejecting}>
+          Avslå
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+export function GroupInviteCardSkeleton() {
+  return (
+    <div className="rounded-lg border border-border shadow-sm bg-white p-4 space-y-2 text-sm hover:shadow transition-shadow">
+      <div className="text-sm">
+        <p className="font-semibold animate-pulse bg-gray-200 h-5 w-1/2 rounded" />
+        <div className="flex flex-row items-center gap-2 mt-1 text-gray-700">
+          <House className="w-4 h-4 animate-pulse" />
+          <span className="animate-pulse bg-gray-200 h-5 w-24 rounded" />
+        </div>
+      </div>
+      <div className="flex gap-2">
+        <Button size="sm" disabled>
+          Godta
+        </Button>
+        <Button size="sm" variant="outline" disabled>
           Avslå
         </Button>
       </div>

@@ -1,8 +1,7 @@
 "use client";
 
-import { useCreateGroup, getGroupInvitesForMyHousehold } from "@/actions/group";
-import { useFetch } from "@/util/fetch";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCreateGroup, useGroupInvitesForMyHousehold } from "@/actions/group";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { Users } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,22 +10,26 @@ import FormSection from "@/components/ui/form/formSection";
 import InviteCard from "@/components/group/groupInviteCard";
 import { z } from "zod";
 import useAppForm from "@/util/formContext";
+import { useMyHousehold } from "@/actions/household";
+import { showToast } from "../ui/toaster";
+import { useEffect } from "react";
 
 export default function CreateOrJoinGroupForm() {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const fetcher = useFetch();
   const { mutate: createGroup } = useCreateGroup();
+  const { data: household, isPending, isError } = useMyHousehold();
 
-  const {
-    data: invites,
-    isPending: isInvitesPending,
-    isError: isInvitesError,
-    error: invitesError,
-  } = useQuery({
-    queryKey: ["group-invites", "my-household"],
-    queryFn: () => getGroupInvitesForMyHousehold(fetcher),
-  });
+  useEffect(() => {
+    if (!isPending && (!household || isError)) {
+      showToast({
+        title: "Ingen husstand",
+        description: "Du må være medlem av en husstand for å opprette en gruppe.",
+        variant: "error",
+      });
+      router.replace("/household/join");
+    }
+  }, [isPending, household, isError, router]);
 
   const schema = z.object({
     name: z.string().min(1, "Navn er påkrevd"),
@@ -79,22 +82,39 @@ export default function CreateOrJoinGroupForm() {
         </TabsContent>
 
         <TabsContent value="join">
-          {isInvitesPending && <LoadingSpinner />}
-          {isInvitesError && (
-            <div className="text-red-500 p-4">Feil ved henting av invitasjoner: {invitesError?.message}</div>
-          )}
-          {!isInvitesPending && invites?.length === 0 && (
-            <p className="text-gray-500">Du har ingen invitasjoner for øyeblikket.</p>
-          )}
-          {!isInvitesPending && invites && (
-            <ul className="space-y-2 text-sm">
-              {invites.map((invite) => (
-                <InviteCard key={`${invite.groupId}-${invite.householdId}`} invite={invite} />
-              ))}
-            </ul>
-          )}
+          <JoinForm />
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+function JoinForm() {
+  const {
+    data: invites,
+    isPending: isInvitesPending,
+    isError: isInvitesError,
+    error: invitesError,
+  } = useGroupInvitesForMyHousehold();
+
+  if (isInvitesPending) {
+    return (
+      <div className="flex flex-col gap-2">
+        <LoadingSpinner />
+        <p className="text-gray-500">Henter invitasjoner...</p>
+      </div>
+    );
+  }
+
+  if (isInvitesError) {
+    return <div className="text-red-500 p-4">Feil ved henting av invitasjoner: {invitesError?.message}</div>;
+  }
+
+  return (
+    <ul className="space-y-2 text-sm">
+      {invites.map((invite) => (
+        <InviteCard key={`${invite.groupId}-${invite.householdId}`} invite={invite} />
+      ))}
+    </ul>
   );
 }
