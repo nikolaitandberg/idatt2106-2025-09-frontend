@@ -7,9 +7,11 @@ import { TopbarCard } from "@/components/ui/topbarCard";
 import { GraduationCap, House, Users } from "lucide-react";
 import { AdminMenuPopover } from "@/components/adminMenuPopover";
 import { UserAvatarFromUserId } from "./ui/UserAvatar";
+import { usePathname } from "next/navigation";
 
 export default function Topbar() {
   const session = useSession();
+  const pathname = usePathname();
 
   return (
     <div className="sticky top-0 z-50 bg-white shadow-md">
@@ -19,14 +21,24 @@ export default function Topbar() {
         </Link>
 
         <div className="grid grid-cols-4 md:flex md:relative md:gap-6 [&>*]:justify-self-center px-4 md:px-0 overflow-hidden bg-white w-full fixed bottom-0 left-0 items-center justify-center md:justify-end">
-          {session?.data?.user?.isAdmin && <AdminMenuPopover />}
+          {session?.data?.user?.isAdmin && <AdminMenuPopover isSelected={pathname.startsWith("/admin")} />}
           {session?.status === "authenticated" && (
             <>
-              <TopbarCard icon={House} text="Husholdning" href="/household" />
-              <TopbarCard icon={Users} text="Gruppe" href="/group" />
+              <TopbarCard
+                icon={House}
+                text="Husholdning"
+                href="/household"
+                isSelected={pathname.startsWith("/household")}
+              />
+              <TopbarCard icon={Users} text="Gruppe" href="/group" isSelected={pathname.startsWith("/group")} />
             </>
           )}
-          <TopbarCard icon={GraduationCap} text="Læring" href="/learning" />
+          <TopbarCard
+            icon={GraduationCap}
+            text="Læring"
+            href="/learning"
+            isSelected={pathname.startsWith("/learning")}
+          />
         </div>
         <Link href="/profile" className="flex flex-row items-center ml-4">
           <UserAvatarFromUserId

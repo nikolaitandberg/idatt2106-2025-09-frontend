@@ -5,6 +5,7 @@ import { ShieldUser, MapPin, CircleAlert, ChevronDown } from "lucide-react";
 import { ElementType, useState, MouseEvent } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { cn } from "@/util/cn";
 
 const AdminMenuItem = ({
   icon: Icon,
@@ -34,7 +35,7 @@ const AdminMenuItem = ({
   </motion.div>
 );
 
-export function AdminMenuPopover() {
+export function AdminMenuPopover({ isSelected }: { isSelected?: boolean }) {
   const [open, setOpen] = useState(false);
   const [hoverTimeout, setHoverTimeout] = useState<{
     timeoutId: NodeJS.Timeout;
@@ -78,16 +79,16 @@ export function AdminMenuPopover() {
         setOpen(open);
       }}>
       <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-        <PopoverTrigger className="flex items-center hover:underline hover:cursor-pointer group px-4 py-2">
+        <PopoverTrigger className="flex items-center hover:underline hover:cursor-pointer group pl-4 py-2">
           <div className="flex flex-col md:flex-row items-center gap-1">
             <ShieldUser className="md:w-7 md:h-7" />
-            <span className="transition-all duration-200">Admin</span>
+            <span className={cn("transition-all duration-200", { "font-bold": isSelected })}>Admin</span>
           </div>
           <ChevronDown
-            className={`ml-1 w-4 h-4 transition-transform duration-200 hidden md:visible ${open ? "rotate-180" : ""}`}
+            className={`ml-1 w-4 h-4 transition-transform duration-200 hidden md:flex ${open ? "rotate-180" : ""}`}
           />
         </PopoverTrigger>
-        <PopoverContent className="w-48 p-0 overflow-hidden" sideOffset={8} asChild>
+        <PopoverContent className="w-48 p-0 overflow-hidden bg-white shadow-xl" sideOffset={8} asChild>
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{
