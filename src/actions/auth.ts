@@ -36,19 +36,21 @@ export async function sendLoginRequest(
  * @param email The email of the user
  * @param username The username of the user
  * @param password The password of the user
+ * @param recaptchaToken The recaptcha token
  * @returns A promise that resolves to a RegisterResponse
  */
 export async function sendRegisterRequest(
   email: string,
   username: string,
   password: string,
+  recaptchaToken: string,
 ): Promise<RegisterSuccessRespnse> {
   const res = await fetch(`${API_BASE_URL}/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ email, username, password }),
+    body: JSON.stringify({ email, username, password, recaptchaToken }),
   });
 
   if (!res.ok) {
