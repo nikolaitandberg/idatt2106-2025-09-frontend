@@ -1,70 +1,38 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useMyGroupMemberships } from "@/actions/group";
-import { useMyHousehold } from "@/actions/household";
+import { getMyGroupMemberships } from "@/actions/group";
 import CreateOrJoinGroupForm from "@/components/group/createJoinGroupForm";
 import GroupInvites from "@/components/group/groupInvites";
-import LoadingSpinner from "@/components/ui/loadingSpinner";
 import UserGroupList from "@/components/group/userGroupList";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import { showToast } from "@/components/ui/toaster";
-import CreateGroupDialog from "@/components/group/createGroupDialog";
+import CreateGroupDialogOpenWrapper from "@/components/group/createGroupDialogWrapper";
+import { auth } from "@/util/auth";
+import { redirect } from "next/navigation";
 
-export default function UserGroupsPage() {
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const { data: household, isPending: loadingHousehold } = useMyHousehold();
-  const { data: relations, isPending, isError, error } = useMyGroupMemberships();
-  const router = useRouter();
+export default async function UserGroupsPage() {
+  const session = await auth();
 
-  useEffect(() => {
-    if (!loadingHousehold && (!household || household.id <= 0)) {
-      showToast({
-        title: "Opprett husholdning",
-        description: "Du må opprette en husholdning for å kunne være med i en gruppe.",
-        variant: "info",
-      });
-      router.push("/household");
-    }
-  }, [household, loadingHousehold, router]);
-
-  if (loadingHousehold || isPending) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <LoadingSpinner />
-      </div>
-    );
+  if (!session) {
+    redirect("/login");
   }
-
-  if (isError) {
-    return <div className="text-red-600 text-center py-12">Kunne ikke hente gruppedata: {error?.message}</div>;
-  }
+  const relations = await getMyGroupMemberships().catch(() => null);
 
   if (!relations || relations.length === 0) {
     return <CreateOrJoinGroupForm />;
   }
 
   return (
-    <div className="min-h-screen flex bg-background text-foreground">
-      <main className="flex-1 p-8 space-y-8">
-        <div className="flex items-center justify-between">
+    <div className="flex flex-1 md:flex-row flex-col bg-background text-foreground">
+      <main className="md:flex-1 px-4 py-8 sm:p-8 space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between sm:gap-0 gap-4">
           <h1 className="text-2xl font-semibold">Dine beredskapsgrupper</h1>
-          <Button onClick={() => setDialogOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            Opprett ny gruppe
-          </Button>
+          <CreateGroupDialogOpenWrapper />
         </div>
 
         <UserGroupList />
       </main>
 
-      <aside className="w-[400px] bg-white border-l border-border p-6 space-y-8">
+      <aside className="w-full md:w-2/6 md:bg-white border-l border-border p-4 space-y-8">
+        <h2 className="text-xl font-semibold mb-4">Gruppeinvitasjoner</h2>
         <GroupInvites />
       </aside>
-
-      <CreateGroupDialog open={dialogOpen} onOpenChange={setDialogOpen} />
     </div>
   );
 }

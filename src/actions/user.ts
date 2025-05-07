@@ -17,6 +17,7 @@ export const useProfile = (userId: number, options?: Omit<UseQueryOptions<User, 
     ...options,
     queryKey: ["user", userId],
     queryFn: () => getProfile(userId, fetcher),
+    retry: false,
   });
 };
 
