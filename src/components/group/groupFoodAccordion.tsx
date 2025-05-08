@@ -10,7 +10,7 @@ import { SharedFoodByHousehold } from "@/types/group";
 import UnshareForm from "@/components/group/unshareDialog";
 
 type GroupSharedFoodAccordionProps = {
-  groupId: number; // <-- Ny prop
+  groupId: number;
   foodByHousehold: SharedFoodByHousehold[];
 };
 
