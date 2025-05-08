@@ -4,6 +4,7 @@ import Map, { AttributionControl, MapRef } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { Ref } from "react";
 import { MAP_STYLE_CONFIG } from "@/util/mapStyleConfig";
+import { Plus, Minus } from "lucide-react";
 
 interface MapComponentProps {
   ref?: Ref<MapRef | null>;
@@ -69,9 +70,12 @@ export default function MapComponent({
             borderRadius: "4px",
             padding: "5px",
             cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          +
+          <Plus size={16} />
         </button>
         <button
           onClick={() => handleZoom(-1)}
@@ -81,9 +85,12 @@ export default function MapComponent({
             borderRadius: "4px",
             padding: "5px",
             cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          -
+          <Minus size={16} />
         </button>
       </div>
     </div>
