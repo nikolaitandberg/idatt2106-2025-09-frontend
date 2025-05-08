@@ -38,6 +38,16 @@ export const getGroupById = async (id: number, fetcher: FetchFunction = Fetch): 
   return res;
 };
 
+export const useGroupById = (groupId: number) => {
+  const fetcher = useFetch();
+
+  return useQuery({
+    queryKey: ["group", "details", groupId],
+    queryFn: () => getGroupById(groupId, fetcher),
+    enabled: !!groupId,
+  });
+};
+
 export const getGroupDetails = async (groupId: number, fetcher: FetchFunction = Fetch): Promise<GroupDetails> => {
   const res = await fetcher<GroupDetails>(`${API_BASE_URL}/emergency-groups/summary/group/${groupId}`);
   if (!res) {
