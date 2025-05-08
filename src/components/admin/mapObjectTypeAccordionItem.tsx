@@ -42,7 +42,7 @@ export default function MapObjectTypeAccordionItem({ type }: MapObjectTypeAccord
           <div className="flex items-center absolute right-8 top-0 h-full">
             <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant={"ghost"}>
+                <Button variant={"ghost"} aria-label="Rediger kartkategori">
                   <Pencil className="text-primary" />
                 </Button>
               </DialogTrigger>
@@ -59,7 +59,10 @@ export default function MapObjectTypeAccordionItem({ type }: MapObjectTypeAccord
                 />
               </DialogContent>
             </Dialog>
-            <Button variant={"ghost"} onClick={() => setDeleteDialogOpen(true)}>
+            <Button 
+              variant={"ghost"} 
+              onClick={() => setDeleteDialogOpen(true)}
+              aria-label="Slett kartkategori">
               <Trash className="text-destructive" />
             </Button>
             <ConfirmationDialog

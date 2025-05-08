@@ -54,18 +54,24 @@ export default function TimeSelector({
     <div className="flex flex-col gap-2">
       {label && <label className="text-sm font-medium">{label}</label>}
       <div className="flex gap-2">
+        <label htmlFor="hours" className="sr-only">Hours</label> {/* Screen-reader-only label */}
         <input
+          id="hours"
           type="text"
           value={field.state.value?.hours ?? 0}
           onChange={handleHoursChange}
           className="border rounded p-1 w-16"
+          aria-label="Hours"
         />
         {":"}
+        <label htmlFor="minutes" className="sr-only">Minutes</label> {/* Screen-reader-only label */}
         <input
+          id="minutes"
           type="text"
           value={field.state.value?.minutes ?? 0}
           onChange={handleMinutesChange}
           className="border rounded p-1 w-16"
+          aria-label="Minutes"
         />
       </div>
     </div>
