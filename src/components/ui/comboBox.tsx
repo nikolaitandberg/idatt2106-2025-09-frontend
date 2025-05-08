@@ -15,7 +15,6 @@ interface ComboBoxProps<T> {
   onSelect: (option: T) => void;
   renderOption: (option: T) => ReactNode;
   renderSelected: (option: T) => ReactNode;
-  id?: string;
 }
 
 export default function ComboBox<T>({
@@ -26,7 +25,6 @@ export default function ComboBox<T>({
   onSelect,
   renderOption,
   renderSelected,
-  id,
 }: ComboBoxProps<T>) {
   const [selectedOption, setSelectedOption] = useState<T | undefined>(initialValue ?? undefined);
   const [open, setOpen] = useState(false);
@@ -56,14 +54,7 @@ export default function ComboBox<T>({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild className="w-full border border-neutral-300 rounded-md p-2 cursor-pointer ">
-        <div
-          className="flex items-center content-between relative"
-          tabIndex={0}
-          role="combobox"
-          aria-expanded={open}
-          aria-haspopup="listbox"
-          id={id}
-          aria-labelledby={`${id}-label`}>
+        <div className="flex items-center content-between relative">
           {selectedOption ? (
             renderSelected(selectedOption)
           ) : (
