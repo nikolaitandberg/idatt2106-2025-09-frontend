@@ -1,5 +1,21 @@
 "use client";
 
+declare global {
+  interface Window {
+    onloadTurnstileCallback: () => void;
+  }
+
+  const turnstile: {
+    render: (
+      containerId: string,
+      options: {
+        sitekey: string;
+        callback: (token: string) => void;
+      }
+    ) => void;
+  };
+}
+
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
 import { useMutation } from "@tanstack/react-query";
@@ -10,15 +26,43 @@ import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { ApiError } from "@/types/apiResponses";
 import useAppForm from "@/util/formContext";
 import { z } from "zod";
+import { useEffect, useState } from "react";
 
 type RegisterRequest = {
   username: string;
   password: string;
   email: string;
+  captchaToken: string;
 };
 
 export default function Register() {
   const router = useRouter();
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Load the Turnstile script dynamically
+    const script = document.createElement("script");
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback";
+    script.defer = true;
+    document.body.appendChild(script);
+
+    // Define the Turnstile callback
+    window.onloadTurnstileCallback = function () {
+      turnstile.render("#captcha-container", {
+        sitekey: "0x4AAAAAABbjtdnnMWVICeky", // Replace with your actual site key
+        callback: function (token: string) {
+          setCaptchaToken(token);
+        },
+      });
+    };
+
+    return () => {
+      // Cleanup script on unmount
+      document.body.removeChild(script);
+    };
+  }, []);
+
+
   const registerSchema = z
     .object({
       username: z.string().min(3, { message: "Brukernavn må være minst 3 tegn" }),
@@ -33,6 +77,7 @@ export default function Register() {
         }),
       email: z.string().email({ message: "Ugyldig e-postadresse" }),
       repeatPassword: z.string(),
+      captchaToken: z.string().min(1, { message: "Captcha er påkrevd" }),
     })
     .refine((data) => data.password === data.repeatPassword, {
       message: "Passordene er ikke like",
@@ -44,8 +89,8 @@ export default function Register() {
     error,
     mutate: register,
   } = useMutation({
-    mutationFn: async ({ username, password, email }: RegisterRequest) => {
-      return await sendRegisterRequest(email, username, password);
+    mutationFn: async ({ username, password, email, captchaToken }: RegisterRequest) => {
+      return await sendRegisterRequest(email, username, password, captchaToken);
     },
   });
 
@@ -53,6 +98,7 @@ export default function Register() {
     username: "",
     password: "",
     email: "",
+    captchaToken: captchaToken || "",
     repeatPassword: "",
   };
 
@@ -80,8 +126,8 @@ export default function Register() {
       });
     });
   };
-
   return (
+
     <div className="flex items-center justify-center bg-background px-4 mt-8">
       <div className="w-full max-w-md rounded-2xl p-8 space-y-6">
         <h1 className="text-2xl font-bold text-center">Registrer deg</h1>
@@ -97,6 +143,11 @@ export default function Register() {
         <form.AppField name="repeatPassword">
           {(field) => (
             <field.TextInput label="Gjenta passord" type="password" placeholder="Skriv inn passordet på nytt" />
+          )}
+        </form.AppField>
+        <form.AppField name="captchaToken">
+          {() => (
+            <div id="captcha-container"></div>
           )}
         </form.AppField>
         <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
