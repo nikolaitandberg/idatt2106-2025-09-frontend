@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: aTrueYety/idatt2106-2025-09-backend
-          ref: 268-log-initalize-data
+          ref: dev
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:

@@ -9,7 +9,9 @@ export default function HomePage() {
     <main className="overflow-hidden flex flex-col lg:flex-row">
       <section className="flex-1 p-10 space-y-12">
         <div className="space-y-4">
-        <h1 className="text-4xl font-bold" data-testid="page-title">Krisefikser</h1>
+          <h1 className="text-4xl font-bold" data-testid="page-title">
+            Krisefikser
+          </h1>
           <p className="text-muted-foreground text-m max-w-prose">
             I en hverdag der mange nordmenn opplever at terskelen for å bli krisesikre er for høy, gjør Krisefikser det
             enkelt å planlegge, organisere og vedlikeholde ditt eget beredskapslager – alt samlet på ett sted. I stedet

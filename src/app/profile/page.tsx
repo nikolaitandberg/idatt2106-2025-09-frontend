@@ -84,10 +84,12 @@ function ProfilePage({ userId }: { userId: number }) {
             className="w-24 h-24 md:w-32 md:h-32 text-3xl stroke-1 md:stroke-[0.5]"
           />
           <div className="text-center md:text-left">
-            <h1 className="text-3xl font-bold">
+            <h1 className="text-3xl font-bold" data-testid="profile-name">
               {profile.firstName} {profile.lastName}
             </h1>
-            <p className="text-gray-500 mt-1" data-testid="profile-username">@{profile.username}</p>
+            <p className="text-gray-500 mt-1" data-testid="profile-username">
+              @{profile.username}
+            </p>
             {profile.admin && (
               <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mt-2 mr-2">Admin</span>
             )}
@@ -103,7 +105,9 @@ function ProfilePage({ userId }: { userId: number }) {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-sm text-gray-500">E-post</p>
-              <p className="font-medium">{profile.email}</p>
+              <p className="font-medium" data-testid="profile-email">
+                {profile.email}
+              </p>
               <span
                 className={`text-xs ${profile.emailConfirmed ? "text-green-700" : "text-red-700"} font-bold bg-gray-200 px-2 py-1 rounded-full mt-2`}>
                 {profile.emailConfirmed ? "Verifisert" : "Ikke verifisert"}
@@ -112,7 +116,9 @@ function ProfilePage({ userId }: { userId: number }) {
 
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-sm text-gray-500">Husholdning</p>
-              <p className="font-medium">{household?.address || "Ingen"}</p>
+              <p className="font-medium" data-testid="profile-household-address">
+                {household?.address || "Ingen"}
+              </p>
             </div>
           </div>
 
@@ -124,6 +130,7 @@ function ProfilePage({ userId }: { userId: number }) {
                   aria-label="Del posisjon med husholdning"
                   id="sharePositionHousehold"
                   name="sharePositionHousehold"
+                  data-testid="profile-share-position-household"
                   checked={profile.sharePositionHousehold}
                   onCheckedChange={(checked) => {
                     handlePositionSharingChange({
@@ -151,6 +158,7 @@ function ProfilePage({ userId }: { userId: number }) {
                   aria-label="Del posisjon med gruppe"
                   id="sharePositionGroup"
                   name="sharePositionGroup"
+                  data-testid="profile-share-position-group"
                   checked={profile.sharePositionGroup}
                   onCheckedChange={(checked) => {
                     handlePositionSharingChange({
@@ -178,7 +186,7 @@ function ProfilePage({ userId }: { userId: number }) {
         </div>
 
         <div className="mt-8 flex justify-end gap-4">
-          <Button onClick={() => setEditDialogOpen(true)} variant="outline">
+          <Button onClick={() => setEditDialogOpen(true)} variant="outline" data-testid="profile-edit-button">
             Rediger profil
           </Button>
           <Button

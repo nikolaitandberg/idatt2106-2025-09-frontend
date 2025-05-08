@@ -57,9 +57,8 @@ export default function TextInput({
               showPasswordClassName,
             )}
             tabIndex={0}
-            aria-label= "Vis eller skjul passord"
-            {...toggleVisibilityButtonProps}
-            >
+            aria-label="Vis eller skjul passord"
+            {...toggleVisibilityButtonProps}>
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
         )}

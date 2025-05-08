@@ -115,8 +115,7 @@ export default function NewAdmin() {
                     variant="outline"
                     size="sm"
                     onClick={() => openConfirmation(admin.username, "removeAdmin")}
-                    disabled={admin.superAdmin || isDeleting}
-                  >
+                    disabled={admin.superAdmin || isDeleting}>
                     {isDeleting && selectedAdmin === admin.username ? <LoadingSpinner /> : "Fjern"}
                   </Button>
                 </TableCell>

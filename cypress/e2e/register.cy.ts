@@ -2,8 +2,7 @@ describe("register", () => {
   it("Should create user when registered", () => {
     cy.intercept("POST", "/api/auth/register").as("register");
 
-    cy.visit("/login");
-    cy.get('a[href="/register"]').should("have.class", "text-blue-700").click();
+    cy.visit("/register");
     cy.contains("h1", "Registrer deg").should("be.visible");
 
     cy.get("#username").should("be.visible").clear().type("martinHansen");

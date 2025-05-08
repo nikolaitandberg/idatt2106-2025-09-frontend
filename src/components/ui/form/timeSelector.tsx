@@ -54,7 +54,10 @@ export default function TimeSelector({
     <div className="flex flex-col gap-2">
       {label && <label className="text-sm font-medium">{label}</label>}
       <div className="flex gap-2">
-        <label htmlFor="hours" className="sr-only">Hours</label> {/* Screen-reader-only label */}
+        <label htmlFor="hours" className="sr-only">
+          Hours
+        </label>{" "}
+        {/* Screen-reader-only label */}
         <input
           id="hours"
           type="text"
@@ -64,7 +67,10 @@ export default function TimeSelector({
           aria-label="Hours"
         />
         {":"}
-        <label htmlFor="minutes" className="sr-only">Minutes</label> {/* Screen-reader-only label */}
+        <label htmlFor="minutes" className="sr-only">
+          Minutes
+        </label>{" "}
+        {/* Screen-reader-only label */}
         <input
           id="minutes"
           type="text"

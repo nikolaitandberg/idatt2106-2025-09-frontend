@@ -1,8 +1,5 @@
-import { time } from "console";
-import { TIMEOUT } from "dns";
-
 describe("profile login", () => {
-  beforeEach(() => {
+  before(() => {
     cy.intercept("POST", "/api/auth/callback/credentials").as("loginRequest");
     cy.intercept("GET", "/api/auth/session").as("sessionRequest");
     cy.visit("/login");

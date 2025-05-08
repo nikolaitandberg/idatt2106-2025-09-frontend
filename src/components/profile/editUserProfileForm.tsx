@@ -56,7 +56,7 @@ export function EditUserProfileForm({ open, onClose, user }: EditUserProfileForm
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogTitle>Rediger profil</DialogTitle>
-        <div className="flex flex-col gap-4 pt-2">
+        <div className="flex flex-col gap-4 pt-2" data-testid="profile-edit-form">
           <FormSection title="Personlig informasjon">
             <form.AppField name="firstName">{(field) => <field.TextInput label="Fornavn" />}</form.AppField>
             <form.AppField name="lastName">{(field) => <field.TextInput label="Etternavn" />}</form.AppField>
