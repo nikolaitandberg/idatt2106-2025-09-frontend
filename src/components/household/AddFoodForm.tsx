@@ -5,7 +5,7 @@ import { z } from "zod";
 type AddFoodFormData = Omit<Food, "id" | "householdId" | "typeId">;
 
 interface AddFoodFormProps {
-  onSubmit?: (data: AddFoodFormData) => void;
+  onSubmit: (data: AddFoodFormData) => void;
 }
 
 export default function AddFoodForm({ onSubmit }: AddFoodFormProps) {
@@ -18,9 +18,7 @@ export default function AddFoodForm({ onSubmit }: AddFoodFormProps) {
   };
 
   const schema = z.object({
-    expirationDate: z.date().refine((date) => date > new Date(), {
-      message: "Utløpsdatoen kan ikke være i fortiden",
-    }),
+    expirationDate: z.date(),
     amount: z.number().min(1, { message: "Antall må være større enn 0" }),
   });
 

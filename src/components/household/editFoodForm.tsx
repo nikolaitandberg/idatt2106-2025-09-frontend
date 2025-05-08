@@ -14,9 +14,7 @@ interface EditFoodFormProps {
 
 export default function EditFoodForm({ onSubmit, defaultValues }: EditFoodFormProps) {
   const schema = z.object({
-    expirationDate: z.date().refine((date) => date > new Date(), {
-      message: "Utløpsdatoen kan ikke være i fortiden",
-    }),
+    expirationDate: z.date(),
     amount: z.number().min(1, { message: "Antall må være større enn 0" }),
   });
 
