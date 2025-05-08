@@ -109,7 +109,7 @@ export default function CreateHouseholdForm() {
       <Tabs defaultValue="join" className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-6">
           <TabsTrigger value="join">Invitasjoner </TabsTrigger>
-          <TabsTrigger value="create">Opprett ny</TabsTrigger>
+          <TabsTrigger value="create" data-testid="household-create">Opprett ny</TabsTrigger>
         </TabsList>
 
         <TabsContent value="join">
