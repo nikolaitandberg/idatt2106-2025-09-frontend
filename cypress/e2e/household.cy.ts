@@ -13,12 +13,16 @@ describe("profile login", () => {
   });
 
   it("Should be able create household", () => {
-    cy.get('a[href="/household"]').click();
+    cy.intercept("POST", "/api/households/register").as("createHouseholdRequest");
+    cy.visit("/household/join");
+    cy.url().should("eq", "http://localhost:3000/household/join");
     cy.get('[data-testid="household-create"]').should("be.visible").click();
     cy.get("#name", { timeout: 5000 }).should("be.visible").type("Huset");
     cy.get("#address").should("be.visible").type("Eirik jarls gate 2");
     cy.get('button[type="submit"]').click();
-    cy.contains("p", "Husholdning opprettet");
-    cy.contains("p", "Du har nå opprettet en husholdning");
+
+    cy.wait("@createHouseholdRequest").its("response.statusCode").should("eq", 200);
+    cy.visit("/household");
+    cy.url().should("eq", "http://localhost:3000/household");
   });
 });
