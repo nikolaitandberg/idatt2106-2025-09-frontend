@@ -85,11 +85,19 @@ export default function Register() {
     <div className="flex items-center justify-center bg-background px-4 mt-8">
       <div className="w-full max-w-md rounded-2xl p-8 space-y-6">
         <h1 className="text-2xl font-bold text-center">Registrer deg</h1>
-        <form.AppField name="username">{(field) => <field.TextInput label="Brukernavn" />}</form.AppField>
-        <form.AppField name="email">{(field) => <field.TextInput label="E-post" type="email" />}</form.AppField>
-        <form.AppField name="password">{(field) => <field.TextInput label="Passord" type="password" />}</form.AppField>
+        <form.AppField name="username">
+          {(field) => <field.TextInput label="Brukernavn" placeholder="Nytt brukernavn" />}
+        </form.AppField>
+        <form.AppField name="email">
+          {(field) => <field.TextInput label="E-post" type="email" placeholder="din@epost.no" />}
+        </form.AppField>
+        <form.AppField name="password">
+          {(field) => <field.TextInput label="Passord" type="password" placeholder="Skriv ditt passord" />}
+        </form.AppField>
         <form.AppField name="repeatPassword">
-          {(field) => <field.TextInput label="Gjenta passord" type="password" />}
+          {(field) => (
+            <field.TextInput label="Gjenta passord" type="password" placeholder="Skriv inn passordet på nytt" />
+          )}
         </form.AppField>
         <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
           {([canSubmit, isSubmitting]) => (
