@@ -48,8 +48,8 @@ export default function HomePage() {
       <aside className="lg:w-1/2 w-full p-10">
         <a href="/map" className="block relative h-[600px] rounded-xl shadow-sm overflow-hidden group">
           <Image src="/kart-hjem.png" alt="Kart" fill className="object-cover" priority />
-          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-center justify-center">
-            <span className="text-white text-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors duration-300 flex items-center justify-center">
+            <span className="text-white text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               Klikk for å se kart
             </span>
           </div>
