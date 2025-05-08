@@ -1,13 +1,15 @@
 "use client";
 
 import { useMyHousehold } from "@/actions/household";
-import HouseholdFood from "@/components/household/HouseholdFood";
-import LoadingSpinner from "@/components/ui/loadingSpinner";
-import HouseholdInfo from "@/components/household/householdInfo";
+import HouseholdFood, { HouseholdFoodSkeleton } from "@/components/household/HouseholdFood";
+import HouseholdInfo, { HouseholdInfoSkeleton } from "@/components/household/householdInfo";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { showToast } from "@/components/ui/toaster";
 
 export default function HouseholdPageWrapper() {
+  const session = useSession();
   const { data: household, isPending, isError, isFetching } = useMyHousehold();
 
   useEffect(() => {
@@ -16,18 +18,25 @@ export default function HouseholdPageWrapper() {
     }
   }, [isPending, isFetching, household]);
 
-  if (isPending) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <LoadingSpinner />
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (session.status === "unauthenticated") {
+      showToast({
+        title: "Du må være innlogget",
+        description: "Du må være innlogget for å se husholdningen din",
+        variant: "error",
+      });
+      redirect("/login");
+    }
+  }, [session.status]);
 
-  if (!household) {
+  if (isPending || !household) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <LoadingSpinner />
+      <div className="min-h-screen max-w-screen flex flex-col md:flex-row bg-white text-foreground">
+        <div className="w-full md:w-[300px] lg:w-[400px] shrink-0 bg-white border-b md:border-r border-border p-6 space-y-8">
+          <HouseholdInfoSkeleton />
+        </div>
+
+        <HouseholdFoodSkeleton />
       </div>
     );
   }
@@ -37,10 +46,10 @@ export default function HouseholdPageWrapper() {
   }
 
   return (
-    <div className="min-h-screen flex bg-white text-foreground">
-      <aside className="w-[400px] bg-white border-r border-border p-6 space-y-8">
+    <div className="min-h-screen max-w-screen flex flex-col md:flex-row bg-white text-foreground">
+      <div className="w-full md:w-[300px] lg:w-[400px] shrink-0 bg-white border-b md:border-r border-border p-6 space-y-8">
         <HouseholdInfo household={household} />
-      </aside>
+      </div>
 
       <HouseholdFood household={household} />
     </div>

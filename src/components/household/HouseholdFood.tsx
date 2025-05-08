@@ -13,7 +13,7 @@ import PreparednessBreakdown from "./PreparednessBreakdown";
 import { useMemo, useState } from "react";
 import AddNewFoodForm from "./AddNewFoodForm";
 import { useQueryClient } from "@tanstack/react-query";
-import HouseholdKits from "./HouseholdKits";
+import HouseholdKits, { HouseholdKitsSkeleton } from "./HouseholdKits";
 import UpdateWaterForm from "@/components/household/UpdateWaterForm";
 
 export default function HouseholdFood({ household }: Readonly<{ household: Household }>) {
@@ -38,19 +38,19 @@ export default function HouseholdFood({ household }: Readonly<{ household: House
   }, [household.levelOfPreparedness]);
 
   if (!householdFood) {
-    return <div>laster...</div>;
+    return <HouseholdFoodSkeleton />;
   }
 
   return (
-    <main className="flex-1 p-8 bg-background">
-      <div className="max-w-3xl mx-auto space-y-8">
+    <main className="p-8 bg-background flex-1">
+      <div className="space-y-8">
         <section className="space-y-4">
           <ProgressBar value={household.levelOfPreparedness.levelOfPreparedness * 100} label="Forberedelsesgrad" />
           <Alert type={alertType.type}>
             {alertType.message}
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="text-md p-1 underline" variant="link">
+                <Button className="text-md p-1 underline text-left" variant="link">
                   Lær mer om hvordan vi beregner dette
                 </Button>
               </DialogTrigger>
@@ -69,23 +69,25 @@ export default function HouseholdFood({ household }: Readonly<{ household: House
 
         <section className="space-y-4">
           <h2 className="text-lg font-medium">Vann</h2>
-          <div className="flex justify-between items-center border p-4 rounded shadow-sm bg-white">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
-                <Droplets className="w-4 h-4 text-muted-foreground" />
+          <div className="flex flex-col lg:flex-row justify-between items-center border p-4 rounded shadow-sm bg-white gap-2 lg:gap-6">
+            <div className="flex flex-row gap-2 items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
+                  <Droplets className="w-4 h-4 text-muted-foreground" />
+                </div>
+                <span className="text-sm">Vann</span>
               </div>
-              <span className="text-sm">Vann</span>
+              <div className="text-sm text-muted-foreground">
+                {Math.floor(
+                  (new Date(household.nextWaterChangeDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24),
+                )}{" "}
+                dager til neste vannbytte
+              </div>
+              <div className="text-sm font-medium">{household.waterAmountLiters} L</div>
             </div>
-            <div className="text-sm text-muted-foreground">
-              {Math.floor(
-                (new Date(household.nextWaterChangeDate).getTime() - new Date().getTime()) / (1000 * 3600 * 24),
-              )}{" "}
-              dager til neste vannbytte
-            </div>
-            <div className="text-sm font-medium">{household.waterAmountLiters} L</div>
             <Dialog open={waterDialogOpen} onOpenChange={setWaterDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="w-full lg:w-1/3">
                   Endre vannmengde
                   <Plus className="w-4 h-4 ml-1" />
                 </Button>
@@ -164,5 +166,55 @@ export default function HouseholdFood({ household }: Readonly<{ household: House
         </section>
       </div>
     </main>
+  );
+}
+
+export function HouseholdFoodSkeleton() {
+  return (
+    <div className="p-8 bg-background flex-1">
+      <div className="space-y-8">
+        <section className="space-y-4">
+          <ProgressBar value={0} label="Forberedelsesgrad" />
+          <div className="animate-pulse bg-muted rounded h-18 md:h-24 lg:h-18 w-full" />
+        </section>
+
+        <section className="space-y-4">
+          <h2 className="text-lg font-medium">Vann</h2>
+          <div className="flex flex-col lg:flex-row justify-between items-center border p-4 rounded shadow-sm bg-white gap-2 lg:gap-6">
+            <div className="flex flex-row gap-2 items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
+                  <Droplets className="w-4 h-4 text-muted-foreground" />
+                </div>
+                <span className="text-sm">Vann</span>
+              </div>
+              <div className="animate-pulse bg-muted rounded w-40 h-5" />
+              <div className="animate-pulse bg-muted rounded w-16 h-5" />
+            </div>
+            <Button variant="outline" disabled size="sm" className="w-full lg:w-1/3">
+              Endre vannmengde
+              <Plus className="w-4 h-4 ml-1" />
+            </Button>
+          </div>
+        </section>
+
+        <section className="space-y-4">
+          <div>
+            <h2 className="text-lg font-medium">Utstyr</h2>
+            <p className="text-sm text-muted-foreground">Utstyr husholdningen har</p>
+          </div>
+          <HouseholdKitsSkeleton />
+        </section>
+
+        <section className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-medium">Matvarer</h2>
+            <Button disabled>
+              Legg til ny matvare <Plus strokeWidth={1.25} size={20} />
+            </Button>
+          </div>
+        </section>
+      </div>
+    </div>
   );
 }
