@@ -155,6 +155,7 @@ export default function HouseholdFood({ household }: Readonly<{ household: House
                   id={foodType.typeId}
                   name={foodType.typeName}
                   totalAmount={foodType.totalAmount}
+                  unit={foodType.unit}
                   units={foodType.batches}
                 />
               );
