@@ -38,7 +38,7 @@ jobs:
     name: Build Frontend
     runs-on: ubuntu-latest
     env:
-      NEXTAUTH_URL: https://localhost:3000
+      NEXTAUTH_URL: http://localhost:3000
       NEXTAUTH_SECRET: aaa
 
       NEXT_PUBLIC_API_URL: localhost:8080
@@ -46,16 +46,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Dump env for debug
-        run: |
-          echo ".env.* files in repo:"
-          ls -1a | grep '^\.env'
-          echo ""
-
-          echo "Environment variables:"
-          env | grep NEXTAUTH
-          env | grep NEXT_PUBLIC_API
-          echo ""
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
