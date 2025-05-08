@@ -54,11 +54,11 @@ function LoginContent() {
 
   return (
     <div className="w-full max-w-md rounded-2xl p-8 space-y-6">
-      <h1 className="text-2xl font-bold text-center">Logg inn</h1>
+      <h1 className="text-2xl font-bold text-center" data-testid="login-title">Logg inn</h1>
       <loginForm.AppField name="username">
-        {(field) => <field.TextInput label="Brukernavn" placeholder="brukernavn" />}
+        {(field) => <field.TextInput data-testid="input-username" label="Brukernavn" placeholder="brukernavn" />}
       </loginForm.AppField>
-      <loginForm.AppField name="password">
+      <loginForm.AppField data-testid="input-password" name="password">
         {(field) => <field.TextInput 
           label="Passord" 
           type="password" 
@@ -66,7 +66,7 @@ function LoginContent() {
         />}
       </loginForm.AppField>
       <loginForm.AppForm>
-        <loginForm.SubmitButton>Logg inn</loginForm.SubmitButton>
+        <loginForm.SubmitButton  data-testid="submit-login">Logg inn</loginForm.SubmitButton>
       </loginForm.AppForm>
       <div className="text-red-700 text-sm text-center">{loginError && <p>{loginError}</p>}</div>
       <div className="flex justify-center flex-col">

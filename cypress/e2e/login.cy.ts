@@ -1,18 +1,12 @@
 describe("login", () => {
   it("Should log in to olaNordmann and then log out", () => {
-
     cy.visit("/login");
-    cy.get("#username").should("be.visible").clear().type("olaNordmann");
-    cy.get("#username").should("have.value","olaNordmann");
+    cy.get('[data-testid="input-username"]').type("nordmannJunior");
+    cy.get('[data-testid="input-password"]').type("Password12345");
 
-    cy.get("#password").should("be.visible").clear().type("Password12345");
-
-    cy.contains('button', "Logg inn").should("be.visible").click();
-    cy.get('h1.text-4xl.font-bold', { timeout: 5000 })
-    .should('contain.text', 'Krisefikser');
+    cy.get('[data-testid="submit-login"]').click();
+    cy.get('[data-testid="page-title"]', { timeout: 5000 }).should("contain.text", "Krisefikser");
     cy.visit("/profile");
-    cy.get('p.text-gray-500.mt-1')
-    .should('contain.text', 'olaNordmann');
-    
+    cy.get('[data-testid="profile-username"]').should("contain.text", "olaNordmann");
   });
 });

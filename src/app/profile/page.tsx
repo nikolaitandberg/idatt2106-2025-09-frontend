@@ -87,7 +87,7 @@ function ProfilePage({ userId }: { userId: number }) {
             <h1 className="text-3xl font-bold">
               {profile.firstName} {profile.lastName}
             </h1>
-            <p className="text-gray-500 mt-1">@{profile.username}</p>
+            <p className="text-gray-500 mt-1" data-testid="profile-username">@{profile.username}</p>
             {profile.admin && (
               <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mt-2 mr-2">Admin</span>
             )}
