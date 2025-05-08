@@ -1,5 +1,4 @@
 import { useDeleteExtraResident, useExtraResidents, useHouseholdUsers } from "@/actions/household";
-import LoadingSpinner from "../ui/loadingSpinner";
 import MemberCard, { MemberCardSkeleton } from "../ui/memberCard";
 import { AddMemberDialog } from "./addMemberDialog";
 
@@ -27,7 +26,7 @@ export default function HouseholdUsers({ householdId }: { householdId: number })
   };
 
   if (householdUsersIsPending || extraResidentsIsPending) {
-    return <LoadingSpinner />;
+    return <HouseholdUsersSkeleton />;
   }
 
   if (householdUsersIsError || extraResidentsIsError) {
