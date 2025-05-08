@@ -23,7 +23,6 @@ export default function MapToolBar({
 }: Readonly<MapToolBarProps>) {
   return (
     <div className="relative bg-white rounded-md px-4 h-14 flex items-center justify-between">
-      {/* Scrollable midtre seksjon */}
       <div className="flex-1 overflow-x-auto">
         <div className="flex flex-row gap-2 items-center min-w-max">
           <MapFilter onMapObjectTypesChange={onMapObjectTypesChange} />
@@ -31,7 +30,6 @@ export default function MapToolBar({
         </div>
       </div>
 
-      {/* Høyresiden */}
       <div className="flex flex-row gap-1 items-center pl-2">
         {canGoToHousehold && (
           <Button variant="ghost" onClick={onHouseholdClick} className="flex flex-row gap-1 items-center p-2">
