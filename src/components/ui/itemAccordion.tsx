@@ -132,6 +132,7 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
                     onOpenChange={(open) => setMoveDialogUnitId(open ? entry.id : null)}
                     foodId={entry.id}
                     maxAmount={entry.amount}
+                    unit={unit}
                   />
                 </DialogContent>
               </Dialog>
