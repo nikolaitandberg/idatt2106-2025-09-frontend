@@ -1,8 +1,7 @@
 "use client";
 
 import { useMyGroupMemberships, getGroupById } from "@/actions/group";
-import GroupCard from "@/components/group/groupCard";
-import LoadingSpinner from "@/components/ui/loadingSpinner";
+import GroupCard, { GroupCardSkeleton } from "@/components/group/groupCard";
 import { useFetch } from "@/util/fetch";
 import { useQueries } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
@@ -20,10 +19,6 @@ export default function UserGroupList() {
     })),
   });
 
-  if (isPending) {
-    return <LoadingSpinner />;
-  }
-
   if (isError) {
     return <div className="text-red-500 text-center mt-8">Kunne ikke hente gruppemedlemskap: {error?.message}</div>;
   }
@@ -31,12 +26,18 @@ export default function UserGroupList() {
   const allLoaded = groupQueries.every((q) => q.isSuccess);
   const anyError = groupQueries.some((q) => q.isError);
 
-  if (!allLoaded && !anyError) {
-    return <LoadingSpinner />;
+  if ((!allLoaded && !anyError) || isPending) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {[1, 2, 3, 4].map((i) => (
+          <GroupCardSkeleton key={i} />
+        ))}
+      </div>
+    );
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {groupQueries.map((query, index) => {
         if (query.isSuccess) {
           const group = query.data;
@@ -51,7 +52,7 @@ export default function UserGroupList() {
           );
         }
         return (
-          <div key={index} className="text-red-500 text-sm">
+          <div key={index + "error"} className="text-red-500 text-sm">
             Kunne ikke hente gruppe-ID {relations?.[index].groupId}
           </div>
         );

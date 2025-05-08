@@ -1,18 +1,22 @@
 "use client";
 
-import { useHousehold, useHouseholdUsers } from "@/actions/household";
-import HouseholdCard from "@/components/group/householdCard";
+import { useHousehold, useHouseholdUsers, useMyHousehold } from "@/actions/household";
+import HouseholdCard, { HouseholdCardSkeleton } from "@/components/group/householdCard";
 
 interface GroupHouseholdCardProps {
   householdId: number;
-  isHome?: boolean;
 }
 
-export default function GroupHouseholdCard({ householdId, isHome }: GroupHouseholdCardProps) {
-  const { data: household } = useHousehold(householdId);
-  const { data: users } = useHouseholdUsers(householdId);
+export default function GroupHouseholdCard({ householdId }: GroupHouseholdCardProps) {
+  const { data: household, isPending: householdIsPending } = useHousehold(householdId);
+  const { data: users, isPending: householdUsersIsPending } = useHouseholdUsers(householdId);
+  const { data: myHousehold, isPending: myHouseholdIsPending } = useMyHousehold();
 
   const memberCount = users?.length ?? 0;
+
+  if (householdIsPending || householdUsersIsPending || myHouseholdIsPending) {
+    return <HouseholdCardSkeleton />;
+  }
 
   return (
     <HouseholdCard
@@ -20,7 +24,11 @@ export default function GroupHouseholdCard({ householdId, isHome }: GroupHouseho
       name={household?.name ?? "Husholdning"}
       address={household?.address ?? ""}
       peopleCount={memberCount}
-      isHome={isHome}
+      isHome={householdId === myHousehold?.id}
     />
   );
+}
+
+export function GroupHouseholdCardSkeleton() {
+  return <HouseholdCardSkeleton />;
 }

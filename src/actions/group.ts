@@ -1,6 +1,3 @@
-"use client";
-
-import { useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { FetchFunction, Fetch, useFetch } from "@/util/fetch";
 import { API_BASE_URL } from "@/types/constants";
 import {
@@ -12,7 +9,7 @@ import {
   GroupInvite,
   SharedFoodByHousehold,
 } from "@/types/group";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 
 export const getMyGroupMemberships = async (fetcher: FetchFunction = Fetch): Promise<GroupHouseholdRelation[]> => {
@@ -39,6 +36,16 @@ export const getGroupById = async (id: number, fetcher: FetchFunction = Fetch): 
   const res = await fetcher<GroupDetails>(`${API_BASE_URL}/emergency-groups/summary/group/${id}`);
   if (!res) throw new Error("Could not fetch group");
   return res;
+};
+
+export const useGroupById = (groupId: number) => {
+  const fetcher = useFetch();
+
+  return useQuery({
+    queryKey: ["group", "details", groupId],
+    queryFn: () => getGroupById(groupId, fetcher),
+    enabled: !!groupId,
+  });
 };
 
 export const getGroupDetails = async (groupId: number, fetcher: FetchFunction = Fetch): Promise<GroupDetails> => {
@@ -179,6 +186,17 @@ export const getGroupInvitesForMyHousehold = async (fetcher: FetchFunction): Pro
   const res = await fetcher<GroupInvite[]>(`${API_BASE_URL}/group-invite/household`);
   if (!res) return [];
   return res;
+};
+
+export const useGroupInvitesForMyHousehold = () => {
+  const session = useSession();
+  const fetcher = useFetch();
+
+  return useQuery({
+    queryKey: ["group-invites", "my-household"],
+    queryFn: () => getGroupInvitesForMyHousehold(fetcher),
+    enabled: session.status !== "loading",
+  });
 };
 
 export const acceptGroupInvite = async (groupId: number, fetcher: FetchFunction = Fetch): Promise<void> => {

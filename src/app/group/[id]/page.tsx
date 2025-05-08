@@ -1,41 +1,88 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { redirect, useParams } from "next/navigation";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Apple, Users } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { getGroupById, useGroupHouseholds, useSharedFood } from "@/actions/group";
-import { useFetch } from "@/util/fetch";
-import LoadingSpinner from "@/components/ui/loadingSpinner";
-import GroupHeader from "@/components/group/groupHeader";
-import GroupMembersTab from "@/components/group/groupMembersTab";
+import { useGroupById, useGroupHouseholds, useSharedFood } from "@/actions/group";
+import GroupHeader, { GroupHeaderSkeleton } from "@/components/group/groupHeader";
+import GroupMembersTab, { GroupMembersTabSkeleton } from "@/components/group/groupMembersTab";
 import GroupFoodTab from "@/components/group/groupFoodTab";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
+import { showToast } from "@/components/ui/toaster";
+import Link from "next/link";
 
 export default function GroupPage() {
   const params = useParams();
   const groupId = Number(params.id);
-  const fetcher = useFetch();
 
-  const { data: group, isPending: loadingGroup } = useQuery({
-    queryKey: ["group", "details", groupId],
-    queryFn: () => getGroupById(groupId, fetcher),
-    enabled: !!groupId,
-  });
+  const { data: households, isPending: loadingHouseholds, isError: householdsIsError } = useGroupHouseholds(groupId);
+  const { data: sharedFood, isError: sharedFoodIsError } = useSharedFood(groupId);
+  const { data: group, isPending: loadingGroup, isError: groupIsError } = useGroupById(groupId);
 
-  const { data: households, isPending: loadingHouseholds } = useGroupHouseholds(groupId);
-  const { data: sharedFood } = useSharedFood(groupId);
+  const session = useSession();
 
-  if (loadingGroup || loadingHouseholds) {
+  useEffect(() => {
+    if (session.status === "unauthenticated") {
+      showToast({
+        title: "Ikke innlogget",
+        description: "Du må være innlogget for å se gruppen din.",
+        variant: "error",
+      });
+      redirect("/login");
+    }
+  }, [session.status]);
+
+  if (isNaN(groupId)) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <LoadingSpinner />
+      <div className="flex flex-col items-center justify-center h-full flex-1">
+        <h1 className="text-2xl font-bold">Ugyldig gruppe-ID</h1>
+        <p className="text-lg text-muted-foreground mt-2">Denne gruppen finnes ikke.</p>
+        <Link href="/group" className="hover:underline mt-4">
+          Tilbake til grupper
+        </Link>
+      </div>
+    );
+  }
+
+  if (loadingGroup || loadingHouseholds || session.status === "loading") {
+    return (
+      <div className="p-8 space-y-6">
+        <GroupHeaderSkeleton />
+
+        <Tabs defaultValue="medlemmer" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="medlemmer" disabled>
+              <Users className="mr-2 h-4 w-4" />
+              Medlemmer
+            </TabsTrigger>
+            <TabsTrigger value="matvarer" disabled>
+              <Apple className="mr-2 h-4 w-4" />
+              Matvarer
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="medlemmer">
+            <GroupMembersTabSkeleton />
+          </TabsContent>
+        </Tabs>
+      </div>
+    );
+  }
+
+  if (groupIsError || householdsIsError || sharedFoodIsError) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full flex-1">
+        <h1 className="text-2xl font-bold">Noe gikk galt</h1>
+        <p className="text-lg text-muted-foreground mt-2">
+          Noe gikk galt når vi prøvde å laste inn gruppen din. Prøv igjen senere.
+        </p>
       </div>
     );
   }
 
   return (
     <div className="p-8 space-y-6">
-      {group && <GroupHeader group={group} />}
+      <GroupHeader group={group} />
 
       <Tabs defaultValue="medlemmer" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
