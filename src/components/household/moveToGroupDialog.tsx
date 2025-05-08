@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { showToast } from "@/components/ui/toaster";
 import useAppForm from "@/util/formContext";
 import FormSection from "@/components/ui/form/formSection";
@@ -22,12 +16,7 @@ interface MoveToGroupDialogProps {
   maxAmount: number;
 }
 
-export default function MoveToGroupDialog({
-  open,
-  onOpenChange,
-  foodId,
-  maxAmount,
-}: MoveToGroupDialogProps) {
+export default function MoveToGroupDialog({ open, onOpenChange, foodId, maxAmount }: MoveToGroupDialogProps) {
   const queryClient = useQueryClient();
   const mutation = useMoveFoodToGroup();
 
@@ -55,7 +44,7 @@ export default function MoveToGroupDialog({
                 variant: "success",
               });
               queryClient.invalidateQueries();
-              onOpenChange(false); // ← viktig!
+              onOpenChange(false);
             },
             onError: () => {
               showToast({
