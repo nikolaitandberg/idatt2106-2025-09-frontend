@@ -79,8 +79,6 @@ export default function HouseholdInfo({ household }: { household: Household }) {
           <span>{household.address}</span>
         </div>
 
-        <div className="text-sm text-muted-foreground">Husholdning ID: {household.id}</div>
-
         <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" size="fullWidth" className="hover:text-foreground gap-2">
