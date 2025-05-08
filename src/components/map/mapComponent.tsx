@@ -28,10 +28,17 @@ export default function MapComponent({
   onKeyDown,
   children,
 }: Readonly<MapComponentProps>) {
+  const handleZoom = (zoomChange: number) => {
+    if (ref && "current" in ref && ref.current) {
+      const currentZoom = ref.current.getZoom();
+      ref.current.zoomTo(currentZoom + zoomChange);
+    }
+  };
+
   return (
     <div
       onKeyDown={onKeyDown} // Handle keyboard events here
-      style={{ width: "100%", height: "100%" }}
+      style={{ width: "100%", height: "100%", position: "relative" }}
     >
       <Map
         onLoad={onLoad}
@@ -52,6 +59,33 @@ export default function MapComponent({
         <AttributionControl compact={true} position="top-left" />
         {children}
       </Map>
+      {/* Zoom controls */}
+      <div style={{ position: "absolute", top: 10, right: 10, display: "flex", flexDirection: "column", gap: "5px" }}>
+        <button
+          onClick={() => handleZoom(1)}
+          style={{
+            background: "white",
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+            padding: "5px",
+            cursor: "pointer",
+          }}
+        >
+          +
+        </button>
+        <button
+          onClick={() => handleZoom(-1)}
+          style={{
+            background: "white",
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+            padding: "5px",
+            cursor: "pointer",
+          }}
+        >
+          -
+        </button>
+      </div>
     </div>
   );
 }
