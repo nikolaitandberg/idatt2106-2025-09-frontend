@@ -64,7 +64,7 @@ export default function HouseholdUsers({ householdId }: { householdId: number })
           <MemberCard
             key={`resident-${resident.id}`}
             name={resident.name}
-            type={resident.typeId === 4 ? "animal" : "person"}
+            type={resident.typeId === 3 || resident.typeId === 4 ? "animal" : "person"}
             onRemove={() => handleRemoveExtraResident(resident.id)}
           />
         ))}

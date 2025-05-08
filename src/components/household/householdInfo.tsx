@@ -3,7 +3,6 @@
 import { Home, LogOut, MapPin, Pencil } from "lucide-react";
 import { Household } from "@/types/household";
 import HouseholdUsers from "./householdUsers";
-import HouseholdGroups from "./householdGroups";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "../ui/dialog";
 import useAppForm from "@/util/formContext";
@@ -138,8 +137,6 @@ export default function HouseholdInfo({ household }: { household: Household }) {
 
       <hr className="border-border" />
       <HouseholdUsers householdId={household.id} />
-      <hr className="border-border" />
-      <HouseholdGroups />
     </>
   );
 }
