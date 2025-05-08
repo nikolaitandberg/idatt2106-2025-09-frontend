@@ -16,6 +16,7 @@ export type CreateMapObjectRequest = Omit<MapObject, "id">;
 export type EditMapObjectRequest = MapObject;
 
 export type AddHouseholdFoodRequest = Omit<Food, "id">;
+export type EditHouseholdFoodRequest = Food;
 export type EditHouseholdInfoRequest = Omit<
   Household,
   "waterAmountLiters" | "lastWaterChangeDate" | "levelOfPreparedness"

@@ -2,21 +2,17 @@ import { Food } from "@/types/household";
 import useAppForm from "@/util/formContext";
 import { z } from "zod";
 
-type AddFoodFormData = Omit<Food, "id" | "householdId" | "typeId">;
+type EditFoodFormData = Omit<Food, "id" | "householdId" | "typeId">;
 
-interface AddFoodFormProps {
-  onSubmit: (data: AddFoodFormData) => void;
-}
-
-export default function AddFoodForm({ onSubmit }: AddFoodFormProps) {
-  const defaultValues: {
+interface EditFoodFormProps {
+  onSubmit: (data: EditFoodFormData) => void;
+  defaultValues: {
     expirationDate: Date;
     amount: number;
-  } = {
-    expirationDate: new Date(),
-    amount: 0,
   };
+}
 
+export default function EditFoodForm({ onSubmit, defaultValues }: EditFoodFormProps) {
   const schema = z.object({
     expirationDate: z.date(),
     amount: z.number().min(1, { message: "Antall må være større enn 0" }),
@@ -28,7 +24,7 @@ export default function AddFoodForm({ onSubmit }: AddFoodFormProps) {
       onChange: schema,
     },
     onSubmit: ({ value }) => {
-      onSubmit?.({
+      onSubmit({
         ...value,
         expirationDate: value.expirationDate.toISOString(),
       });
@@ -40,7 +36,7 @@ export default function AddFoodForm({ onSubmit }: AddFoodFormProps) {
       <form.AppField name="expirationDate">{(field) => <field.DatePicker label="Utløpsdato" />}</form.AppField>
       <form.AppField name="amount">{(field) => <field.NumberInput label="Antall" />}</form.AppField>
       <form.AppForm>
-        <form.SubmitButton>Legg til matvare</form.SubmitButton>
+        <form.SubmitButton>Oppdater matvare</form.SubmitButton>
       </form.AppForm>
     </div>
   );

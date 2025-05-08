@@ -43,7 +43,7 @@ export default function UpdateWaterForm({ household, onClose }: { household: Hou
   return (
     <div className="space-y-4">
       <form.AppField name="amount">
-        {(field) => <field.NumberInput label="Mengde vann å legge til (liter)" />}
+        {(field) => <field.NumberInput label="Mengde vann i husholdning (liter)" />}
       </form.AppField>
       <form.AppField name="date">{(field) => <field.DatePicker label="Siste dato vann ble byttet" />}</form.AppField>
 
