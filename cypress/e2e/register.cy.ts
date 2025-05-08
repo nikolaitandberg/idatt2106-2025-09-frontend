@@ -4,7 +4,7 @@ describe("register", () =>{
     
     cy.visit("/login");
     cy.get('a[href="/register"]')
-    .should('have.class', 'text-blue-500') 
+    .should('have.class', 'text-blue-700') 
     .click()
     cy.contains('h1', 'Registrer deg').should('be.visible');
     
