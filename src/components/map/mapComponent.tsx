@@ -15,6 +15,7 @@ interface MapComponentProps {
   onLoad?: () => void;
   onMove?: () => void;
   onClick?: () => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
   children?: React.ReactNode;
 }
 
@@ -24,26 +25,33 @@ export default function MapComponent({
   onMove,
   onClick,
   onLoad,
+  onKeyDown,
   children,
 }: Readonly<MapComponentProps>) {
   return (
-    <Map
-      onLoad={onLoad}
-      onMove={onMove}
-      onClick={onClick}
-      initialViewState={
-        initialViewState ?? {
-          longitude: 9.726463,
-          latitude: 60.931636,
-          zoom: 5,
-        }
-      }
-      attributionControl={false}
-      ref={ref}
+    <div
+      onKeyDown={onKeyDown} // Handle keyboard events here
       style={{ width: "100%", height: "100%" }}
-      mapStyle={MAP_STYLE_CONFIG}>
-      <AttributionControl compact={true} position="top-left" />
-      {children}
-    </Map>
+    >
+      <Map
+        onLoad={onLoad}
+        onMove={onMove}
+        onClick={onClick}
+        initialViewState={
+          initialViewState ?? {
+            longitude: 9.726463,
+            latitude: 60.931636,
+            zoom: 5,
+          }
+        }
+        attributionControl={false}
+        ref={ref}
+        style={{ width: "100%", height: "100%" }}
+        mapStyle={MAP_STYLE_CONFIG}
+      >
+        <AttributionControl compact={true} position="top-left" />
+        {children}
+      </Map>
+    </div>
   );
 }

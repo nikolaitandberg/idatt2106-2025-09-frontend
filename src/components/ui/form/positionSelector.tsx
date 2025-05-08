@@ -34,6 +34,13 @@ export default function PositionSelector({ initialMapViewState, className, icon 
     });
   }, [field]);
 
+  const placeMarkerWithKeyboard = useCallback(() => {
+    if (mapRef.current) {
+      const center = mapRef.current.getCenter();
+      field.handleChange({ latitude: center.lat, longitude: center.lng });
+    }
+  }, [field]);
+
   return (
     <Dialog>
       <DialogTrigger>
@@ -65,7 +72,13 @@ export default function PositionSelector({ initialMapViewState, className, icon 
                 longitude: initialMapViewState.longitude,
                 zoom: initialMapViewState.zoom ?? 12,
               }
-            }>
+            }
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                placeMarkerWithKeyboard();
+              }
+            }}
+          >
             <Marker
               longitude={field.state.value?.longitude ?? 0}
               latitude={field.state.value?.latitude ?? 0}
@@ -74,6 +87,9 @@ export default function PositionSelector({ initialMapViewState, className, icon 
             </Marker>
           </MapComponent>
         </div>
+        <p className="text-sm text-neutral-500 mb-2">
+            Klikk på kartet eller trykk Enter for å plassere markøren.
+        </p>
         <div className="flex flex-row justify-between gap-2">
           <DialogClose asChild>
             <Button size="fullWidth">Velg</Button>
