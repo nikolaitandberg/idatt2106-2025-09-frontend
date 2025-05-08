@@ -7,7 +7,7 @@ import LoadingSpinner from "../loadingSpinner";
 import { Button } from "../button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "../dialog";
 import AddFoodTypeForm from "@/components/household/AddFoodTypeForm";
-import { useState } from "react";
+import { useState, useId } from "react";
 
 interface FoodTypePickerProps {
   label?: string;
@@ -19,6 +19,7 @@ export default function FoodTypePicker({ label, placeholder }: FoodTypePickerPro
   const { data: foodTypes, isPending, isError, error } = useFoodTypes();
   const { mutate: createFoodType } = useCreateFoodType();
   const field = useFieldContext<number | undefined>();
+  const id = useId();
 
   if (isError) {
     return <div className="text-red-500">Feil: {error.message}</div>;
@@ -42,7 +43,9 @@ export default function FoodTypePicker({ label, placeholder }: FoodTypePickerPro
   return (
     <>
       <div className="flex justify-between items-center">
-        <label className="text-sm font-medium text-gray-700">{label}</label>
+        <label id={`${id}-label`} className="text-sm font-medium text-gray-700">
+          {label}
+        </label>
         <Dialog open={newFoodTypeDialogOpen} onOpenChange={setNewFoodTypeDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="outline">Lag ny matvaretype</Button>
@@ -64,6 +67,7 @@ export default function FoodTypePicker({ label, placeholder }: FoodTypePickerPro
         </Dialog>
       </div>
       <ComboBox
+        id={id}
         placeholder={placeholder}
         options={foodTypes}
         renderOption={(option) => (
