@@ -2,7 +2,8 @@ name: Frontend CI
 
 on:
   push:
-    branches: -main
+    branches:
+      - main
       - dev
   pull_request:
     branches:
@@ -14,10 +15,13 @@ jobs:
     name: Build Backend
     runs-on: ubuntu-latest
     steps:
+      # 1) Checkout the backend repo on `dev`
       - uses: actions/checkout@v4
         with:
           repository: aTrueYety/idatt2106-2025-09-backend
           ref: dev
+
+      # 2) Set up Java & Maven
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -26,8 +30,12 @@ jobs:
           cache: maven
       - name: Install Maven
         run: sudo apt-get update && sudo apt-get install maven -y
+
+      # 3) Build with the test-e2e profile (seeds H2 DB)
       - name: Build with Maven
         run: mvn -B package -Dspring.profiles.active=test-e2e -Ptest-e2e
+
+      # 4) Upload the JAR as an artifact
       - name: Upload Backend Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -38,26 +46,32 @@ jobs:
     name: Build Frontend
     runs-on: ubuntu-latest
     env:
+      # Must match your local `.env`
       NEXTAUTH_URL: http://localhost:3000
-      NEXTAUTH_SECRET: aaa
-
+      NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
       NEXT_PUBLIC_API_URL: localhost:8080
       NEXT_PUBLIC_USE_HTTPS: false
 
     steps:
+      # 1) Checkout frontend code
       - uses: actions/checkout@v4
 
+      # 2) Set up Node.js & cache dependencies
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
-          cache: "npm"
-          cache-dependency-path: "package-lock.json"
+          node-version: 18
+          cache: npm
+          cache-dependency-path: package-lock.json
 
-      - run: npm ci
-      - run: npm run build
+      # 3) Install & build
+      - name: Install dependencies
+        run: npm ci
+      - name: Build Next.js
+        run: npm run build
 
-      - name: Upload build artifact
+      # 4) Upload the `.next/` folder as an artifact
+      - name: Upload Frontend Artifact
         uses: actions/upload-artifact@v4
         with:
           name: frontend-build
@@ -69,50 +83,72 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-backend, build-frontend]
     env:
+      # Backend in-memory H2
       DATABASE_URL: jdbc:h2:mem:testdb;Mode=MySQL
       DATABASE_USER: h2
-      DATABASE_PASSWORD=: h2
+      DATABASE_PASSWORD: h2
       SPRING_DATABASE_DRIVER: org.h2.Driver
 
+      # NextAuth & front-end
       NEXTAUTH_URL: http://localhost:3000
-      NEXTAUTH_SECRET: aaa
-
+      NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
       NEXT_PUBLIC_API_URL: localhost:8080
       NEXT_PUBLIC_USE_HTTPS: false
-
       CORS_ALLOWED_ORIGINS: http://localhost:3000
       DATABASE_SCHEMA: default
 
     steps:
-      - name: Checkout Code
+      # 1) Checkout front-end source (so we have package.json & public/)
+      - name: Checkout Frontend Code
         uses: actions/checkout@v4
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
+
+      # 2) Install Next.js runtime deps
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          java-version: "21"
-          distribution: "temurin"
-      - name: Download Backend Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: backend-build
-          path: backend/
+          node-version: 18
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install Frontend Dependencies
+        run: npm ci
+
+      # 3) Download the prod-built `.next/` folder
       - name: Download Frontend Artifact
         uses: actions/download-artifact@v4
         with:
           name: frontend-build
           path: .next/
-      - name: Start Frontend
+
+      # 4) Start Next.js in production mode
+      - name: Start Frontend Server
         run: |
-          nohup npx next start &
+          nohup npm run start &
           sleep 5
-      - name: Start Backend
+
+      # 5) Set up Java for the backend
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "temurin"
+
+      # 6) Download & start the backend JAR
+      - name: Download Backend Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-build
+          path: backend/
+      - name: Start Backend Server
         run: |
-          nohup java -jar backend/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=test-e2e &
+          nohup java -jar backend/backend-0.0.1-SNAPSHOT.jar \
+            --spring.profiles.active=test-e2e &
           sleep 20
 
-      - name: Run Cypress Test
+      # 7) Run Cypress headless against localhost:3000
+      - name: Run Cypress Tests
         uses: cypress-io/github-action@v6
 
+      # 8) Upload any failure screenshots
       - name: Upload Cypress Artifacts
         if: always()
         uses: actions/upload-artifact@v4
