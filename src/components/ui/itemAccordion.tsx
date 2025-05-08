@@ -16,6 +16,7 @@ type FoodAccordionItemProps = {
   id: number;
   name: string;
   totalAmount: number;
+  unit: string;
   units: Omit<Food, "typeId" | "householdId">[];
   householdId: number;
 };
@@ -28,9 +29,9 @@ const expieryIsSoon = (date: string) => {
   return diffDays >= 0 && diffDays < 7;
 };
 
-export default function FoodAccordionItem({ id, name, totalAmount, householdId, units }: FoodAccordionItemProps) {
+export default function FoodAccordionItem({ id, name, totalAmount, unit, householdId, units }: FoodAccordionItemProps) {
   const [addFoodDialogOpen, setAddFoodDialogOpen] = useState(false);
-  const [moveDialogUnitId, setMoveDialogUnitId] = useState<number | null>(null); // 💡 Ny state
+  const [moveDialogUnitId, setMoveDialogUnitId] = useState<number | null>(null);
 
   const { mutate: addFood } = useAddHouseholdFood();
   const { mutate: deleteFood } = useDeleteHouseholdFood();
@@ -46,7 +47,9 @@ export default function FoodAccordionItem({ id, name, totalAmount, householdId, 
             </div>
             <span className="text-sm font-medium text-foreground">{name}</span>
           </div>
-          <span className="text-sm text-muted-foreground">{totalAmount}</span>
+          <span className="text-sm text-muted-foreground">
+            {totalAmount} {unit}
+          </span>
         </div>
       </AccordionTrigger>
 
@@ -76,22 +79,24 @@ export default function FoodAccordionItem({ id, name, totalAmount, householdId, 
           </DialogContent>
         </Dialog>
 
-        {units.map((unit, index) => (
+        {units.map((entry, index) => (
           <div
-            key={unit.id}
+            key={entry.id}
             className={cn(
               "flex items-center justify-between px-4 py-2 border-t",
               index % 2 === 0 ? "bg-white" : "bg-muted/20",
             )}>
-            <span className="text-sm text-foreground">{unit.amount} </span>
+            <span className="text-sm text-foreground">
+              {entry.amount} {unit}
+            </span>
 
             <span
               className={cn(
                 "flex items-center gap-1 text-sm",
-                expieryIsSoon(unit.expirationDate) ? "text-yellow-500" : "text-muted-foreground",
+                expieryIsSoon(entry.expirationDate) ? "text-yellow-500" : "text-muted-foreground",
               )}>
               <Calendar className="w-4 h-4" />
-              {unit.expirationDate}
+              {entry.expirationDate}
             </span>
 
             <div className="flex gap-2">
@@ -101,7 +106,7 @@ export default function FoodAccordionItem({ id, name, totalAmount, householdId, 
 
               <button
                 onClick={() => {
-                  deleteFood(unit.id, {
+                  deleteFood(entry.id, {
                     onSuccess: () => {
                       queryClient.invalidateQueries({ queryKey: ["household", "food"] });
                       queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
@@ -113,8 +118,8 @@ export default function FoodAccordionItem({ id, name, totalAmount, householdId, 
               </button>
 
               <Dialog
-                open={moveDialogUnitId === unit.id}
-                onOpenChange={(open) => setMoveDialogUnitId(open ? unit.id : null)}>
+                open={moveDialogUnitId === entry.id}
+                onOpenChange={(open) => setMoveDialogUnitId(open ? entry.id : null)}>
                 <DialogTrigger asChild>
                   <button className="p-1 rounded bg-blue-100 hover:bg-blue-200 transition">
                     <ArrowRightLeft className="w-4 h-4 text-blue-500" />
@@ -123,10 +128,10 @@ export default function FoodAccordionItem({ id, name, totalAmount, householdId, 
                 <DialogContent>
                   <DialogTitle>Flytt til gruppe</DialogTitle>
                   <MoveToGroupDialog
-                    open={moveDialogUnitId === unit.id}
-                    onOpenChange={(open) => setMoveDialogUnitId(open ? unit.id : null)}
-                    foodId={unit.id}
-                    maxAmount={unit.amount}
+                    open={moveDialogUnitId === entry.id}
+                    onOpenChange={(open) => setMoveDialogUnitId(open ? entry.id : null)}
+                    foodId={entry.id}
+                    maxAmount={entry.amount}
                   />
                 </DialogContent>
               </Dialog>
