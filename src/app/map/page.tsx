@@ -198,7 +198,7 @@ export default function Home() {
   return (
     <div className="grid grid-cols-1 gap-4 items-center justify-center w-full h-[90vh]">
       <div className="flex items-center justify-center bg-white px-4 pb-4 pt-2 h-full w-full n">
-        <div className="w-full h-full rounded-md overflow-hidden">
+        <div className="w-full h-full">
           <MapComponent
             initialViewState={{
               longitude: 9.726463,
