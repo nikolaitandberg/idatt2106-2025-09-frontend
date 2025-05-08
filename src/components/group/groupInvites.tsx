@@ -21,6 +21,7 @@ export default function GroupInvites() {
       {invites.map((invite) => (
         <InviteCard key={`${invite.groupId}-${invite.householdId}`} invite={invite} />
       ))}
+      {invites.length === 0 && <li className="text-muted-foreground text-sm">Du har ingen invitasjoner</li>}
     </ul>
   );
 }
