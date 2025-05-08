@@ -5,25 +5,16 @@ import HouseholdFood from "@/components/household/HouseholdFood";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import HouseholdInfo from "@/components/household/householdInfo";
 import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function HouseholdPageWrapper() {
   const { data: household, isPending, isError, isFetching } = useMyHousehold();
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
-    if (isFetching || !household) {
-      return;
-    }
-
-    setIsInitialLoad(false);
-  }, [isFetching, household]);
-
-  useEffect(() => {
-    if (!household && isInitialLoad && !isFetching) {
+    if (!isPending && !isFetching && !household) {
       redirect("/household/join");
     }
-  }, [household, isInitialLoad, isFetching]);
+  }, [isPending, isFetching, household]);
 
   if (isPending) {
     return (
