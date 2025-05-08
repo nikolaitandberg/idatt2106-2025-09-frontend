@@ -80,6 +80,9 @@ jobs:
       NEXT_PUBLIC_API_URL: localhost:8080
       NEXT_PUBLIC_USE_HTTPS: false
 
+      CORS_ALLOWED_ORIGINS: http://localhost:3000
+      DATABASE_SCHEMA: default
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -111,6 +114,7 @@ jobs:
         uses: cypress-io/github-action@v6
 
       - name: Upload Cypress Artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cypress-artifacts
