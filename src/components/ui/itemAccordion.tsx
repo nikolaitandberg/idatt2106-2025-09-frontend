@@ -11,6 +11,7 @@ import { useState } from "react";
 import { useAddHouseholdFood, useDeleteHouseholdFood } from "@/actions/household";
 import { useQueryClient } from "@tanstack/react-query";
 import MoveToGroupDialog from "@/components/household/moveToGroupDialog";
+import ConfirmationDialog from "@/components/ui/confirmationDialog";
 
 type FoodAccordionItemProps = {
   id: number;
@@ -32,6 +33,7 @@ const expieryIsSoon = (date: string) => {
 export default function FoodAccordionItem({ id, name, totalAmount, unit, householdId, units }: FoodAccordionItemProps) {
   const [addFoodDialogOpen, setAddFoodDialogOpen] = useState(false);
   const [moveDialogUnitId, setMoveDialogUnitId] = useState<number | null>(null);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<number | null>(null);
 
   const { mutate: addFood } = useAddHouseholdFood();
   const { mutate: deleteFood } = useDeleteHouseholdFood();
@@ -105,17 +107,35 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
               </button>
 
               <button
-                onClick={() => {
-                  deleteFood(entry.id, {
-                    onSuccess: () => {
-                      queryClient.invalidateQueries({ queryKey: ["household", "food"] });
-                      queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
-                    },
-                  });
-                }}
-                className="p-1 rounded bg-red-100 hover:bg-red-200 transition">
+                onClick={() => setShowDeleteConfirmation(entry.id)}
+                className="p-1 rounded bg-red-100 hover:bg-red-200 transition"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    setShowDeleteConfirmation(entry.id);
+                  }
+                }}>
                 <Trash className="w-4 h-4 text-red-500" />
               </button>
+
+              {showDeleteConfirmation === entry.id && (
+                <ConfirmationDialog
+                  variant="critical"
+                  title="Slett matvare"
+                  description={`Er du sikker på at du vil slette ${entry.amount} ${unit} ${name}?`}
+                  confirmText="Slett"
+                  onConfirm={() => {
+                    deleteFood(entry.id, {
+                      onSuccess: () => {
+                        queryClient.invalidateQueries({ queryKey: ["household", "food"] });
+                        queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
+                      },
+                    });
+                    setShowDeleteConfirmation(null);
+                  }}
+                  onCancel={() => setShowDeleteConfirmation(null)}
+                />
+              )}
 
               <Dialog
                 open={moveDialogUnitId === entry.id}
