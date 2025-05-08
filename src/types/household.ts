@@ -21,6 +21,7 @@ export type Household = {
     levelOfPreparednessFood: number;
     levelOfPreparednessKit: number;
     levelOfPreparednessWater: number;
+    timePrepared: number;
   };
 };
 

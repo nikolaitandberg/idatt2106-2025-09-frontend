@@ -86,7 +86,8 @@ export default function HouseholdFood({ household }: Readonly<{ household: House
             <Dialog open={waterDialogOpen} onOpenChange={setWaterDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
-                  <Plus className="w-4 h-4 mr-1" /> Legg til vann
+                  Endre vannmengde
+                  <Plus className="w-4 h-4 ml-1" />
                 </Button>
               </DialogTrigger>
               <DialogContent>
@@ -154,6 +155,7 @@ export default function HouseholdFood({ household }: Readonly<{ household: House
                   id={foodType.typeId}
                   name={foodType.typeName}
                   totalAmount={foodType.totalAmount}
+                  unit={foodType.unit}
                   units={foodType.batches}
                 />
               );

@@ -91,7 +91,7 @@ export default function ComboBox<T>({
                 setOpen(false);
                 onSelect(option);
               }}
-              className={cn("w-full cursor-pointer p-4 hover:bg-secondary-foreground-muted", {
+              className={cn("w-full cursor-pointer p-4 hover:bg-secondary-foreground-muted text-left", {
                 "bg-secondary-foreground hover:bg-secondary-foreground": selectedOption === option,
               })}>
               {renderOption(option)}
