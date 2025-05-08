@@ -13,6 +13,7 @@ type TextInputProps = {
   onChange?: (value: string) => void;
   validate?: (value: string) => boolean;
   validationErrorMessage?: string;
+  toggleVisibilityButtonProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
 };
 
 export default function TextInput({
@@ -24,6 +25,7 @@ export default function TextInput({
   initialValue,
   onChange,
   validate,
+  toggleVisibilityButtonProps,
 }: TextInputProps) {
   const [value, setValue] = useState(initialValue ?? "");
   const [touched, setTouched] = useState(false);
@@ -56,7 +58,10 @@ export default function TextInput({
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:cursor-pointer">
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:cursor-pointer"
+            tabIndex={0} // Ensure the button is tabbable
+            {...toggleVisibilityButtonProps}
+            >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
         )}
