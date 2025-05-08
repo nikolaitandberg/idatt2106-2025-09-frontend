@@ -87,3 +87,9 @@ export type SharedFoodByHousehold = {
     groupHouseholdId: number;
   }[];
 };
+
+export type MoveFoodArgs = {
+  foodId: number;
+  groupId: number;
+  amount: number;
+};

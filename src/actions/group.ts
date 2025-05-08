@@ -11,6 +11,7 @@ import {
   GroupInviteRequest,
   GroupInvite,
   SharedFoodByHousehold,
+  MoveFoodArgs,
 } from "@/types/group";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
@@ -265,6 +266,34 @@ export const useUnshareSharedFood = () => {
     mutationFn: ({ foodId, groupId, amount }) => unshareSharedFood(foodId, groupId, amount, fetcher),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["shared-food"] });
+      queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
+    },
+  });
+};
+
+export const moveFoodToGroup = async (
+  foodId: number,
+  groupId: number,
+  amount: number,
+  fetcher: FetchFunction,
+): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/shared-food/move`, {
+    method: "POST",
+    body: JSON.stringify({ foodId, groupId, amount }),
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useMoveFoodToGroup = () => {
+  const fetcher = useFetch();
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, MoveFoodArgs>({
+    mutationFn: ({ foodId, groupId, amount }) =>
+      moveFoodToGroup(foodId, groupId, amount, fetcher),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["shared-food"] });
+      queryClient.invalidateQueries({ queryKey: ["household", "food"] });
       queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
     },
   });
