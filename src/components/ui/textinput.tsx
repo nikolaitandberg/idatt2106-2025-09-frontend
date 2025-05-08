@@ -60,6 +60,7 @@ export default function TextInput({
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:cursor-pointer"
             tabIndex={0} // Ensure the button is tabbable
+            aria-label= "Vis eller skjul passord"
             {...toggleVisibilityButtonProps}
             >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -69,7 +70,7 @@ export default function TextInput({
 
       <div className="h-2 mt-1">
         {showError && (
-          <p className="text-red-500 text-sm">{validationErrorMessage || "Ugyldig " + label.toLowerCase()}</p>
+          <p className="text-red-700 text-sm">{validationErrorMessage || "Ugyldig " + label.toLowerCase()}</p>
         )}
       </div>
     </div>

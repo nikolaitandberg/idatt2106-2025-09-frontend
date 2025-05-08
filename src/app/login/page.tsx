@@ -63,9 +63,6 @@ function LoginContent() {
           label="Passord" 
           type="password" 
           placeholder="passord"
-          toggleVisibilityButtonProps={{
-            "aria-label": "Vis eller skjul passord",
-          }}
         />}
       </loginForm.AppField>
       <loginForm.AppForm>
