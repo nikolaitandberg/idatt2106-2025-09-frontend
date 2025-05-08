@@ -41,6 +41,9 @@ jobs:
       NEXTAUTH_URL: https://localhost:3000
       NEXTAUTH_SECRET: aaa
 
+      NEXT_PUBLIC_API_URL: localhost:8080
+      NEXT_PUBLIC_USE_HTTPS: false
+
     steps:
       - uses: actions/checkout@v4
 
@@ -73,6 +76,9 @@ jobs:
 
       NEXTAUTH_URL: https://localhost:3000
       NEXTAUTH_SECRET: aaa
+
+      NEXT_PUBLIC_API_URL: localhost:8080
+      NEXT_PUBLIC_USE_HTTPS: false
 
     steps:
       - name: Checkout Code
