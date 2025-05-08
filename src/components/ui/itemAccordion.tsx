@@ -8,10 +8,11 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./dialog";
 import { Button } from "./button";
 import AddFoodForm from "../household/AddFoodForm";
 import { useState } from "react";
-import { useAddHouseholdFood, useDeleteHouseholdFood } from "@/actions/household";
+import { useAddHouseholdFood, useDeleteHouseholdFood, useUpdateHouseholdFood } from "@/actions/household";
 import { useQueryClient } from "@tanstack/react-query";
 import MoveToGroupDialog from "@/components/household/moveToGroupDialog";
 import ConfirmationDialog from "@/components/ui/confirmationDialog";
+import EditFoodForm from "@/components/household/editFoodForm";
 
 type FoodAccordionItemProps = {
   id: number;
@@ -34,9 +35,11 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
   const [addFoodDialogOpen, setAddFoodDialogOpen] = useState(false);
   const [moveDialogUnitId, setMoveDialogUnitId] = useState<number | null>(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<number | null>(null);
+  const [editingFood, setEditingFood] = useState(false);
 
   const { mutate: addFood } = useAddHouseholdFood();
   const { mutate: deleteFood } = useDeleteHouseholdFood();
+  const { mutate: editFood } = useUpdateHouseholdFood();
   const queryClient = useQueryClient();
 
   return (
@@ -102,7 +105,7 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
             </span>
 
             <div className="flex gap-2">
-              <button className="p-1 rounded hover:bg-muted transition">
+              <button className="p-1 rounded hover:bg-muted transition" onClick={() => setEditingFood(true)}>
                 <Pencil className="w-4 h-4 text-muted-foreground" />
               </button>
 
@@ -154,6 +157,40 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
                     maxAmount={entry.amount}
                     unit={unit}
                   />
+                </DialogContent>
+              </Dialog>
+
+              <Dialog open={editingFood} onOpenChange={setEditingFood}>
+                <DialogContent>
+                  <DialogTitle>Rediger {name.toLowerCase()}</DialogTitle>
+                  {editingFood && (
+                    <EditFoodForm
+                      onSubmit={async (food) => {
+                        await new Promise((resolve) => {
+                          editFood(
+                            {
+                              ...food,
+                              id: entry.id,
+                              householdId: householdId,
+                              typeId: id,
+                            },
+                            {
+                              onSettled: resolve,
+                              onSuccess: () => {
+                                queryClient.invalidateQueries({ queryKey: ["household", "food"] });
+                                queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
+                                setEditingFood(false);
+                              },
+                            },
+                          );
+                        });
+                      }}
+                      defaultValues={{
+                        expirationDate: new Date(entry.expirationDate),
+                        amount: entry.amount,
+                      }}
+                    />
+                  )}
                 </DialogContent>
               </Dialog>
             </div>
