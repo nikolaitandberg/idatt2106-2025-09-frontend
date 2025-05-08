@@ -13,6 +13,7 @@ import CreateMapObjectTypeForm from "@/components/admin/createMapObjectTypeForm"
 import { useDeleteEvent, useEvents, useSeverities } from "@/actions/event";
 import EventForm from "@/components/admin/EventForm";
 import { Event as AppEvent } from "@/types/event";
+import ConfirmationDialog from "@/components/ui/confirmationDialog";
 
 export default function AdminMap() {
   const mapObjects = useMapObjects(MAP_BOUNDS_MAX);
@@ -22,7 +23,9 @@ export default function AdminMap() {
   const [newMapObjectTypeDialogOpen, setNewMapObjectTypeDialogOpen] = useState(false);
   const [newEventDialogOpen, setNewEventDialogOpen] = useState(false);
   const [editEventDialogOpen, setEditEventDialogOpen] = useState(false);
+  const [deleteEventDialogOpen, setDeleteEventDialogOpen] = useState(false);
   const [currentEditEvent, setCurrentEditEvent] = useState<AppEvent | undefined>(undefined);
+  const [eventToDelete, setEventToDelete] = useState<number | null>(null);
   const deleteEvent = useDeleteEvent();
   const queryClient = useQueryClient();
 
@@ -59,6 +62,11 @@ export default function AdminMap() {
   const handleEditEvent = (event: AppEvent) => {
     setCurrentEditEvent(event);
     setEditEventDialogOpen(true);
+  };
+
+  const confirmDeleteEvent = (eventId: number) => {
+    setEventToDelete(eventId);
+    setDeleteEventDialogOpen(true);
   };
 
   return (
@@ -134,7 +142,7 @@ export default function AdminMap() {
                           <div className="w-4 h-4 rounded-full" style={{ backgroundColor: severity.colour }} />
                         )}
                         <span>
-                          #{event.id} {event.name}
+                          {event.name || "#" + event.id}
                         </span>
                         <span
                           className="px-2 py-1 text-xs font-medium rounded-md"
@@ -190,7 +198,7 @@ export default function AdminMap() {
                           <Button
                             variant="destructive"
                             size="sm"
-                            onClick={() => handleDeleteEvent(event.id)}
+                            onClick={() => confirmDeleteEvent(event.id)}
                             disabled={deleteEvent.isPending}>
                             {deleteEvent.isPending ? "Sletter..." : "Slett"}
                           </Button>
@@ -206,6 +214,22 @@ export default function AdminMap() {
           </div>
         </TabsContent>
       </Tabs>
+      <ConfirmationDialog
+        open={deleteEventDialogOpen}
+        confirmIsPending={deleteEvent.isPending}
+        title="Slett hendelse"
+        description="Er du sikker på at du vil slette denne hendelsen?"
+        variant="critical"
+        confirmText="Slett"
+        cancelText="Avbryt"
+        onConfirm={() => {
+          if (eventToDelete !== null) {
+            handleDeleteEvent(eventToDelete);
+            setDeleteEventDialogOpen(false);
+          }
+        }}
+        onCancel={() => setDeleteEventDialogOpen(false)}
+      />
     </div>
   );
 }

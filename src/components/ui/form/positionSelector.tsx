@@ -37,7 +37,7 @@ export default function PositionSelector({ initialMapViewState, className, icon 
   return (
     <Dialog>
       <DialogTrigger>
-        <div className="text-left mb-1">Velg posisjon</div>
+        <div className="text-left mb-1">Velg posisjon i kart</div>
         <div className={cn("w-full p-2 border border-neutral-300 rounded-md hover:cursor-pointer", className)}>
           {field.state.value === undefined ? (
             <p className="text-sm text-neutral-500">Ingen posisjon valgt</p>
