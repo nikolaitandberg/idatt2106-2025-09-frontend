@@ -1,7 +1,7 @@
 "use client";
 
 import { AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
-import { Calendar, Image as ImageIcon, Pencil, Trash, Plus } from "lucide-react";
+import { Calendar, Image as ImageIcon, Pencil, Trash, Plus, ArrowRightLeft } from "lucide-react";
 import { cn } from "@/util/cn";
 import { Food } from "@/types/household";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./dialog";
@@ -10,6 +10,7 @@ import AddFoodForm from "../household/AddFoodForm";
 import { useState } from "react";
 import { useAddHouseholdFood, useDeleteHouseholdFood } from "@/actions/household";
 import { useQueryClient } from "@tanstack/react-query";
+import MoveToGroupDialog from "@/components/household/moveToGroupDialog";
 
 type FoodAccordionItemProps = {
   id: number;
@@ -24,12 +25,13 @@ const expieryIsSoon = (date: string) => {
   const currentDate = new Date();
   const diffTime = expieryDate.getTime() - currentDate.getTime();
   const diffDays = diffTime / (1000 * 3600 * 24);
-
   return diffDays >= 0 && diffDays < 7;
 };
 
 export default function FoodAccordionItem({ id, name, totalAmount, householdId, units }: FoodAccordionItemProps) {
   const [addFoodDialogOpen, setAddFoodDialogOpen] = useState(false);
+  const [moveDialogUnitId, setMoveDialogUnitId] = useState<number | null>(null); // 💡 Ny state
+
   const { mutate: addFood } = useAddHouseholdFood();
   const { mutate: deleteFood } = useDeleteHouseholdFood();
   const queryClient = useQueryClient();
@@ -49,6 +51,7 @@ export default function FoodAccordionItem({ id, name, totalAmount, householdId, 
       </AccordionTrigger>
 
       <AccordionContent className="bg-muted/30 px-0">
+        {/* Legg til dialog */}
         <Dialog open={addFoodDialogOpen} onOpenChange={setAddFoodDialogOpen}>
           <DialogTrigger asChild>
             <Button size="fullWidth" variant="outline">
@@ -64,12 +67,8 @@ export default function FoodAccordionItem({ id, name, totalAmount, householdId, 
                   { ...food, householdId, typeId: id },
                   {
                     onSuccess: () => {
-                      queryClient.invalidateQueries({
-                        queryKey: ["household", "food"],
-                      });
-                      queryClient.invalidateQueries({
-                        queryKey: ["household", "my-household"],
-                      });
+                      queryClient.invalidateQueries({ queryKey: ["household", "food"] });
+                      queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
                     },
                   },
                 );
@@ -78,20 +77,23 @@ export default function FoodAccordionItem({ id, name, totalAmount, householdId, 
           </DialogContent>
         </Dialog>
 
+        {/* Liste over mat-enheter */}
         {units.map((unit, index) => (
           <div
-            key={index}
+            key={unit.id}
             className={cn(
               "flex items-center justify-between px-4 py-2 border-t",
               index % 2 === 0 ? "bg-white" : "bg-muted/20",
-            )}>
-            <span className="text-sm text-foreground">{unit.amount}</span>
+            )}
+          >
+            <span className="text-sm text-foreground">{unit.amount} </span>
 
             <span
               className={cn(
                 "flex items-center gap-1 text-sm",
                 expieryIsSoon(unit.expirationDate) ? "text-yellow-500" : "text-muted-foreground",
-              )}>
+              )}
+            >
               <Calendar className="w-4 h-4" />
               {unit.expirationDate}
             </span>
@@ -100,22 +102,37 @@ export default function FoodAccordionItem({ id, name, totalAmount, householdId, 
               <button className="p-1 rounded hover:bg-muted transition">
                 <Pencil className="w-4 h-4 text-muted-foreground" />
               </button>
+
               <button
                 onClick={() => {
                   deleteFood(unit.id, {
                     onSuccess: () => {
-                      queryClient.invalidateQueries({
-                        queryKey: ["household", "food"],
-                      });
-                      queryClient.invalidateQueries({
-                        queryKey: ["household", "my-household"],
-                      });
+                      queryClient.invalidateQueries({ queryKey: ["household", "food"] });
+                      queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
                     },
                   });
                 }}
-                className="p-1 rounded bg-red-100 hover:bg-red-200 transition">
+                className="p-1 rounded bg-red-100 hover:bg-red-200 transition"
+              >
                 <Trash className="w-4 h-4 text-red-500" />
               </button>
+
+              <Dialog open={moveDialogUnitId === unit.id} onOpenChange={(open) => setMoveDialogUnitId(open ? unit.id : null)}>
+                <DialogTrigger asChild>
+                  <button className="p-1 rounded bg-blue-100 hover:bg-blue-200 transition">
+                    <ArrowRightLeft className="w-4 h-4 text-blue-500" />
+                  </button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogTitle>Flytt til gruppe</DialogTitle>
+                  <MoveToGroupDialog
+                    open={moveDialogUnitId === unit.id}
+                    onOpenChange={(open) => setMoveDialogUnitId(open ? unit.id : null)}
+                    foodId={unit.id}
+                    maxAmount={unit.amount}
+                  />
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         ))}
