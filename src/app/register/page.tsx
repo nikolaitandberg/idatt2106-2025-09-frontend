@@ -89,10 +89,10 @@ export default function Register() {
           {(field) => <field.TextInput label="Brukernavn" placeholder="Nytt brukernavn" />}
         </form.AppField>
         <form.AppField name="email">
-          {(field) => <field.TextInput label="E-post" type="email" placeholder="din@epost.no" />}
+          {(field) => <field.TextInput label="E-post" type="email" placeholder="Skriv din e-post" />}
         </form.AppField>
         <form.AppField name="password">
-          {(field) => <field.TextInput label="Passord" type="password" placeholder="Skriv ditt passord" />}
+          {(field) => <field.TextInput label="Passord" type="password" placeholder="Skriv ditt nye passord" />}
         </form.AppField>
         <form.AppField name="repeatPassword">
           {(field) => (
