@@ -7,6 +7,7 @@ import { Button } from "../ui/button";
 import LoadingSpinner from "../ui/loadingSpinner";
 import { showToast } from "../ui/toaster";
 import { House } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface InviteCardProps {
   invite: GroupInvite;
@@ -18,6 +19,7 @@ export default function InviteCard({ invite }: InviteCardProps) {
   const { mutate: acceptInvite, isPending } = useAcceptInvite();
   const { data: group, isPending: loadingGroup } = useGroupDetails(invite.groupId);
   const { mutate: rejectInvite, isPending: isRejecting } = useRejectInvite();
+  const router = useRouter();
 
   const handleAccept = () => {
     acceptInvite(invite.groupId, {
@@ -28,6 +30,7 @@ export default function InviteCard({ invite }: InviteCardProps) {
           description: `Du har blitt med i gruppen "${group?.groupName ?? invite.groupId}"`,
           variant: "success",
         });
+        router.push(`/group/${invite.groupId}`);
       },
       onError: () => {
         showToast({

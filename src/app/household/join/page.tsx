@@ -18,18 +18,20 @@ export default function CreateHouseholdForm() {
   const { data: household, isFetching: householdIsFetching } = useMyHousehold();
   const { data: myInvites, isPending: invitesIsPending } = useMyHouseholdInvites();
   const session = useSession();
-
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [hasCreatedHousehold, setHasCreatedHousehold] = useState(false);
 
   const router = useRouter();
 
   useEffect(() => {
-    if (householdIsFetching || !household) {
-      return;
+    if (household && !householdIsFetching && !hasCreatedHousehold) {
+      showToast({
+        title: "Du har allerede en husholdning",
+        description: "Forlat husholdningen din før du oppretter en ny",
+        variant: "warning",
+      });
+      redirect("/household");
     }
-
-    setIsInitialLoad(false);
-  }, [householdIsFetching, household]);
+  }, [household, householdIsFetching, hasCreatedHousehold]);
 
   const shema = z.object({
     address: z.string().min(1, { message: "Adresse må fylles ut" }),
@@ -76,6 +78,7 @@ export default function CreateHouseholdForm() {
           },
           {
             onSuccess: () => {
+              setHasCreatedHousehold(true);
               showToast({
                 title: "Husholdning opprettet",
                 description: "Du har nå opprettet en husholdning",
@@ -95,15 +98,6 @@ export default function CreateHouseholdForm() {
       });
     },
   });
-
-  if (household && isInitialLoad && !householdIsFetching) {
-    showToast({
-      title: "Du har allerede en husholdning",
-      description: "Forlat husholdningen din før du oppretter en ny",
-      variant: "warning",
-    });
-    redirect("/household");
-  }
 
   return (
     <div className="w-md mx-auto p-6 bg-white rounded-lg shadow-md mt-8">

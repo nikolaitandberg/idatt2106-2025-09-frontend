@@ -19,16 +19,18 @@ export default function HouseholdPageWrapper() {
     setIsInitialLoad(false);
   }, [isFetching, household]);
 
+  useEffect(() => {
+    if (!household && isInitialLoad && !isFetching) {
+      redirect("/household/join");
+    }
+  }, [household, isInitialLoad, isFetching]);
+
   if (isPending) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <LoadingSpinner />
       </div>
     );
-  }
-
-  if (!household && isInitialLoad && !isFetching) {
-    redirect("/household/join");
   }
 
   if (!household) {
