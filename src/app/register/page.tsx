@@ -99,14 +99,14 @@ export default function Register() {
           )}
         </form.Subscribe>
         {isError && (
-          <div className="text-red-500 text-sm text-center">
+          <div className="text-red-700 text-sm text-center">
             {error instanceof ApiError ? error.message : "Noe gikk galt. Vennligst prøv igjen."}
           </div>
         )}
         <div className="flex justify-center">
           <p className="text-sm text-gray-500">
             Har du allerede en konto?{" "}
-            <Link href="/login" className="text-blue-500 hover:underline">
+            <Link href="/login" className="text-blue-700 hover:underline">
               Logg inn
             </Link>
           </p>
