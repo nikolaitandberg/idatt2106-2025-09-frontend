@@ -1,6 +1,5 @@
 import { useDeleteExtraResident, useExtraResidents, useHouseholdUsers } from "@/actions/household";
-import LoadingSpinner from "../ui/loadingSpinner";
-import MemberCard from "../ui/memberCard";
+import MemberCard, { MemberCardSkeleton } from "../ui/memberCard";
 import { AddMemberDialog } from "./addMemberDialog";
 
 export default function HouseholdUsers({ householdId }: { householdId: number }) {
@@ -27,7 +26,7 @@ export default function HouseholdUsers({ householdId }: { householdId: number })
   };
 
   if (householdUsersIsPending || extraResidentsIsPending) {
-    return <LoadingSpinner />;
+    return <HouseholdUsersSkeleton />;
   }
 
   if (householdUsersIsError || extraResidentsIsError) {
@@ -70,6 +69,21 @@ export default function HouseholdUsers({ householdId }: { householdId: number })
         ))}
 
       <AddMemberDialog householdId={householdId} />
+    </div>
+  );
+}
+
+export function HouseholdUsersSkeleton() {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="font-medium">Medlemmer</h2>
+        <span className="animate-pulse bg-muted rounded w-1/2 h-5" />
+      </div>
+
+      {[1, 2, 3, 4].map((i) => (
+        <MemberCardSkeleton key={i} />
+      ))}
     </div>
   );
 }
