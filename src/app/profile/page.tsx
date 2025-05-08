@@ -36,6 +36,11 @@ function ProfilePage({ userId }: { userId: number }) {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const { mutate: sendEmailVerification, isPending: isSendingEmail } = useSendEmailVerification();
   const [verificationSent, setVerificationSent] = useState(false);
+  
+  if (profile) {
+    console.log("Brukerprofil:", profile);
+    console.log("E-post bekreftet:", profile.emailConfirmed);
+  }
 
   if (isLoading) {
     return (
