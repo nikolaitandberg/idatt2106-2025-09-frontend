@@ -38,7 +38,7 @@ export default function PasswordResetDialog() {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <button onClick={() => setOpen(true)} className="text-blue-500 hover:underline hover:cursor-pointer">
+      <button onClick={() => setOpen(true)} className="text-blue-700 hover:underline hover:cursor-pointer">
         Tilbakestill passord
       </button>
 
