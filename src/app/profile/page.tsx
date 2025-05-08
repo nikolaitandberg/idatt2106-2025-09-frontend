@@ -45,7 +45,7 @@ function ProfilePage({ userId }: { userId: number }) {
   if (error || !profile) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-xl font-bold text-red-600">Kunne ikke laste profilen din</h2>
+        <h2 className="text-xl font-bold text-red-700">Kunne ikke laste profilen din</h2>
         <Button
           className="mt-4"
           onClick={() =>
@@ -105,7 +105,7 @@ function ProfilePage({ userId }: { userId: number }) {
               <p className="text-sm text-gray-500">E-post</p>
               <p className="font-medium">{profile.email}</p>
               <span
-                className={`text-xs ${profile.emailConfirmed ? "text-green-600" : "text-red-600"} font-bold bg-gray-200 px-2 py-1 rounded-full mt-2`}>
+                className={`text-xs ${profile.emailConfirmed ? "text-green-700" : "text-red-700"} font-bold bg-gray-200 px-2 py-1 rounded-full mt-2`}>
                 {profile.emailConfirmed ? "Verifisert" : "Ikke verifisert"}
               </span>
             </div>
@@ -121,6 +121,8 @@ function ProfilePage({ userId }: { userId: number }) {
             <div className="flex flex-col gap-4 mt-2">
               <div className="flex items-center gap-2">
                 <Switch
+                  aria-label="Del posisjon med husholdning"
+                  id="sharePositionHousehold"
                   name="sharePositionHousehold"
                   checked={profile.sharePositionHousehold}
                   onCheckedChange={(checked) => {
@@ -146,6 +148,8 @@ function ProfilePage({ userId }: { userId: number }) {
               </div>
               <div className="flex items-center gap-2">
                 <Switch
+                  aria-label="Del posisjon med gruppe"
+                  id="sharePositionGroup"
                   name="sharePositionGroup"
                   checked={profile.sharePositionGroup}
                   onCheckedChange={(checked) => {
@@ -156,7 +160,7 @@ function ProfilePage({ userId }: { userId: number }) {
                   }}
                 />
                 <label
-                  htmlFor="sharePositionHousehold"
+                  htmlFor="sharePositionGroup"
                   className="cursor-pointer select-none"
                   onClick={() =>
                     handlePositionSharingChange({
