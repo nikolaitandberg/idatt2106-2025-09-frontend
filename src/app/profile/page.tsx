@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 import { useState } from "react";
 import { EditUserProfileForm } from "@/components/profile/editUserProfileForm";
 import { UserAvatarFromUserId } from "@/components/ui/UserAvatar";
+import { useSendEmailVerification } from "@/actions/user";
 
 export default function ProfilePageWrapper() {
   const session = useSession();
@@ -33,6 +34,8 @@ function ProfilePage({ userId }: { userId: number }) {
   const { data: household } = useMyHousehold();
   const { mutate: updateUserPositionSharing } = useUpdateUserPositionSharing();
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const { mutate: sendEmailVerification, isPending: isSendingEmail } = useSendEmailVerification();
+  const [verificationSent, setVerificationSent] = useState(false);
 
   if (isLoading) {
     return (
@@ -104,10 +107,22 @@ function ProfilePage({ userId }: { userId: number }) {
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-sm text-gray-500">E-post</p>
               <p className="font-medium">{profile.email}</p>
-              <span
-                className={`text-xs ${profile.emailConfirmed ? "text-green-700" : "text-red-700"} font-bold bg-gray-200 px-2 py-1 rounded-full mt-2`}>
-                {profile.emailConfirmed ? "Verifisert" : "Ikke verifisert"}
-              </span>
+              {profile.emailConfirmed ? (
+                <Button disabled className="h-8">
+                  Verifisert
+                </Button>
+              ) : (
+                <Button
+                  className="h-6 mt-1 w-full"
+                  disabled={isSendingEmail || verificationSent}
+                  onClick={() => {
+                    sendEmailVerification(undefined, {
+                      onSuccess: () => setVerificationSent(true),
+                    });
+                  }}>
+                  {verificationSent ? "Verifisering sendt" : isSendingEmail ? "Sender..." : "Verifiser e-post"}
+                </Button>
+              )}
             </div>
 
             <div className="bg-gray-50 p-4 rounded-lg">
