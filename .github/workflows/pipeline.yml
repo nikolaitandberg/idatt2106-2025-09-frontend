@@ -92,13 +92,14 @@ jobs:
         with:
           name: frontend-build
           path: .next/
-      - name: Start Backend
-        run: |
-          nohup java -jar backend/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=test-e2e &
-          sleep 5
       - name: Start Frontend
         run: |
           nohup npx next start &
+          sleep 5
+      - name: Start Backend
+        run: |
+          nohup java -jar backend/backend-0.0.1-SNAPSHOT.jar --spring.profiles.active=test-e2e &
           sleep 20
+
       - name: Run Cypress Test
         uses: cypress-io/github-action@v6
