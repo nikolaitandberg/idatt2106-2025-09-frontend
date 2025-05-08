@@ -43,8 +43,8 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
   const queryClient = useQueryClient();
 
   return (
-    <AccordionItem className="rounded-lg overflow-hidden border" value={id.toString()}>
-      <AccordionTrigger className="bg-white px-4 py-3 hover:no-underline">
+    <AccordionItem className="border rounded-lg" value={id.toString()}>
+      <AccordionTrigger className="bg-white px-4 py-3 hover:no-underline rounded-lg">
         <div className="flex justify-between items-center w-full">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
@@ -60,7 +60,9 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
 
       <AccordionContent className="bg-muted/30 px-0">
         <Dialog open={addFoodDialogOpen} onOpenChange={setAddFoodDialogOpen}>
-          <DialogTrigger asChild>
+          <DialogTrigger
+            asChild
+            className="focus-visible:border-2 focus-visible:border-blue-500 focus-visible:outline-none focus-visible:ring-0 ">
             <Button size="fullWidth" variant="outline">
               Legg til {name.toLowerCase()} <Plus className="inline w-4 h-4 ml-1" />
             </Button>
@@ -90,7 +92,7 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
           <div
             key={entry.id}
             className={cn(
-              "flex items-center justify-between px-4 py-2 border-t",
+              "flex items-center justify-between px-4 py-2 |-t",
               index % 2 === 0 ? "bg-white" : "bg-muted/20",
             )}>
             <span className="text-sm text-foreground">
