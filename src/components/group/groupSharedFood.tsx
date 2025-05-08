@@ -19,6 +19,7 @@ export default function GroupSharedFood({ groupHouseholdId }: { groupHouseholdId
           id={food.typeId}
           name={food.typeName}
           totalAmount={food.totalAmount}
+          unit={food.unit}
           units={food.batches}
         />
       ))}
