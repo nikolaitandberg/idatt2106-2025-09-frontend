@@ -85,12 +85,12 @@ export default function HouseholdFood({ household }: Readonly<{ household: House
             <div className="text-sm font-medium">{household.waterAmountLiters} L</div>
             <Dialog open={waterDialogOpen} onOpenChange={setWaterDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <Plus className="w-4 h-4 mr-1" /> Legg til vann
+                <Button variant="outline" size="sm" className="gap-2">
+                  Endre vann <Plus strokeWidth={1.25} size={20} />
                 </Button>
               </DialogTrigger>
               <DialogContent>
-                <DialogTitle>Oppdater vannmengde</DialogTitle>
+                <DialogTitle>Endre vannmengde</DialogTitle>
                 <UpdateWaterForm household={household} onClose={() => setWaterDialogOpen(false)} />
               </DialogContent>
             </Dialog>
@@ -110,7 +110,7 @@ export default function HouseholdFood({ household }: Readonly<{ household: House
             <h2 className="text-lg font-medium">Matvarer</h2>
             <Dialog open={addNewFoodDialogOpen} onOpenChange={setAddNewFoodDialogOpen}>
               <DialogTrigger asChild>
-                <Button>
+                <Button className="gap-2">
                   Legg til ny matvare <Plus strokeWidth={1.25} size={20} />
                 </Button>
               </DialogTrigger>
