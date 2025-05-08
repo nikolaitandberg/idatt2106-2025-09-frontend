@@ -36,7 +36,7 @@ function ProfilePage({ userId }: { userId: number }) {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const { mutate: sendEmailVerification, isPending: isSendingEmail } = useSendEmailVerification();
   const [verificationSent, setVerificationSent] = useState(false);
-  
+
   if (profile) {
     console.log("Brukerprofil:", profile);
     console.log("E-post bekreftet:", profile.emailConfirmed);
@@ -110,24 +110,26 @@ function ProfilePage({ userId }: { userId: number }) {
         <div className="mt-8 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-sm text-gray-500">E-post</p>
-              <p className="font-medium">{profile.email}</p>
-              {profile.emailConfirmed ? (
-                <Button disabled className="h-8">
-                  Verifisert
-                </Button>
-              ) : (
-                <Button
-                  className="h-6 mt-1 w-full"
-                  disabled={isSendingEmail || verificationSent}
-                  onClick={() => {
-                    sendEmailVerification(undefined, {
-                      onSuccess: () => setVerificationSent(true),
-                    });
-                  }}>
-                  {verificationSent ? "Verifisering sendt" : isSendingEmail ? "Sender..." : "Verifiser e-post"}
-                </Button>
-              )}
+              <div className="flex justify-between items-center">
+                <p className="text-sm text-gray-500">E-post</p>
+                {profile.emailConfirmed ? (
+                  <Button disabled className="h-6 pointer-events-none">
+                    Verifisert
+                  </Button>
+                ) : (
+                  <Button
+                    className="h-6"
+                    disabled={isSendingEmail || verificationSent}
+                    onClick={() => {
+                      sendEmailVerification(undefined, {
+                        onSuccess: () => setVerificationSent(true),
+                      });
+                    }}>
+                    {verificationSent ? "Verifisering sendt" : isSendingEmail ? "Sender..." : "Verifiser e-post"}
+                  </Button>
+                )}
+              </div>
+              <p className="font-medium mt-1">{profile.email}</p>
             </div>
 
             <div className="bg-gray-50 p-4 rounded-lg">
