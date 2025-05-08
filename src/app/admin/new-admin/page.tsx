@@ -6,7 +6,6 @@ import { useState } from "react";
 import { useGetAdminList, useGetPendingAdminList, useDeleteAdmin, useDeleteAdminInvite } from "@/actions/admin";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { showToast } from "@/components/ui/toaster";
-import { cn } from "@/util/cn";
 import type { User } from "@/types/user";
 import { ConfirmAdminActionDialog } from "@/components/admin/confirmAdminActionDialog";
 import { notFound } from "next/navigation";
@@ -108,7 +107,7 @@ export default function NewAdmin() {
               <TableRow key={index}>
                 <TableCell className="font-medium">
                   {admin.username}
-                  {admin.superAdmin && <span className="ml-2 text-xs text-blue-500">(Super)</span>}
+                  {admin.superAdmin && <span className="ml-2 text-xs text-blue-700">(Super)</span>}
                 </TableCell>
                 <TableCell>{admin.email || "-"}</TableCell>
                 <TableCell className="text-right">
@@ -117,7 +116,7 @@ export default function NewAdmin() {
                     size="sm"
                     onClick={() => openConfirmation(admin.username, "removeAdmin")}
                     disabled={admin.superAdmin || isDeleting}
-                    className={cn(admin.superAdmin && "opacity-50 cursor-not-allowed")}>
+                  >
                     {isDeleting && selectedAdmin === admin.username ? <LoadingSpinner /> : "Fjern"}
                   </Button>
                 </TableCell>
