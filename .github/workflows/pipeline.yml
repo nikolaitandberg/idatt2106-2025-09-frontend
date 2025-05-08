@@ -74,7 +74,7 @@ jobs:
       DATABASE_PASSWORD=: h2
       SPRING_DATABASE_DRIVER: org.h2.Driver
 
-      NEXTAUTH_URL: https://localhost:3000
+      NEXTAUTH_URL: http://localhost:3000
       NEXTAUTH_SECRET: aaa
 
       NEXT_PUBLIC_API_URL: localhost:8080
