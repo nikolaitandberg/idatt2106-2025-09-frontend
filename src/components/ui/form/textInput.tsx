@@ -13,6 +13,7 @@ type InputProps = {
   showPasswordClassName?: string;
   errorsClassName?: string;
   labelClassName?: string;
+  toggleVisibilityButtonProps?: React.ButtonHTMLAttributes<HTMLButtonElement>;
 };
 
 export default function TextInput({
@@ -23,6 +24,7 @@ export default function TextInput({
   showPasswordClassName,
   errorsClassName,
   labelClassName,
+  toggleVisibilityButtonProps,
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
   const field = useFieldContext<string>();
@@ -48,13 +50,15 @@ export default function TextInput({
         />
         {type === "password" && (
           <button
-            tabIndex={-1}
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className={cn(
               "absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:cursor-pointer",
               showPasswordClassName,
-            )}>
+            )}
+            tabIndex={0}
+            {...toggleVisibilityButtonProps}
+            >
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
         )}
