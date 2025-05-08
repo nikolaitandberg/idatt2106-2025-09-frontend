@@ -109,3 +109,9 @@ jobs:
 
       - name: Run Cypress Test
         uses: cypress-io/github-action@v6
+
+      - name: Upload Cypress Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-artifacts
+          path: cypress/screenshots
