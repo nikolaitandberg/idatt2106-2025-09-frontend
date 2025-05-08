@@ -21,9 +21,12 @@ export default function MapObjectCard({
   const closeDate = new Date(mapObject.closing ?? 0);
 
   return (
-    <div onClick={onClick} className="bg-white p-4 rounded-md shadow-md cursor-pointer w-full flex flex-col relative">
+    <button
+      onClick={onClick} 
+      className="bg-white p-4 rounded-md shadow-md cursor-pointer w-full flex flex-col relative"
+    >
       <div className="flex flex-col">
-        <div className="text-black text-base ">{mapObject.description}</div>
+        <div className="text-black text-base text-left">{mapObject.description}</div>
         <div className="flex items-center gap-1">
           <User size={10} />
           <div className="text-gray-500 text-sm">{mapObject.contactName}</div>
@@ -58,7 +61,12 @@ export default function MapObjectCard({
       </div>
       {onDelete && (
         <div onClick={(e) => e.stopPropagation()}>
-          <Button variant="ghost" className="absolute top-2 right-2" onClick={() => setDeleteDialogOpen(true)}>
+          <Button 
+              variant="ghost" 
+              className="absolute top-2 right-2" 
+              onClick={() => setDeleteDialogOpen(true)}
+              aria-label="Slett kartobjekt"
+            >
             <Trash size={16} className="text-destructive" />
           </Button>
           <ConfirmationDialog
@@ -80,6 +88,6 @@ export default function MapObjectCard({
           />
         </div>
       )}
-    </div>
+    </button>
   );
 }
