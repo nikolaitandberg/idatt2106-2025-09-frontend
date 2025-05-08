@@ -47,12 +47,10 @@ export default function GroupHeader({ group }: Props) {
 
   return (
     <div>
-      <nav className="text-sm text-muted-foreground">Husholdning &gt; {group.groupName}</nav>
-
       <div>
         <h1 className="text-4xl font-bold">{group.groupName}</h1>
         <p className="text-lg text-muted-foreground mt-2">{group.groupDescription}</p>
-        <div className="flex items-center gap-6 mt-3 text-muted-foreground text-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 mt-3 text-muted-foreground text-sm">
           <div className="flex items-center gap-2">
             <Home className="w-4 h-4" />
             <span>
@@ -76,7 +74,7 @@ export default function GroupHeader({ group }: Props) {
         </div>
       </div>
 
-      <div className="flex justify-end items-center gap-4 mt-4">
+      <div className="flex flex-col sm:flex-row justify-end sm:items-center gap-2 sm:gap-4 mt-4">
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" className="flex items-center gap-2">
@@ -117,6 +115,42 @@ export default function GroupHeader({ group }: Props) {
           onConfirm={handleLeaveGroup}
           onCancel={() => setIsLeaveDialogOpen(false)}
         />
+      </div>
+    </div>
+  );
+}
+
+export function GroupHeaderSkeleton() {
+  return (
+    <div>
+      <div>
+        <div className="animate-pulse bg-gray-200 h-8 w-1/2 rounded mb-4" />
+        <div className="mt-2 animate-pulse bg-gray-200 h-6 w-2/3 rounded mb-4" />
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 mt-3 text-muted-foreground text-sm">
+          <div className="flex items-center gap-2">
+            <Home className="w-4 h-4" />
+            <span className="animate-pulse bg-gray-200 h-5 w-24 rounded" />
+          </div>
+          <div className="flex items-center gap-2">
+            <Users className="w-4 h-4" />
+            <span className="animate-pulse bg-gray-200 h-5 w-24 rounded" />
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="animate-pulse bg-gray-200 h-5 w-32 rounded" />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-col sm:flex-row justify-end sm:items-center gap-2 sm:gap-4 mt-4">
+        <Button variant="outline" className="flex items-center gap-2" disabled>
+          <Pencil className="h-4 w-4" />
+          Rediger gruppen
+        </Button>
+
+        <Button variant="destructive" className="flex items-center gap-2" disabled>
+          Forlat gruppen
+          <LogOut className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   );

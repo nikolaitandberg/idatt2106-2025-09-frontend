@@ -27,3 +27,22 @@ export default function HouseholdCard({ id, name, address, isHome = false }: Hou
     </div>
   );
 }
+
+export function HouseholdCardSkeleton() {
+  return (
+    <div className="rounded-lg border border-border shadow-sm p-4 w-[280px] bg-white">
+      <h3 className="text-lg font-medium flex items-center justify-between">
+        <span className="animate-pulse bg-gray-200 h-7 w-1/2 rounded" />
+        <span className="animate-pulse bg-gray-200 h-5 w-1/4 rounded-full" />
+      </h3>
+      <div className="flex items-center gap-1 text-sm text-muted-foreground mt-1 mb-1">
+        <MapPin className="w-3.5 h-3.5 inline-block mr-1 animate-pulse" />
+        <span className="animate-pulse bg-gray-200 h-5 w-1/2 rounded" />
+      </div>
+      <p className="flex items-center gap-1 text-sm text-muted-foreground">
+        <Users className="w-3.5 h-3.5 inline-block mr-1 animate-pulse" />
+        <span className="animate-pulse bg-gray-200 h-5 w-1/2 rounded" />
+      </p>
+    </div>
+  );
+}
