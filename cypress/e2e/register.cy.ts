@@ -13,5 +13,6 @@ describe("register", () => {
     cy.get("#repeatPassword").should("be.visible").type("SterktPassord123");
     cy.contains("button", "Registrer deg").should("be.visible").click();
     cy.wait("@register").its("response.statusCode").should("eq", 200);
+    cy.get('[data-testid="page-title"]').should("be.visible").and("contain.text", "Krisefikser");
   });
 });
