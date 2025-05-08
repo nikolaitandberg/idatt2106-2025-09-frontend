@@ -100,7 +100,7 @@ export default function CreateHouseholdForm() {
   });
 
   return (
-    <div className="w-md mx-auto p-6 bg-white rounded-lg shadow-md mt-8">
+    <div className="sm:w-md mx-auto w-full p-6 bg-white sm:rounded-lg sm:flex-none shadow-md pt-8 sm:mt-8">
       <div className="flex items-center gap-2 mb-6">
         <Home className="w-5 h-5 text-primary" />
         <h1 className="text-xl font-semibold">Husholdning</h1>
