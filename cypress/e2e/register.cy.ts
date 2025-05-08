@@ -2,7 +2,7 @@ describe("register", () =>{
   it("Should create user when registered", () => {
     cy.visit("/login");
     cy.get('a[href="/register"]')
-    .should('have.class', 'text-blue-500') 
+    .should('have.class', 'text-blue-700') 
     .click()
 
     cy.wait(4000);
