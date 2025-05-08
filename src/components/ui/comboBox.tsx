@@ -53,16 +53,18 @@ export default function ComboBox<T>({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild className="w-full border border-neutral-300 rounded-md p-2 cursor-pointer ">
+      <PopoverTrigger asChild className="w-full border border-neutral-300 rounded-md cursor-pointer ">
         <div className="flex items-center content-between relative">
-          {selectedOption ? (
-            renderSelected(selectedOption)
-          ) : (
-            <span className="text-gray-500">{placeholder ?? "Velg"}</span>
-          )}
+          <Button size="fullWidth" variant="ghost">
+            {selectedOption ? (
+              renderSelected(selectedOption)
+            ) : (
+              <span className="text-gray-500">{placeholder ?? "Velg"}</span>
+            )}
+          </Button>
           {selectedOption && (
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               className="absolute right-2 w-6 h-6 p-0 ml-2"
               onClick={(e) => {
@@ -91,9 +93,12 @@ export default function ComboBox<T>({
                 setOpen(false);
                 onSelect(option);
               }}
-              className={cn("w-full cursor-pointer p-4 hover:bg-secondary-foreground-muted", {
-                "bg-secondary-foreground hover:bg-secondary-foreground": selectedOption === option,
-              })}>
+              className={cn(
+                "w-full cursor-pointer p-4 hover:bg-secondary-foreground-muted focus-visible:bg-secondary-foreground-muted border-0",
+                {
+                  "bg-secondary-foreground hover:bg-secondary-foreground": selectedOption === option,
+                },
+              )}>
               {renderOption(option)}
             </button>
           ))}
