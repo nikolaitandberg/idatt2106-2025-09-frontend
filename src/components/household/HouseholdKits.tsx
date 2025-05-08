@@ -1,6 +1,6 @@
 import { useAddHouseholdKit, useHouseholdKits, useKits, useRemoveHouseholdKit } from "@/actions/kits";
 import LoadingSpinner from "../ui/loadingSpinner";
-import HouseholdKitItem from "./householdKitItem";
+import HouseholdKitItem, { HouseholdKitItemSkeleton } from "./householdKitItem";
 
 interface HouseholdKitsProps {
   householdId: number;
@@ -55,6 +55,16 @@ export default function HouseholdKits({ householdId }: HouseholdKitsProps) {
           }}
         />
       ))}
+    </>
+  );
+}
+
+export function HouseholdKitsSkeleton() {
+  return (
+    <>
+      {[1, 2, 3].map((i) => {
+        return <HouseholdKitItemSkeleton key={i} />;
+      })}
     </>
   );
 }

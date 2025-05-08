@@ -123,3 +123,17 @@ export const useUpdateUser = () => {
     },
   });
 };
+
+export const sendEmailVerification = async (fetcher: FetchFunction = Fetch): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/user/send-email-verification`, {
+    method: "POST",
+  });
+};
+
+export const useSendEmailVerification = () => {
+  const fetcher = useFetch();
+
+  return useMutation({
+    mutationFn: () => sendEmailVerification(fetcher),
+  });
+};

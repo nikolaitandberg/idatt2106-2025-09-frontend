@@ -10,6 +10,7 @@ import {
   EditHouseholdInfoRequest,
   EditHouseholdWaterRequest,
   CreateHouseholdRequest,
+  EditHouseholdFoodRequest,
 } from "@/types/apiRequests";
 import { ExtraResidentResponse } from "@/types/extraResident";
 import { useSession } from "next-auth/react";
@@ -200,6 +201,25 @@ export const useAddHouseholdFood = () => {
   });
 };
 
+export const updateHouseholdFood = async (
+  req: EditHouseholdFoodRequest,
+  fetcher: FetchFunction = Fetch,
+): Promise<void> => {
+  await fetcher<void>(`${API_BASE_URL}/food/${req.id}`, {
+    method: "PUT",
+    body: JSON.stringify(req),
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const useUpdateHouseholdFood = () => {
+  const fetcher = useFetch();
+
+  return useMutation<void, Error, EditHouseholdFoodRequest>({
+    mutationFn: (data: EditHouseholdFoodRequest) => updateHouseholdFood(data, fetcher),
+  });
+};
+
 export const deleteHouseholdFood = async (id: number, fetcher: FetchFunction = Fetch) => {
   await fetcher<void>(`${API_BASE_URL}/food/${id}`, {
     method: "DELETE",
@@ -245,7 +265,6 @@ export const editHouseholdInfo = async (
   req: EditHouseholdInfoRequest,
   fetcher: FetchFunction = Fetch,
 ): Promise<void> => {
-  console.log(req);
   await fetcher<void>(`${API_BASE_URL}/households/${req.id}`, {
     method: "PUT",
     body: JSON.stringify(req),

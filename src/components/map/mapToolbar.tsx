@@ -22,12 +22,15 @@ export default function MapToolBar({
   onMapObjectTypesChange,
 }: Readonly<MapToolBarProps>) {
   return (
-    <div className="flex flex-row gap-2 justify-center items-center bg-white rounded-md px-4 h-14 relative">
-      <div className="flex flex-row gap-2 items-center">
-        <MapFilter onMapObjectTypesChange={onMapObjectTypesChange} />
-        <MapFinder onFindObject={onFindObject} />
+    <div className="relative bg-white rounded-md px-4 h-14 flex items-center justify-between">
+      <div className="flex-1 overflow-x-auto">
+        <div className="flex flex-row gap-2 items-center min-w-max">
+          <MapFilter onMapObjectTypesChange={onMapObjectTypesChange} />
+          <MapFinder onFindObject={onFindObject} />
+        </div>
       </div>
-      <div className="flex flex-row gap-1 items-center absolute right-2 top-0 h-full">
+
+      <div className="flex flex-row gap-1 items-center pl-2">
         {canGoToHousehold && (
           <Button variant="ghost" onClick={onHouseholdClick} className="flex flex-row gap-1 items-center p-2">
             <House size={20} className="text-gray-500" />

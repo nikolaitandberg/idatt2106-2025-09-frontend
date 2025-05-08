@@ -25,3 +25,14 @@ export default function MemberCard({ name, image, type = "person", onRemove }: M
     </div>
   );
 }
+
+export function MemberCardSkeleton() {
+  return (
+    <div className="flex items-center justify-between p-2 rounded-lg shadow-sm bg-white border border-border">
+      <div className="flex items-center gap-3">
+        <div className="w-8 h-8 bg-muted rounded-full animate-pulse" />
+        <span className="animate-pulse bg-muted rounded w-30 h-5" />
+      </div>
+    </div>
+  );
+}
