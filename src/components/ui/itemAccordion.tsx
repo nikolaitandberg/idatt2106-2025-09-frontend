@@ -51,7 +51,6 @@ export default function FoodAccordionItem({ id, name, totalAmount, householdId, 
       </AccordionTrigger>
 
       <AccordionContent className="bg-muted/30 px-0">
-        {/* Legg til dialog */}
         <Dialog open={addFoodDialogOpen} onOpenChange={setAddFoodDialogOpen}>
           <DialogTrigger asChild>
             <Button size="fullWidth" variant="outline">
@@ -77,23 +76,20 @@ export default function FoodAccordionItem({ id, name, totalAmount, householdId, 
           </DialogContent>
         </Dialog>
 
-        {/* Liste over mat-enheter */}
         {units.map((unit, index) => (
           <div
             key={unit.id}
             className={cn(
               "flex items-center justify-between px-4 py-2 border-t",
               index % 2 === 0 ? "bg-white" : "bg-muted/20",
-            )}
-          >
+            )}>
             <span className="text-sm text-foreground">{unit.amount} </span>
 
             <span
               className={cn(
                 "flex items-center gap-1 text-sm",
                 expieryIsSoon(unit.expirationDate) ? "text-yellow-500" : "text-muted-foreground",
-              )}
-            >
+              )}>
               <Calendar className="w-4 h-4" />
               {unit.expirationDate}
             </span>
@@ -112,12 +108,13 @@ export default function FoodAccordionItem({ id, name, totalAmount, householdId, 
                     },
                   });
                 }}
-                className="p-1 rounded bg-red-100 hover:bg-red-200 transition"
-              >
+                className="p-1 rounded bg-red-100 hover:bg-red-200 transition">
                 <Trash className="w-4 h-4 text-red-500" />
               </button>
 
-              <Dialog open={moveDialogUnitId === unit.id} onOpenChange={(open) => setMoveDialogUnitId(open ? unit.id : null)}>
+              <Dialog
+                open={moveDialogUnitId === unit.id}
+                onOpenChange={(open) => setMoveDialogUnitId(open ? unit.id : null)}>
                 <DialogTrigger asChild>
                   <button className="p-1 rounded bg-blue-100 hover:bg-blue-200 transition">
                     <ArrowRightLeft className="w-4 h-4 text-blue-500" />
