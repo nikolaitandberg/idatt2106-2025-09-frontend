@@ -35,7 +35,7 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
   const [addFoodDialogOpen, setAddFoodDialogOpen] = useState(false);
   const [moveDialogUnitId, setMoveDialogUnitId] = useState<number | null>(null);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<number | null>(null);
-  const [editingFood, setEditingFood] = useState(false);
+  const [editingFoodId, setEditingFoodId] = useState<number | null>(null);
 
   const { mutate: addFood } = useAddHouseholdFood();
   const { mutate: deleteFood } = useDeleteHouseholdFood();
@@ -68,17 +68,19 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
           <DialogContent>
             <DialogTitle>Legg til {name.toLowerCase()}</DialogTitle>
             <AddFoodForm
-              onSubmit={(food) => {
-                setAddFoodDialogOpen(false);
-                addFood(
-                  { ...food, householdId, typeId: id },
-                  {
-                    onSuccess: () => {
-                      queryClient.invalidateQueries({ queryKey: ["household", "food"] });
-                      queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
+              onSubmit={async (food) => {
+                await new Promise((resolve) => {
+                  addFood(
+                    { ...food, householdId, typeId: id },
+                    {
+                      onSettled: resolve,
+                      onSuccess: () => {
+                        queryClient.invalidateQueries({ queryKey: ["household", "food"] });
+                        queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
+                      },
                     },
-                  },
-                );
+                  );
+                });
               }}
             />
           </DialogContent>
@@ -105,7 +107,9 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
             </span>
 
             <div className="flex gap-2">
-              <button className="p-1 rounded hover:bg-muted transition" onClick={() => setEditingFood(true)}>
+              <button
+                className="p-1 rounded hover:bg-muted transition"
+                onClick={(open) => setEditingFoodId(open ? entry.id : null)}>
                 <Pencil className="w-4 h-4 text-muted-foreground" />
               </button>
 
@@ -160,37 +164,37 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
                 </DialogContent>
               </Dialog>
 
-              <Dialog open={editingFood} onOpenChange={setEditingFood}>
+              <Dialog
+                open={editingFoodId === entry.id}
+                onOpenChange={(open) => setEditingFoodId(open ? entry.id : null)}>
                 <DialogContent>
                   <DialogTitle>Rediger {name.toLowerCase()}</DialogTitle>
-                  {editingFood && (
-                    <EditFoodForm
-                      onSubmit={async (food) => {
-                        await new Promise((resolve) => {
-                          editFood(
-                            {
-                              ...food,
-                              id: entry.id,
-                              householdId: householdId,
-                              typeId: id,
+                  <EditFoodForm
+                    onSubmit={async (food) => {
+                      await new Promise((resolve) => {
+                        editFood(
+                          {
+                            ...food,
+                            id: entry.id,
+                            householdId: householdId,
+                            typeId: id,
+                          },
+                          {
+                            onSettled: resolve,
+                            onSuccess: () => {
+                              queryClient.invalidateQueries({ queryKey: ["household", "food"] });
+                              queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
+                              setEditingFoodId(null);
                             },
-                            {
-                              onSettled: resolve,
-                              onSuccess: () => {
-                                queryClient.invalidateQueries({ queryKey: ["household", "food"] });
-                                queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
-                                setEditingFood(false);
-                              },
-                            },
-                          );
-                        });
-                      }}
-                      defaultValues={{
-                        expirationDate: new Date(entry.expirationDate),
-                        amount: entry.amount,
-                      }}
-                    />
-                  )}
+                          },
+                        );
+                      });
+                    }}
+                    defaultValues={{
+                      expirationDate: new Date(entry.expirationDate),
+                      amount: entry.amount,
+                    }}
+                  />
                 </DialogContent>
               </Dialog>
             </div>
