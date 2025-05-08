@@ -11,7 +11,7 @@ declare global {
       options: {
         sitekey: string;
         callback: (token: string) => void;
-      }
+      },
     ) => void;
   };
 }
@@ -40,28 +40,30 @@ export default function Register() {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
   useEffect(() => {
-    // Load the Turnstile script dynamically
     const script = document.createElement("script");
     script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback";
     script.defer = true;
     document.body.appendChild(script);
 
-    // Define the Turnstile callback
     window.onloadTurnstileCallback = function () {
       turnstile.render("#captcha-container", {
-        sitekey: "0x4AAAAAABbjtdnnMWVICeky", // Replace with your actual site key
+        sitekey: "0x4AAAAAABbjtdnnMWVICeky",
         callback: function (token: string) {
           setCaptchaToken(token);
+          form.setFieldValue("captchaToken", token || "");
+
+          // tvinge form-validering når captchatoken er satt
+          // vet ikke hvorfor denne ikke kan gjøres uten setTimeout, men sånn er det iaf - Nikolai
+          setTimeout(() => form.validate("change"), 0);
         },
       });
     };
 
     return () => {
-      // Cleanup script on unmount
       document.body.removeChild(script);
     };
+    // ikke fjern denne tomme arrayen, den er nødvendig for at cloudflare-scriptet skal fungere
   }, []);
-
 
   const registerSchema = z
     .object({
@@ -127,7 +129,6 @@ export default function Register() {
     });
   };
   return (
-
     <div className="flex items-center justify-center bg-background px-4 mt-8">
       <div className="w-full max-w-md rounded-2xl p-8 space-y-6">
         <h1 className="text-2xl font-bold text-center">Registrer deg</h1>
@@ -146,9 +147,7 @@ export default function Register() {
           )}
         </form.AppField>
         <form.AppField name="captchaToken">
-          {() => (
-            <div id="captcha-container"></div>
-          )}
+          {() => <div id="captcha-container" className="flex justify-center"></div>}
         </form.AppField>
         <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
           {([canSubmit, isSubmitting]) => (
