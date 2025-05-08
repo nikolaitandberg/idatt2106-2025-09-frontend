@@ -56,13 +56,13 @@ function LoginContent() {
     <div className="w-full max-w-md rounded-2xl p-8 space-y-6">
       <h1 className="text-2xl font-bold text-center">Logg inn</h1>
       <loginForm.AppField name="username">
-        {(field) => <field.TextInput label="Brukernavn" placeholder="brukernavn" />}
+        {(field) => <field.TextInput label="Brukernavn" placeholder="Ditt brukernavn" />}
       </loginForm.AppField>
       <loginForm.AppField name="password">
         {(field) => <field.TextInput 
           label="Passord" 
           type="password" 
-          placeholder="passord"
+          placeholder="••••••••"
         />}
       </loginForm.AppField>
       <loginForm.AppForm>
