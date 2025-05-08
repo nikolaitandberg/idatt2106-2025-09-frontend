@@ -8,6 +8,12 @@ interface PreparednessBreakdownProps {
 export default function PreparednessBreakdown({ household }: PreparednessBreakdownProps) {
   return (
     <div className="flex flex-col gap-4">
+      {typeof household.levelOfPreparedness.timePrepared === "number" && (
+        <div className="text-sm text-muted-foreground px-2">
+          Estimert beredskapstid: {household.levelOfPreparedness.timePrepared} timer
+        </div>
+      )}
+
       <ProgressResult
         value={household.levelOfPreparedness.levelOfPreparednessFood * 100}
         label="Mat"
