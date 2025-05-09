@@ -68,10 +68,14 @@ export default function FoodTypePicker({ label, placeholder }: FoodTypePickerPro
         options={foodTypes}
         renderOption={(option) => (
           <div key={option.id} className="text-start">
-            {option.name}
+            {option.name.charAt(0).toUpperCase() + option.name.slice(1)} ({option.unit})
           </div>
         )}
-        renderSelected={(option) => <div key={option.id}>{option.name}</div>}
+        renderSelected={(option) => (
+          <div key={option.id}>
+            {option.name.charAt(0).toUpperCase() + option.name.slice(1)} ({option.unit})
+          </div>
+        )}
         value={foodTypes.find((option) => option.id === field.state.value)}
         onSelect={(option) => field.handleChange(option.id)}
       />
