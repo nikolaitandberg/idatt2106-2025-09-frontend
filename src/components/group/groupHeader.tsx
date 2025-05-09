@@ -78,8 +78,8 @@ export default function GroupHeader({ group }: Props) {
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" className="flex items-center gap-2">
-              <Pencil className="h-4 w-4" />
               Rediger gruppen
+              <Pencil className="h-4 w-4" />
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-3xl">

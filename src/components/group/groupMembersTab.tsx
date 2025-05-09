@@ -4,6 +4,7 @@ import GroupHouseholdCard, { GroupHouseholdCardSkeleton } from "@/components/gro
 import InviteHouseholdDialog from "@/components/group/inviteHouseholdDialog";
 import { GroupHousehold } from "@/types/group";
 import { Button } from "../ui/button";
+import { Plus } from "lucide-react";
 
 type Props = {
   groupId: number;
@@ -39,6 +40,7 @@ export function GroupMembersTabSkeleton() {
 
       <Button variant="outline" disabled>
         Inviter en husholdning
+        <Plus className="h-4 w-4 ml-2" />
       </Button>
     </div>
   );
