@@ -41,7 +41,7 @@ export default function Topbar() {
           />
           <TopbarCard icon={MapPin} text="Kart" href="/map" isSelected={pathname.startsWith("/map")} />
         </div>
-        <Link href="/profile" className="flex flex-row items-center ml-4">
+        <Link href="/profile" className="flex flex-row items-center ml-4" aria-label="profil">
           <UserAvatarFromUserId
             className="size-12 border-neutral-600 text-md stroke-[0.8]"
             userId={session?.data?.user?.userId ?? 0}
