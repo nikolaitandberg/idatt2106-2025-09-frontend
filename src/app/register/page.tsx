@@ -175,9 +175,13 @@ export default function Register() {
           )}
         </form.AppField>
         <form.AppField name="acceptPrivacyPolicy">
-          {() => (
+          {(field) => (
             <div className="flex items-center gap-2">
-              <Checkbox id="privacyPolicy" />
+              <Checkbox
+                id="privacyPolicy"
+                checked={field.state.value}
+                onCheckedChange={(checked) => field.handleChange(!!checked)}
+              />
               <label htmlFor="privacyPolicy" className="text-sm text-gray-700">
                 Jeg godtar{" "}
                 <Link href="/privacy-policy" className="text-blue-700 hover:underline">
