@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { signIn } from "next-auth/react";
 import { useMutation } from "@tanstack/react-query";
 import { sendRegisterRequest } from "@/actions/auth";
@@ -33,6 +34,7 @@ type RegisterRequest = {
   password: string;
   email: string;
   captchaToken: string;
+  acceptPrivacyPolicy: boolean;
 };
 
 export default function Register() {
@@ -86,6 +88,9 @@ export default function Register() {
       email: z.string().email({ message: "Ugyldig e-postadresse" }),
       repeatPassword: z.string(),
       captchaToken: z.string().optional(),
+      acceptPrivacyPolicy: z.boolean().refine((val) => val, {
+        message: "Du må godta personvernserklæringen",
+      }),
     })
     .refine((data) => data.password === data.repeatPassword, {
       message: "Passordene er ikke like",
@@ -121,6 +126,7 @@ export default function Register() {
     email: "",
     captchaToken: captchaToken || undefined,
     repeatPassword: "",
+    acceptPrivacyPolicy: false,
   };
 
   const form = useAppForm({
@@ -166,6 +172,19 @@ export default function Register() {
         <form.AppField name="repeatPassword">
           {(field) => (
             <field.TextInput label="Gjenta passord" type="password" placeholder="Skriv inn passordet på nytt" />
+          )}
+        </form.AppField>
+        <form.AppField name="acceptPrivacyPolicy">
+          {() => (
+            <div className="flex items-center gap-2">
+              <Checkbox id="privacyPolicy" />
+              <label htmlFor="privacyPolicy" className="text-sm text-gray-700">
+                Jeg godtar{" "}
+                <Link href="/privacy-policy" className="text-blue-700 hover:underline">
+                  personvernserklæringen
+                </Link>
+              </label>
+            </div>
           )}
         </form.AppField>
         <form.AppField name="captchaToken">
