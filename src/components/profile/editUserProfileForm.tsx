@@ -6,6 +6,7 @@ import FormSection from "../ui/form/formSection";
 import FormError from "../ui/form/formError";
 import { User } from "@/types/user";
 import { Dialog, DialogContent, DialogTitle } from "../ui/dialog";
+import { showToast } from "@/components/ui/toaster";
 
 interface EditUserProfileFormProps {
   open: boolean;
@@ -46,6 +47,11 @@ export function EditUserProfileForm({ open, onClose, user }: EditUserProfileForm
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["user", user.id] });
             onClose();
+            showToast({
+              variant: "success",
+              title: "Profil oppdatert",
+              description: "Endringene dine ble lagret.",
+            });
           },
         },
       );
