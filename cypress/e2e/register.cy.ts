@@ -10,6 +10,7 @@ describe("register", () => {
     cy.get("#email").should("be.visible").type("test@gmail.com");
     cy.get("#password").should("be.visible").type("SterktPassord123");
     cy.get("#repeatPassword").should("be.visible").type("SterktPassord123");
+    cy.get("#acceptPrivacyPolicy").should("be.visible").check();
     cy.contains("button", "Registrer deg").should("be.visible").click();
     cy.wait("@register").its("response.statusCode").should("eq", 200);
     cy.get('[data-testid="page-title"]').should("be.visible").and("contain.text", "Krisefikser");
