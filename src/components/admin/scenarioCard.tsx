@@ -62,6 +62,7 @@ export default function ScenarioCard({ scenario, onDeleted }: ScenarioCardProps)
               data-testid="edit-scenario">
               <Pencil size={16} strokeWidth={1.5} />
               Rediger
+              <Pencil size={16} strokeWidth={1.5} />
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-3xl">
@@ -76,8 +77,8 @@ export default function ScenarioCard({ scenario, onDeleted }: ScenarioCardProps)
           className="w-full flex items-center gap-2 justify-center"
           onClick={() => setIsDeleteDialogOpen(true)}
           disabled={isPending}>
-          <Trash size={16} strokeWidth={1.5} />
           Slett
+          <Trash size={16} strokeWidth={1.5} />
         </Button>
 
         <ConfirmationDialog

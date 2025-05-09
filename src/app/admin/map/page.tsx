@@ -5,7 +5,7 @@ import { MAP_BOUNDS_MAX } from "@/types/map";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import MapObjectTypeAccordionItem from "@/components/admin/mapObjectTypeAccordionItem";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Trash, Pencil } from "lucide-react";
 import { useState } from "react";
 import { DialogContent, DialogTitle, DialogTrigger, Dialog } from "@/components/ui/dialog";
 import { useQueryClient } from "@tanstack/react-query";
@@ -205,6 +205,7 @@ export default function AdminMap() {
                         <div className="flex justify-end gap-2 mt-4">
                           <Button variant="outline" size="sm" onClick={() => handleEditEvent(event)}>
                             Rediger
+                            <Pencil size={16} strokeWidth={1.5} className="ml-2"/>
                           </Button>
                           <Button
                             variant="destructive"
@@ -212,6 +213,7 @@ export default function AdminMap() {
                             onClick={() => confirmDeleteEvent(event.id)}
                             disabled={deleteEvent.isPending}>
                             {deleteEvent.isPending ? "Sletter..." : "Slett"}
+                            <Trash size={16} strokeWidth={1.5} className="ml-2"/>
                           </Button>
                         </div>
                       </div>
