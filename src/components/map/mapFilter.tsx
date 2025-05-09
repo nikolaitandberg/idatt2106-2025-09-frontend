@@ -1,7 +1,7 @@
 import { ListFilter } from "lucide-react";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMapObjectTypes } from "@/actions/map";
 import LoadingSpinner from "../ui/loadingSpinner";
 import { Checkbox } from "../ui/checkbox";
@@ -11,10 +11,9 @@ interface MapFilterProps {
 }
 
 export default function MapFilter({ onMapObjectTypesChange }: MapFilterProps) {
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const [filterOpen, setFilterOpen] = useState(false);
   const { data: mapObjectTypes, isPending, isError, error } = useMapObjectTypes();
   const [selectedTypes, setSelectedTypes] = useState<number[]>([]);
+  const [filterOpen, setFilterOpen] = useState(false);
 
   useEffect(() => {
     if (mapObjectTypes) {
@@ -28,25 +27,15 @@ export default function MapFilter({ onMapObjectTypesChange }: MapFilterProps) {
     }
   }, [selectedTypes, onMapObjectTypesChange]);
 
-  const handleMouseEnter = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-    }
-    setFilterOpen(true);
-  };
-
-  const handleMouseLeave = () => {
-    timerRef.current = setTimeout(() => {
-      setFilterOpen(false);
-    }, 50);
+  const toggleFilter = () => {
+    setFilterOpen((prev) => !prev);
   };
 
   return (
     <Popover open={filterOpen} onOpenChange={setFilterOpen}>
       <PopoverTrigger asChild>
         <Button
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
+          onClick={toggleFilter}
           variant="ghost"
           size="fullWidth"
           className="flex flex-row gap-1 justify-start px-2 md:justify-center items-center">
@@ -55,8 +44,6 @@ export default function MapFilter({ onMapObjectTypesChange }: MapFilterProps) {
         </Button>
       </PopoverTrigger>
       <PopoverContent
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
         side="right"
         align="start"
         className="bg-white">
@@ -73,7 +60,6 @@ export default function MapFilter({ onMapObjectTypesChange }: MapFilterProps) {
             <div key={type.id} className="flex flex-row items-center gap-2">
               <Checkbox
                 className="size-4"
-                key={type.id}
                 id={`filter-${type.id}`}
                 checked={selectedTypes.includes(type.id)}
                 onCheckedChange={(checked) => {
