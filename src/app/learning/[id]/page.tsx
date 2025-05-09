@@ -16,16 +16,18 @@ export default async function ScenarioPage({ params }: { params: Promise<{ id: s
   return (
     <div className="min-h-screen bg-background text-foreground px-4 py-10 flex justify-center">
       <div className="w-full max-w-5xl">
-        <h1 className="flex items-center mb-4 text-3xl font-bold text-left">{infoPage.title}</h1>
+        <h1 className="flex items-center mb-4 text-3xl font-bold text-left" data-testid="learning-page-title">
+          {infoPage.title}
+        </h1>
 
         <hr className="border-border mb-6" />
 
-        <div className="prose max-w-none text-left">
+        <div className="prose max-w-none text-left" data-testid="scenario-content">
           <MarkdownRenderer content={infoPage.content} />
         </div>
         <div className="flex items-center justify-between mt-12">
           <div className="flex gap-4">
-            <Link href={`/learning`}>
+            <Link href={`/learning`} data-testid="scenario-back">
               <Button variant="default" size="lg">
                 Tilbake til scenarioer
               </Button>

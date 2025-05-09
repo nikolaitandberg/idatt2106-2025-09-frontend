@@ -45,14 +45,21 @@ export default function ScenarioCard({ scenario, onDeleted }: ScenarioCardProps)
   return (
     <li className="border p-4 rounded shadow-sm flex justify-between items-star bg-white">
       <div>
-        <h2 className="text-xl font-semibold">{scenario.title}</h2>
-        <p className="text-gray-600">{scenario.shortDescription}</p>
+        <h2 className="text-xl font-semibold" data-testid="scenario-title">
+          {scenario.title}
+        </h2>
+        <p className="text-gray-600" data-testid="scenario-description">
+          {scenario.shortDescription}
+        </p>
       </div>
 
       <div className="flex flex-col items-end ml-4 space-y-2 mt-1 w-32">
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
           <DialogTrigger asChild>
-            <Button variant="outline" className="w-full flex items-center gap-2 justify-center">
+            <Button
+              variant="outline"
+              className="w-full flex items-center gap-2 justify-center"
+              data-testid="edit-scenario">
               <Pencil size={16} strokeWidth={1.5} />
               Rediger
             </Button>
@@ -64,6 +71,7 @@ export default function ScenarioCard({ scenario, onDeleted }: ScenarioCardProps)
         </Dialog>
 
         <Button
+          data-testid="delete-scenario"
           variant="destructive"
           className="w-full flex items-center gap-2 justify-center"
           onClick={() => setIsDeleteDialogOpen(true)}

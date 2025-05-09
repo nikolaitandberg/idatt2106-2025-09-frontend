@@ -12,7 +12,7 @@ export default function ScenarioCard({ scenario }: ScenarioCardProps) {
     <div className="bg-white p-6 rounded-xl shadow-md space-y-4">
       <h2 className="text-xl font-bold">{scenario.title}</h2>
       <p className="text-sm text-foreground">{scenario.shortDescription}</p>
-      <Link href={`/learning/${scenario.id}`}>
+      <Link href={`/learning/${scenario.id}`} data-testid="scenario-link">
         <Button variant="default" size="lg">
           Les mer
         </Button>

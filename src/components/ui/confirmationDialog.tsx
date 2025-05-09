@@ -29,11 +29,12 @@ export default function ConfirmationDialog({
 }: ConfirmationDialogProps) {
   return (
     <Dialog open={open} onOpenChange={() => onCancel()}>
-      <DialogContent>
+      <DialogContent data-testid="confirmation-dialog">
         <DialogTitle>{title}</DialogTitle>
         <Alert type={variant}>{description}</Alert>
         <div className="flex justify-between gap-2 mt-4">
           <Button
+            data-testid="confirmation-cancel"
             size="fullWidth"
             variant="outline"
             className="px-4 py-2"
@@ -43,6 +44,7 @@ export default function ConfirmationDialog({
             {cancelText}
           </Button>
           <Button
+            data-testid="confirmation-confirm"
             variant={variant === "critical" ? "destructive" : "default"}
             size="fullWidth"
             className={cn("px-4 py-2")}
