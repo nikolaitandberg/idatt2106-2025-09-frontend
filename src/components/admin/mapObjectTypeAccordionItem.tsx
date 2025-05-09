@@ -125,7 +125,7 @@ export default function MapObjectTypeAccordionItem({ type }: MapObjectTypeAccord
               }}
               mapObject={object}
               key={object.id}
-              onClick={() => {
+              onEdit={() => {
                 setEditMapObjectDialogOpen(true);
                 setSelectedMapObject(object);
               }}
