@@ -37,6 +37,7 @@ export default function AdminScenario() {
           <DialogTrigger asChild>
             <Button data-testid="create-scenario">
               <Plus className="mr-2" size={18} />
+            </Button>
             <Button>
               Legg til scenario
               <Plus className="ml-2" size={18} />
