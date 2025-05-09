@@ -3,6 +3,7 @@ import { useUpdateHouseholdWater } from "@/actions/household";
 import { z } from "zod";
 import useAppForm from "@/util/formContext";
 import FormError from "../ui/form/formError";
+import { showToast } from "@/components/ui/toaster";
 
 export default function UpdateWaterForm({ household, onClose }: { household: Household; onClose?: () => void }) {
   const { mutate: updateWater, error } = useUpdateHouseholdWater();
@@ -31,6 +32,11 @@ export default function UpdateWaterForm({ household, onClose }: { household: Hou
         },
         {
           onSuccess: () => {
+            showToast({
+              variant: "success",
+              title: "Vannmengde oppdatert",
+              description: "Endringene ble lagret.",
+            });
             if (onClose) {
               onClose();
             }

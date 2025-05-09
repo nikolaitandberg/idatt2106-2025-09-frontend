@@ -13,6 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import MoveToGroupDialog from "@/components/household/moveToGroupDialog";
 import ConfirmationDialog from "@/components/ui/confirmationDialog";
 import EditFoodForm from "@/components/household/editFoodForm";
+import { showToast } from "@/components/ui/toaster";
 
 type FoodAccordionItemProps = {
   id: number;
@@ -79,11 +80,11 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
                       onSuccess: () => {
                         queryClient.invalidateQueries({ queryKey: ["household", "food"] });
                         queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
-                      },
-                    },
+                      },                    },
                   );
                 });
               }}
+              onSuccess={() => setAddFoodDialogOpen(false)}
             />
           </DialogContent>
         </Dialog>
@@ -138,7 +139,13 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
                       onSuccess: () => {
                         queryClient.invalidateQueries({ queryKey: ["household", "food"] });
                         queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
+                        showToast({
+                          title: "Matvare slettet",
+                          description: `${entry.amount} ${unit} ${name.toLowerCase()} ble fjernet.`,
+                          variant: "success",
+                        });
                       },
+
                     });
                     setShowDeleteConfirmation(null);
                   }}

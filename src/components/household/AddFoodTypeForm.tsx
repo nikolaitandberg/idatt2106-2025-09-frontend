@@ -2,6 +2,7 @@ import { CreateFoodTypeRequest } from "@/types";
 import useAppForm from "@/util/formContext";
 import { z } from "zod";
 import { Button } from "../ui/button";
+import { showToast } from "../ui/toaster";
 
 interface AddFoodTypeFormProps {
   onSubmit: (foodType: CreateFoodTypeRequest) => Promise<void>;
@@ -32,6 +33,12 @@ export default function AddFoodTypeForm({ onSubmit, onCancel }: AddFoodTypeFormP
     defaultValues,
     onSubmit: async ({ value }) => {
       await onSubmit(value);
+
+      showToast({
+        title: "Matvaretype lagt til",
+        description: `${value.name} ble lagt til som ny type.`,
+        variant: "success",
+      });
     },
     validators: {
       onChange: schema,

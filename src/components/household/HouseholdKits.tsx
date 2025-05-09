@@ -1,6 +1,7 @@
 import { useAddHouseholdKit, useHouseholdKits, useKits, useRemoveHouseholdKit } from "@/actions/kits";
 import LoadingSpinner from "../ui/loadingSpinner";
 import HouseholdKitItem, { HouseholdKitItemSkeleton } from "./householdKitItem";
+import { showToast } from "../ui/toaster";
 
 interface HouseholdKitsProps {
   householdId: number;
@@ -46,12 +47,22 @@ export default function HouseholdKits({ householdId }: HouseholdKitsProps) {
               householdId,
               kitId: kit.id,
             });
+            showToast({
+              title: "Utstyr lagt til",
+              description: "Utstyret ble lagt til husholdningen.",
+              variant: "success",
+            })
           }}
           onRemove={() => {
             removeHouseholdKit({
               householdId,
               kitId: kit.id,
             });
+            showToast({
+              title: "Utstyr fjernet",
+              description: "Utstyret ble fjernet fra husholdningen.",
+              variant: "success",
+            })
           }}
         />
       ))}
