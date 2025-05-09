@@ -29,11 +29,13 @@ export default function AdminScenario() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Scenario</h1>
+        <h1 className="text-3xl font-bold" data-testid="admin-title">
+          Scenario
+        </h1>
 
         <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
           <DialogTrigger asChild>
-            <Button>
+            <Button data-testid="create-scenario">
               Legg til scenario
               <Plus className="ml-2" size={18} />
             </Button>
@@ -45,7 +47,7 @@ export default function AdminScenario() {
         </Dialog>
       </div>
 
-      <ul className="space-y-4">
+      <ul className="space-y-4" data-testid="admin-scenario-list">
         {scenarios?.map((scenario) => <ScenarioCard key={scenario.id} scenario={scenario} onDeleted={handleDeleted} />)}
       </ul>
     </div>

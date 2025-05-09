@@ -47,7 +47,7 @@ export default function CreateScenarioForm({ onCreated }: CreateScenarioFormProp
   });
 
   return (
-    <div className="flex flex-col gap-4 border-t-1 border-foreground-muted pt-2">
+    <div className="flex flex-col gap-4 border-t-1 border-foreground-muted pt-2" data-testid="create-scenario-form">
       <FormSection>
         <form.AppField name="title">{(field) => <field.TextInput label="Tittel" />}</form.AppField>
 
