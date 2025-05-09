@@ -6,9 +6,6 @@ export default function Loading() {
       <div className="w-full max-w-5xl">
         <div className="flex items-center justify-between mb-4">
           <div className="animate-pulese bg-skeleton rounded-md w-1/2 h-8" />
-          <Button variant="default" size="lg">
-            Ta Quiz
-          </Button>
         </div>
 
         <hr className="border-border mb-6" />
@@ -29,9 +26,6 @@ export default function Loading() {
           <div className="flex gap-4">
             <Button variant="default" size="lg">
               Tilbake til scenarioer
-            </Button>
-            <Button variant="default" size="lg">
-              Ta Quiz
             </Button>
           </div>
           <div>
