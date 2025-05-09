@@ -9,6 +9,8 @@ Den lar brukere:
 - og mer!
 
 ## Kildekode (frontend)
+
+### Avhengigheter
 - nextjs 15.3.1 med react og typescript
 - nextauth og cloudflare turnstile for sikkerhet
 - tailwindcss for styling
