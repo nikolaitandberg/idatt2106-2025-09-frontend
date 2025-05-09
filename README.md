@@ -38,20 +38,7 @@ Den lar brukere:
 5. Start produksjonsserver med `npm start`
 6. Åpne nettleseren og gå til `http://localhost:3000`
 
-### for å starte utviklingsserveren
-1. Klon repoet
-2. Installer avhengigheter med `npm install`
-3. Start utviklingsserver med `npm run dev`
-4. Åpne nettleseren og gå til `http://localhost:3000`
-
-### for å bygge produksjonsversjon
-1. Klon repoet
-2. Installer avhengigheter med `npm install`
-3. Bygg produksjonsversjon med `npm run build`
-4. Start produksjonsserver med `npm start`
-5. Åpne nettleseren og gå til `http://localhost:3000`
-
 ## Mer
 
-For informasjon om backend til prosjektet sjekk ut [backend-repoet](https://github.com/aTrueYety/idatt2106-2025-09-backend/)
-For mer informasjon om prosjektet sjekk ut [wiki](https://github.com/aTrueYety/idatt2106-2025-09-backend/wiki).
+- For informasjon om backend til prosjektet sjekk ut [backend-repoet](https://github.com/aTrueYety/idatt2106-2025-09-backend/)
+- For mer informasjon om prosjektet sjekk ut [wiki](https://github.com/aTrueYety/idatt2106-2025-09-backend/wiki).
