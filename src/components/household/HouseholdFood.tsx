@@ -68,7 +68,7 @@ export default function HouseholdFood({ household }: Readonly<{ household: House
           </Alert>
         </section>
 
-        <Tabs defaultValue="vann" className="w-full">
+        <Tabs defaultValue="matvarer" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="matvarer">Matvarer</TabsTrigger>
             <TabsTrigger value="vann">Vann</TabsTrigger>
