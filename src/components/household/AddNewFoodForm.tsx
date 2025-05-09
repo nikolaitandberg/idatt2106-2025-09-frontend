@@ -1,12 +1,14 @@
 import { Food } from "@/types/household";
 import useAppForm from "@/util/formContext";
 import { z } from "zod";
+import { showToast } from "@/components/ui/toaster";
 
 interface AddNewFoodFormProps {
   onSubmit: (food: Omit<Food, "householdId" | "id">) => Promise<void>;
+  onSuccess?: () => void;
 }
 
-export default function AddNewFoodForm({ onSubmit }: AddNewFoodFormProps) {
+export default function AddNewFoodForm({ onSubmit, onSuccess }: AddNewFoodFormProps) {
   const defaultValues = {
     typeId: 0,
     amount: 0,
@@ -30,6 +32,14 @@ export default function AddNewFoodForm({ onSubmit }: AddNewFoodFormProps) {
         amount: value.amount,
         expirationDate: value.expirationDate.toISOString(),
       });
+
+      showToast({
+        title: "Matvare lagt til",
+        description: "Den nye matvaren ble lagt til i husholdningen.",
+        variant: "success",
+      });
+
+      onSuccess?.();
     },
   });
 
