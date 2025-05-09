@@ -32,7 +32,7 @@ export default function ScenarioCard({ scenario, onDeleted }: ScenarioCardProps)
   };
 
   return (
-    <li className="border p-4 rounded shadow-sm flex justify-between items-start">
+    <li className="border p-4 rounded shadow-sm flex justify-between items-star bg-white">
       <div>
         <h2 className="text-xl font-semibold">{scenario.title}</h2>
         <p className="text-gray-600">{scenario.shortDescription}</p>
