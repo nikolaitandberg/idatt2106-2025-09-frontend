@@ -152,31 +152,27 @@ export function HouseholdInfoSkeleton() {
   return (
     <>
       <div className="space-y-3 mb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 w-full">
+        <div className="flex items-left justify-between flex-col">
+          <div className="flex items-center gap-2">
             <Home className="w-5 h-5" />
-            <div className="tanimate-pulse bg-muted rounded w-1/2 h-8" />
+            <div className="animate-pulse bg-muted rounded w-1/2 h-6" />
           </div>
-          <Button variant="ghost" disabled className="text-muted-foreground hover:text-foreground">
-            <Pencil className="w-4 h-4" />
-          </Button>
         </div>
+
+        <div className="animate-pulse bg-muted rounded w-1/3 h-4" />
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <MapPin className="w-4 h-4" />
-          <span className="animate-pulse bg-muted rounded w-1/2 h-5" />
+          <div className="animate-pulse bg-muted rounded w-2/3 h-4" />
         </div>
 
-        <div className="animate-pulse bg-muted rounded w-1/2 h-5" />
+        <div className="animate-pulse bg-muted rounded w-full h-10" />
 
-        <Button variant="outline" size="fullWidth" disabled>
-          <div className="flex items-center gap-2">
-            Forlat husholdning <LogOut strokeWidth={1.5} size={15} />
-          </div>
-        </Button>
+        <div className="animate-pulse bg-muted rounded w-full h-10" />
       </div>
 
       <hr className="border-border" />
+
       <HouseholdUsersSkeleton />
     </>
   );

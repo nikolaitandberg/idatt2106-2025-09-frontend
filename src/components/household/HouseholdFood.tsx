@@ -188,42 +188,56 @@ export function HouseholdFoodSkeleton() {
           <div className="animate-pulse bg-muted rounded h-18 md:h-24 lg:h-18 w-full" />
         </section>
 
-        <section className="space-y-4">
-          <h2 className="text-lg font-medium">Vann</h2>
-          <div className="flex flex-col lg:flex-row justify-between items-center border p-4 rounded shadow-sm bg-white gap-2 lg:gap-6">
-            <div className="flex flex-row gap-2 items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
-                  <Droplets className="w-4 h-4 text-muted-foreground" />
+        <Tabs defaultValue="matvarer" className="w-full">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="matvarer">Matvarer</TabsTrigger>
+            <TabsTrigger value="vann">Vann</TabsTrigger>
+            <TabsTrigger value="utstyr">Utstyr</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="vann">
+            <section className="space-y-4 mt-4">
+              <h2 className="text-lg font-medium">Vann</h2>
+              <div className="flex flex-col lg:flex-row justify-between items-center border p-4 rounded shadow-sm bg-white gap-2 lg:gap-6">
+                <div className="flex flex-row flex-wrap items-center justify-between gap-2 w-full">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
+                      <Droplets className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                    <span className="text-sm font-medium">Vann</span>
+                  </div>
+                  <div className="animate-pulse bg-muted rounded w-40 h-5" />
+                  <div className="animate-pulse bg-muted rounded w-16 h-5" />
                 </div>
-                <span className="text-sm">Vann</span>
+                <Button variant="outline" disabled size="sm" className="w-full lg:w-1/3">
+                  Endre vannmengde
+                  <Plus className="w-4 h-4 ml-1" />
+                </Button>
               </div>
-              <div className="animate-pulse bg-muted rounded w-40 h-5" />
-              <div className="animate-pulse bg-muted rounded w-16 h-5" />
-            </div>
-            <Button variant="outline" disabled size="sm" className="w-full lg:w-1/3">
-              Endre vannmengde
-              <Plus className="w-4 h-4 ml-1" />
-            </Button>
-          </div>
-        </section>
+            </section>
+          </TabsContent>
 
-        <section className="space-y-4">
-          <div>
-            <h2 className="text-lg font-medium">Utstyr</h2>
-            <p className="text-sm text-muted-foreground">Utstyr husholdningen har</p>
-          </div>
-          <HouseholdKitsSkeleton />
-        </section>
+          <TabsContent value="utstyr">
+            <section className="space-y-4 mt-4">
+              <div>
+                <h2 className="text-lg font-medium">Utstyr</h2>
+                <p className="text-sm text-muted-foreground">Utstyr husholdningen har</p>
+              </div>
+              <HouseholdKitsSkeleton />
+            </section>
+          </TabsContent>
 
-        <section className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-medium">Matvarer</h2>
-            <Button disabled>
-              Legg til ny matvare <Plus strokeWidth={1.25} size={20} />
-            </Button>
-          </div>
-        </section>
+          <TabsContent value="matvarer">
+            <section className="space-y-4 mt-4">
+              <div className="flex justify-between items-center">
+                <h2 className="text-lg font-medium">Matvarer</h2>
+                <Button disabled>
+                  Legg til ny matvare <Plus strokeWidth={1.25} size={20} />
+                </Button>
+              </div>
+            </section>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
