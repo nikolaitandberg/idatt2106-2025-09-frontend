@@ -34,13 +34,13 @@ export default function EventForm({ onClose, event, isEdit = false }: EventFormP
   } =
     event && isEdit
       ? {
-          name: event.name || "",
+          name: event.name ?? "",
           severityId: event.severityId,
           radius: event.radius,
           startTime: new Date(event.startTime || Date.now()),
           endTime: event.endTime ? new Date(event.endTime) : undefined,
-          recommendation: event.recommendation || "",
-          infoPageId: event.infoPageId || undefined,
+          recommendation: event.recommendation ?? "",
+          infoPageId: event.infoPageId ?? undefined,
           position: {
             latitude: event.latitude,
             longitude: event.longitude,
@@ -58,9 +58,8 @@ export default function EventForm({ onClose, event, isEdit = false }: EventFormP
 
   const schema = z.object({
     name: z.string().optional(),
-    severityId: z.number({
-      required_error: "Vennligst velg en alvorlighetsgrad",
-      invalid_type_error: "Vennligst velg en gyldig alvorlighetsgrad",
+    severityId: z.number().min(1, {
+      message: "Vennligst velg en alvorlighetsgrad",
     }),
     position: z.object(
       {
@@ -140,11 +139,11 @@ export default function EventForm({ onClose, event, isEdit = false }: EventFormP
               options={severities.data?.map((severity: Severity) => severity.id) || []}
               renderOption={(id: number) => {
                 const severity = severities.data?.find((s) => s.id === id);
-                return <div>{severity?.name || "Unknown"}</div>;
+                return <div>{severity?.name ?? "Unknown"}</div>;
               }}
               renderSelected={(id: number) => {
                 const severity = severities.data?.find((s) => s.id === id);
-                return severity?.name || "Unknown";
+                return severity?.name ?? "Unknown";
               }}
             />
           )}

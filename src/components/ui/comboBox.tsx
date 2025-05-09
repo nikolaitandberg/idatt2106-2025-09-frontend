@@ -6,6 +6,7 @@ import { ScrollArea } from "./scrollArea";
 import { cn } from "@/util/cn";
 import { Button } from "@/components/ui/button";
 import { ReactNode } from "react";
+import { X } from "lucide-react";
 
 interface ComboBoxProps<T> {
   placeholder?: string;
@@ -70,9 +71,10 @@ export default function ComboBox<T>({
               onClick={(e) => {
                 e.stopPropagation();
                 setSelectedOption(undefined);
+                onSelect(undefined as unknown as T);
               }}
               type="button">
-              ✕
+              <X strokeWidth={1.5} />
             </Button>
           )}
         </div>

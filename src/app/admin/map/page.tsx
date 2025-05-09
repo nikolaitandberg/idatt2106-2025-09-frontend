@@ -31,7 +31,7 @@ export default function AdminMap() {
   const queryClient = useQueryClient();
 
   if (mapObjects.isPending || mapObjectTypes.isPending || events.isPending || severities.isPending) {
-    return <div>Loading...</div>;
+    return <div>Laster...</div>;
   }
   if (mapObjects.isError || mapObjectTypes.isError || events.isError || severities.isError) {
     return <div>Feil ved lasting av data</div>;
