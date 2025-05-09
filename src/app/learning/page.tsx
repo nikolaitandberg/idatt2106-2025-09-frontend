@@ -15,6 +15,11 @@ export default async function LearningPage() {
         {scenarios.map((scenario) => (
           <ScenarioCard key={scenario.id} scenario={scenario} />
         ))}
+        {scenarios.length === 0 && (
+          <div className="flex flex-col items-center justify-center h-full">
+            <p className="text-sm text-muted-foreground">Fant ingen læringssider.</p>
+          </div>
+        )}
       </div>
     </div>
   );
