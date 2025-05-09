@@ -42,10 +42,16 @@ export default function Register() {
   const router = useRouter();
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
+  // cloudflare turnstile implementasjon
+  // https://www.cloudflare.com/application-services/products/turnstile/
   useEffect(() => {
+    const existingScript = document.querySelector('script[src*="turnstile"]');
+    if (existingScript) return;
+
     const script = document.createElement("script");
     script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback";
     script.defer = true;
+    script.id = "turnstile-script";
     document.body.appendChild(script);
 
     window.onloadTurnstileCallback = function () {
@@ -54,23 +60,25 @@ export default function Register() {
         return;
       }
 
-      turnstile.render("#captcha-container", {
-        sitekey: sitekey,
-        callback: function (token: string) {
-          setCaptchaToken(token);
-          form.setFieldValue("captchaToken", token || "");
-
-          // tvinge form-validering når captchatoken er satt
-          // vet ikke hvorfor denne ikke kan gjøres uten setTimeout, men sånn er det iaf - Nikolai
-          setTimeout(() => form.validate("change"), 0);
-        },
-      });
+      const container = document.getElementById("captcha-container");
+      if (container && !container.hasChildNodes()) {
+        turnstile.render("#captcha-container", {
+          sitekey: sitekey,
+          callback: function (token: string) {
+            setCaptchaToken(token);
+            form.setFieldValue("captchaToken", token || "");
+            setTimeout(() => form.validate("change"), 0);
+          },
+        });
+      }
     };
 
     return () => {
-      document.body.removeChild(script);
+      const scriptToRemove = document.getElementById("turnstile-script");
+      if (scriptToRemove && scriptToRemove.parentNode) {
+        scriptToRemove.parentNode.removeChild(scriptToRemove);
+      }
     };
-    // ikke fjern denne tomme arrayen, den er nødvendig for at cloudflare-scriptet skal fungere
   }, []);
 
   const registerSchema = z
