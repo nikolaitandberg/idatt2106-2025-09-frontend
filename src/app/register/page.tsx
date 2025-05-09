@@ -1,5 +1,17 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { signIn } from "next-auth/react";
+import { useMutation } from "@tanstack/react-query";
+import { sendRegisterRequest } from "@/actions/auth";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import LoadingSpinner from "@/components/ui/loadingSpinner";
+import { ApiError } from "@/types/apiResponses";
+import useAppForm from "@/util/formContext";
+import { z } from "zod";
+import { useEffect, useState } from "react";
+
 declare global {
   interface Window {
     onloadTurnstileCallback: () => void;
@@ -16,17 +28,7 @@ declare global {
   };
 }
 
-import { Button } from "@/components/ui/button";
-import { signIn } from "next-auth/react";
-import { useMutation } from "@tanstack/react-query";
-import { sendRegisterRequest } from "@/actions/auth";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import LoadingSpinner from "@/components/ui/loadingSpinner";
-import { ApiError } from "@/types/apiResponses";
-import useAppForm from "@/util/formContext";
-import { z } from "zod";
-import { useEffect, useState } from "react";
+
 
 type RegisterRequest = {
   username: string;
@@ -36,6 +38,9 @@ type RegisterRequest = {
 };
 
 export default function Register() {
+
+
+  const sitekey = process.env.NEXT_PUBLIC_TURNSTILE_SITEKEY;
   const router = useRouter();
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
@@ -46,8 +51,15 @@ export default function Register() {
     document.body.appendChild(script);
 
     window.onloadTurnstileCallback = function () {
+
+      if (!sitekey) {
+        console.warn("Turnstile site key is not defined, please check your environment variables.");
+        return;
+      }
+
+
       turnstile.render("#captcha-container", {
-        sitekey: "0x4AAAAAABbjtdnnMWVICeky",
+        sitekey: sitekey,
         callback: function (token: string) {
           setCaptchaToken(token);
           form.setFieldValue("captchaToken", token || "");
