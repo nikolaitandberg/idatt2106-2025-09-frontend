@@ -16,8 +16,8 @@ function LoginContent() {
   const [loginError, setLoginError] = useState<string | null>(null);
 
   const loginSchema = z.object({
-    username: z.string(),
-    password: z.string(),
+    username: z.string().min(1, "Brukernavn er påkrevd"),
+    password: z.string().min(1, "Passord er påkrevd"),
   });
 
   const handleLogin = async ({ username, password }: { username: string; password: string }) => {
