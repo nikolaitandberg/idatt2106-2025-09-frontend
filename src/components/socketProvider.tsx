@@ -27,7 +27,6 @@ export function SocketProvider({ children }: Readonly<{ children: ReactNode }>) 
     socketRef.current = new Client({
       brokerURL: session.data?.token ? `${WS_BASE_URL}?token=${session.data.token}` : WS_BASE_URL,
       onConnect: () => {
-
         // Re-subscribe existing subscriptions
         const newSubscriptions = subscriptions.current.map(({ topic, callback }) => {
           const subscription = socketRef.current?.subscribe(topic, (message) => {
