@@ -1,6 +1,7 @@
 import { Food } from "@/types/household";
 import useAppForm from "@/util/formContext";
 import { z } from "zod";
+import { showToast } from "@/components/ui/toaster";
 
 type EditFoodFormData = Omit<Food, "id" | "householdId" | "typeId">;
 
@@ -10,9 +11,10 @@ interface EditFoodFormProps {
     expirationDate: Date;
     amount: number;
   };
+  onSuccess?: () => void;
 }
 
-export default function EditFoodForm({ onSubmit, defaultValues }: EditFoodFormProps) {
+export default function EditFoodForm({ onSubmit, defaultValues, onSuccess }: EditFoodFormProps) {
   const schema = z.object({
     expirationDate: z.date(),
     amount: z.number().min(1, { message: "Antall må være større enn 0" }),
@@ -28,6 +30,14 @@ export default function EditFoodForm({ onSubmit, defaultValues }: EditFoodFormPr
         ...value,
         expirationDate: value.expirationDate.toISOString(),
       });
+
+      showToast({
+        title: "Matvare oppdatert",
+        description: "Endringene ble lagret.",
+        variant: "success",
+      });
+
+      onSuccess?.();
     },
   });
 
