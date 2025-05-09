@@ -12,7 +12,7 @@ export default function CreateGroupDialogOpenWrapper() {
     <>
       <Button onClick={() => setDialogOpen(true)}>
         Opprett ny gruppe
-        <Plus className="w-4 h-4 mr-2" />
+        <Plus className="w-4 h-4 ml-2" />
       </Button>
       <CreateGroupDialog open={dialogOpen} onOpenChange={setDialogOpen} />
     </>
