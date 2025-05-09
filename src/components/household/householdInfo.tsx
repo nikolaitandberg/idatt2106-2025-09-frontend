@@ -57,6 +57,13 @@ export default function HouseholdInfo({ household }: { household: Household }) {
           },
           {
             onSettled: resolve,
+            onSuccess: () => {
+              showToast({
+                title: "Husholdning oppdatert",
+                description: "Endringene ble lagret.",
+                variant: "success",
+              });
+            },
           },
         );
       });
@@ -96,7 +103,7 @@ export default function HouseholdInfo({ household }: { household: Household }) {
             <FormError error={error?.message} />
           </DialogContent>
         </Dialog>
-        <Button variant="outline" size="fullWidth" onClick={() => setConfirmLeaveOpen(true)}>
+        <Button variant="destructive" size="fullWidth" onClick={() => setConfirmLeaveOpen(true)}>
           <div className="flex items-center gap-2">
             Forlat husholdning <LogOut strokeWidth={1.5} size={15} />
           </div>
