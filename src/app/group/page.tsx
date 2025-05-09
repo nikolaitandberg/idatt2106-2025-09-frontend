@@ -31,7 +31,7 @@ export default async function UserGroupsPage() {
         <UserGroupList />
       </main>
 
-      <aside className="w-full md:w-2/6 md:bg-white border-l border-border p-4 space-y-8">
+      <aside className="w-full md:w-2/6 md:bg-white border-l border-b border-border p-4 space-y-8">
         <h2 className="text-xl font-semibold mb-4">Gruppeinvitasjoner</h2>
         <GroupInvites />
       </aside>
