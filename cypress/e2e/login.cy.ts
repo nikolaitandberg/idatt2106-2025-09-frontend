@@ -1,5 +1,5 @@
 describe("login", () => {
-  it("Should log in to olaNordmann and then log out", () => {
+  it("Should log in to olaNordmann", () => {
     cy.intercept("POST", "/api/auth/callback/credentials").as("loginRequest");
     cy.intercept("GET", "/api/auth/session").as("sessionRequest");
     cy.visit("/login");
