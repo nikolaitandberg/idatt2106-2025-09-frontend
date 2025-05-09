@@ -6,6 +6,7 @@ import { Button } from "../ui/button";
 import { Dialog, DialogTrigger, DialogContent, DialogFooter, DialogTitle, DialogClose } from "../ui/dialog";
 import TextInput from "../ui/textinput";
 import { showToast } from "../ui/toaster";
+import { Plus } from "lucide-react";
 
 export default function InviteHouseholdDialog({ groupId }: { groupId: number }) {
   const [householdId, setHouseholdId] = useState<number | null>(null);
@@ -43,7 +44,10 @@ export default function InviteHouseholdDialog({ groupId }: { groupId: number }) 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Inviter en husholdning</Button>
+        <Button variant="outline">
+          Inviter en husholdning
+          <Plus className="h-4 w-4 ml-2" />
+          </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogTitle>Inviter husholdning</DialogTitle>
