@@ -7,6 +7,7 @@ import FormError from "../ui/form/formError";
 import useAppForm from "@/util/formContext";
 import { z } from "zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { showToast } from "@/components/ui/toaster";
 
 interface EditScenarioFormProps {
   scenario: InfoPage;
@@ -41,13 +42,18 @@ export default function EditScenarioForm({ scenario, onClose }: EditScenarioForm
           {
             onSuccess: () => {
               queryClient.invalidateQueries({ queryKey: ["infoPages"] });
+              showToast({
+                title: "Scenario oppdatert",
+                description: `"${value.title}" ble oppdatert.`,
+                variant: "success",
+              });
               onClose();
             },
             onSettled: resolve,
           },
         );
       });
-    },
+    },    
   });
 
   return (

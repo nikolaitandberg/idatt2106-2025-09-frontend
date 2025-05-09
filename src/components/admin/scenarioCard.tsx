@@ -8,6 +8,7 @@ import { Pencil, Trash } from "lucide-react";
 import EditScenarioForm from "@/components/admin/editScenarioForm";
 import { useDeleteScenario } from "@/actions/learning";
 import ConfirmationDialog from "@/components/ui/confirmationDialog";
+import { showToast } from "@/components/ui/toaster";
 
 interface ScenarioCardProps {
   scenario: InfoPage;
@@ -22,14 +23,25 @@ export default function ScenarioCard({ scenario, onDeleted }: ScenarioCardProps)
   const handleDelete = () => {
     deleteScenario(scenario.id, {
       onSuccess: () => {
+        showToast({
+          title: "Scenario slettet",
+          description: `"${scenario.title}" ble slettet.`,
+          variant: "success",
+        });
         onDeleted();
         setIsDeleteDialogOpen(false);
       },
       onError: (err) => {
         console.error("Feil ved sletting:", err);
+        showToast({
+          title: "Feil",
+          description: "Klarte ikke å slette scenario. Prøv igjen.",
+          variant: "error",
+        });
       },
     });
   };
+  
 
   return (
     <li className="border p-4 rounded shadow-sm flex justify-between items-star bg-white">
