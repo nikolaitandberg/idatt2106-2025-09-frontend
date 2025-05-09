@@ -1,6 +1,5 @@
 # Krisefikser (frontend)
-Krisefikser er en applikasjon for lære om og holde seg beredt dersom en krisesituasjon skulle inntreffe. 
-Den lar brukere:
+Krisefikser er en web applikation som hjælper med å øke beredskapen og forståelsen for kriser og katastrofer. Den lar brukere:
 - opprette og administrere husholdninger og grupper av husholdninger.
 - administrere beredskapslager for sin husholdning og sine husholdningsgrupper.
 - se beredskapsgrad utifra husholdningens og husholdningsgruppens beredskapslager.
