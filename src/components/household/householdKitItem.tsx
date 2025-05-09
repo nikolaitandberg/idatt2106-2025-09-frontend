@@ -31,7 +31,7 @@ export default function HouseholdKitItem({ kit, householdHasKit, onAdd, onRemove
       </div>
       <Dialog>
         <DialogTrigger asChild>
-          <p className="text-gray-500 text-right line-clamp-1 break-all hover:underline select-none cursor-pointer">
+          <p className="text-gray-500 text-right line-clamp-1 break-all hover:underline select-none cursor-pointer ml-10 lg:ml-50">
             {kit.description}
           </p>
         </DialogTrigger>

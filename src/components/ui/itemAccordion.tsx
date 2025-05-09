@@ -1,7 +1,7 @@
 "use client";
 
 import { AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
-import { Calendar, Image as ImageIcon, Pencil, Trash, Plus, ArrowRightLeft } from "lucide-react";
+import { Calendar, UtensilsCrossed as ImageIcon, Pencil, Trash, Plus, ArrowRightLeft } from "lucide-react";
 import { cn } from "@/util/cn";
 import { Food } from "@/types/household";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "./dialog";
