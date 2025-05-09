@@ -24,7 +24,7 @@ export default function EventForm({ onClose, event, isEdit = false }: EventFormP
 
   const error = isEdit ? editError : createError;
 
-  const defaultValues: Omit<CreateEventRequest, "latitude" | "longitude" | "startTime" | "endTime"> & {
+  const defaultValues: Omit<CreateEventRequest, "latitude" | "longitude" | "startTime" | "endTime" | "colour"> & {
     startTime: Date;
     endTime?: Date;
     position?: {
