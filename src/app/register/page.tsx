@@ -28,8 +28,6 @@ declare global {
   };
 }
 
-
-
 type RegisterRequest = {
   username: string;
   password: string;
@@ -38,8 +36,6 @@ type RegisterRequest = {
 };
 
 export default function Register() {
-
-
   const sitekey = process.env.NEXT_PUBLIC_TURNSTILE_SITEKEY;
   const router = useRouter();
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
@@ -51,12 +47,10 @@ export default function Register() {
     document.body.appendChild(script);
 
     window.onloadTurnstileCallback = function () {
-
       if (!sitekey) {
         console.warn("Turnstile site key is not defined, please check your environment variables.");
         return;
       }
-
 
       turnstile.render("#captcha-container", {
         sitekey: sitekey,
@@ -91,12 +85,25 @@ export default function Register() {
         }),
       email: z.string().email({ message: "Ugyldig e-postadresse" }),
       repeatPassword: z.string(),
-      captchaToken: z.string().min(1, { message: "Captcha er påkrevd" }),
+      captchaToken: z.string().optional(),
     })
     .refine((data) => data.password === data.repeatPassword, {
       message: "Passordene er ikke like",
       path: ["repeatPassword"],
-    });
+    })
+    .refine(
+      (data) => {
+        if (!sitekey) {
+          return true;
+        }
+
+        return !!data.captchaToken;
+      },
+      {
+        message: "Captcha er påkrevd",
+        path: ["captchaToken"],
+      },
+    );
 
   const {
     isError,
@@ -108,11 +115,11 @@ export default function Register() {
     },
   });
 
-  const defaultRegister: RegisterRequest & { repeatPassword: string } = {
+  const defaultRegister: Omit<RegisterRequest, "captchaToken"> & { repeatPassword: string; captchaToken?: string } = {
     username: "",
     password: "",
     email: "",
-    captchaToken: captchaToken || "",
+    captchaToken: captchaToken || undefined,
     repeatPassword: "",
   };
 
@@ -122,7 +129,10 @@ export default function Register() {
     },
     defaultValues: defaultRegister,
     onSubmit: async ({ value }) => {
-      await handleRegister(value);
+      await handleRegister({
+        captchaToken: value.captchaToken!,
+        ...value,
+      });
     },
   });
 
