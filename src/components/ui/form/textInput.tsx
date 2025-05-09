@@ -42,6 +42,11 @@ export default function TextInput({
           placeholder={placeholder}
           value={field.state.value}
           onChange={(e) => field.handleChange(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              field.form.handleSubmit();
+            }
+          }}
           className={cn(
             "w-full px-3 py-2 border rounded-md pr-10",
             field.state.meta.errors.length > 0 ? "border-red-500" : "border-gray-300",

@@ -161,16 +161,12 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
                     <ArrowRightLeft className="w-4 h-4 text-blue-500" />
                   </button>
                 </DialogTrigger>
-                <DialogContent>
-                  <DialogTitle>Flytt til gruppe</DialogTitle>
-                  <MoveToGroupDialog
-                    open={moveDialogUnitId === entry.id}
-                    onOpenChange={(open) => setMoveDialogUnitId(open ? entry.id : null)}
-                    foodId={entry.id}
-                    maxAmount={entry.amount}
-                    unit={unit}
-                  />
-                </DialogContent>
+                <MoveToGroupDialog
+                  onClose={() => setMoveDialogUnitId(0)}
+                  foodId={entry.id}
+                  maxAmount={entry.amount}
+                  unit={unit}
+                />
               </Dialog>
 
               <Dialog

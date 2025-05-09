@@ -77,7 +77,9 @@ export default function FoodTypePicker({ label, placeholder }: FoodTypePickerPro
           </div>
         )}
         value={foodTypes.find((option) => option.id === field.state.value)}
-        onSelect={(option) => field.handleChange(option.id)}
+        onSelect={(option) => {
+          field.handleChange(option?.id);
+        }}
       />
     </>
   );

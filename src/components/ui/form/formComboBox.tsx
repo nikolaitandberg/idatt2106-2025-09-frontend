@@ -23,7 +23,7 @@ export default function FormCombBox<T>({
   renderOption,
   renderSelected,
 }: Readonly<FormCombBoxProps<T>>) {
-  const field = useFieldContext<T>();
+  const field = useFieldContext<T | undefined>();
 
   return (
     <div className={className}>
