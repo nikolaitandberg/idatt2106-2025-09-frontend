@@ -34,8 +34,8 @@ export default function AdminScenario() {
         <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
           <DialogTrigger asChild>
             <Button>
-              <Plus className="mr-2" size={18} />
               Legg til scenario
+              <Plus className="ml-2" size={18} />
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-3xl">
