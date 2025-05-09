@@ -48,7 +48,6 @@ export function AddMemberDialog({ householdId }: { householdId: number }) {
                     },
                     onError: (error) => {
                       const errorMessage = error instanceof Error ? error.message : "Kunne ikke invitere bruker";
-                      console.log(errorMessage);
 
                       showToast({
                         title: "Feil ved invitasjon",

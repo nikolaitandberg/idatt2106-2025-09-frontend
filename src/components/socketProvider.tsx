@@ -26,10 +26,7 @@ export function SocketProvider({ children }: Readonly<{ children: ReactNode }>) 
   const createSocket = useCallback(() => {
     socketRef.current = new Client({
       brokerURL: session.data?.token ? `${WS_BASE_URL}?token=${session.data.token}` : WS_BASE_URL,
-      debug: console.log,
       onConnect: () => {
-        console.log("Connected to WebSocket");
-
         // Re-subscribe existing subscriptions
         const newSubscriptions = subscriptions.current.map(({ topic, callback }) => {
           const subscription = socketRef.current?.subscribe(topic, (message) => {
@@ -49,13 +46,6 @@ export function SocketProvider({ children }: Readonly<{ children: ReactNode }>) 
         // Clear queued subscriptions
         queuedSubscriptionsRef.current = [];
         subscriptions.current = newSubscriptions;
-      },
-      onDisconnect: () => {
-        console.log("Disconnected from WebSocket");
-      },
-      onStompError: (frame) => {
-        console.log("Broker reported error:", frame.headers["message"]);
-        console.log("Additional details:", frame.body);
       },
     });
     socketRef.current.activate();

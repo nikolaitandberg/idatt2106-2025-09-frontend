@@ -8,6 +8,7 @@ export type Event = {
   startTime: string;
   endTime?: string;
   severityId: number;
+  colour: string;
   recommendation?: string;
 };
 
