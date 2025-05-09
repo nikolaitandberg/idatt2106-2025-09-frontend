@@ -16,14 +16,7 @@ export default async function ScenarioPage({ params }: { params: Promise<{ id: s
   return (
     <div className="min-h-screen bg-background text-foreground px-4 py-10 flex justify-center">
       <div className="w-full max-w-5xl">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-3xl font-bold text-left">{infoPage.title}</h1>
-          <Link href={`/learning/${id}/quiz`}>
-            <Button variant="default" size="lg">
-              Ta Quiz
-            </Button>
-          </Link>
-        </div>
+          <h1 className="flex items-center mb-4 text-3xl font-bold text-left">{infoPage.title}</h1>
 
         <hr className="border-border mb-6" />
 
@@ -35,11 +28,6 @@ export default async function ScenarioPage({ params }: { params: Promise<{ id: s
             <Link href={`/learning`}>
               <Button variant="default" size="lg">
                 Tilbake til scenarioer
-              </Button>
-            </Link>
-            <Link href={`/learning/${id}/quiz`}>
-              <Button variant="default" size="lg">
-                Ta Quiz
               </Button>
             </Link>
           </div>
