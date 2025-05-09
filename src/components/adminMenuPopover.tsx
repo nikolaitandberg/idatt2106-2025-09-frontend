@@ -6,6 +6,7 @@ import { ElementType, useState, MouseEvent } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { cn } from "@/util/cn";
+import { useSession } from "next-auth/react";
 
 const AdminMenuItem = ({
   icon: Icon,
@@ -36,17 +37,13 @@ const AdminMenuItem = ({
 );
 
 export function AdminMenuPopover({ isSelected }: { isSelected?: boolean }) {
+  const session = useSession();
+
   const [open, setOpen] = useState(false);
   const [hoverTimeout, setHoverTimeout] = useState<{
     timeoutId: NodeJS.Timeout;
     lastEnteredTime: number;
   } | null>(null);
-
-  const menuItems = [
-    { icon: MapPin, text: "Kart", href: "/admin/map" },
-    { icon: CircleAlert, text: "Scenario", href: "/admin/scenario" },
-    { icon: ShieldUser, text: "Ny admin", href: "/admin/new-admin" },
-  ];
 
   const handleMouseEnter = () => {
     if (hoverTimeout?.timeoutId) clearTimeout(hoverTimeout.timeoutId);
@@ -99,16 +96,23 @@ export function AdminMenuPopover({ isSelected }: { isSelected?: boolean }) {
               },
             }}
             className="p-2 space-y-1">
-            {menuItems.map((item, index) => (
+            <AdminMenuItem icon={MapPin} text="Kart" href="/admin/map" index={0} onClick={handleItemClick} />
+            <AdminMenuItem
+              icon={CircleAlert}
+              text="Scenario"
+              href="/admin/scenario"
+              index={1}
+              onClick={handleItemClick}
+            />
+            {session.data?.user?.isSuperAdmin && (
               <AdminMenuItem
-                key={item.href}
-                icon={item.icon}
-                text={item.text}
-                href={item.href}
-                index={index}
+                icon={ShieldUser}
+                text="Ny admin"
+                href="/admin/new-admin"
+                index={2}
                 onClick={handleItemClick}
               />
-            ))}
+            )}
           </motion.div>
         </PopoverContent>
       </div>
