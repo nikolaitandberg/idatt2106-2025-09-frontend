@@ -74,6 +74,20 @@ export function AddMemberDialog({ householdId }: { householdId: number }) {
                       householdId,
                     },
                     {
+                      onSuccess: () => {
+                        showToast({
+                          title: "Ekstern deltaker lagt til",
+                          description: `${req.name} ble lagt til i husholdningen.`,
+                          variant: "success",
+                        });
+                      },
+                      onError: () => {
+                        showToast({
+                          title: "Feil",
+                          description: "Kunne ikke legge til deltaker. Prøv igjen.",
+                          variant: "error",
+                        });
+                      },
                       onSettled: resolve,
                     },
                   );
