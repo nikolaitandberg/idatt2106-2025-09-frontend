@@ -196,9 +196,9 @@ export default function Home() {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4 items-center justify-center w-full h-[90vh]">
+    <div className="grid grid-cols-1 gap-4 items-center justify-center w-full h-[82vh] md:h-[90vh]">
       <div className="flex items-center justify-center bg-white px-4 pb-4 pt-2 h-full w-full n">
-        <div className="w-full h-full">
+        <div className="w-full h-full relative">
           <MapComponent
             initialViewState={{
               longitude: 9.726463,
@@ -226,79 +226,77 @@ export default function Home() {
               }}
             />
           </MapComponent>
-          <div className="absolute bottom-10 w-full left-0 px-8">
-            <MapToolBar
-              onMapObjectTypesChange={(setSelectedTypes) => {
-                setSelectedMapObjectTypes(setSelectedTypes);
-                setHasSelectedMapObjectTypes(true);
-              }}
-              onFindObject={async (typeId) => {
-                if (!mapRef.current) return;
+          <MapToolBar
+            onMapObjectTypesChange={(setSelectedTypes) => {
+              setSelectedMapObjectTypes(setSelectedTypes);
+              setHasSelectedMapObjectTypes(true);
+            }}
+            onFindObject={async (typeId) => {
+              if (!mapRef.current) return;
 
-                const position = positionRef.current?.getPosition();
+              const position = positionRef.current?.getPosition();
 
-                if (!position) {
-                  return;
-                }
+              if (!position) {
+                return;
+              }
 
-                await new Promise((resolve) => {
-                  findMapObject(
-                    {
-                      position,
-                      type: typeId,
+              await new Promise((resolve) => {
+                findMapObject(
+                  {
+                    position,
+                    type: typeId,
+                  },
+                  {
+                    onSuccess: (data) => {
+                      if (!data) return;
+                      mapRef.current?.flyTo({
+                        center: [data.longitude, data.latitude],
+                        zoom: 15,
+                        animate: true,
+                        duration: 1000,
+                      });
                     },
-                    {
-                      onSuccess: (data) => {
-                        if (!data) return;
-                        mapRef.current?.flyTo({
-                          center: [data.longitude, data.latitude],
-                          zoom: 15,
-                          animate: true,
-                          duration: 1000,
-                        });
-                      },
-                      onSettled: resolve,
-                      onError: () => {
-                        showToast({
-                          title: "Feil",
-                          description: "Fant ikke kartobjektet",
-                          variant: "error",
-                        });
-                      },
+                    onSettled: resolve,
+                    onError: () => {
+                      showToast({
+                        title: "Feil",
+                        description: "Fant ikke kartobjektet",
+                        variant: "error",
+                      });
                     },
-                  );
-                });
-              }}
-              canGoToHousehold={!!myHousehold}
-              onHouseholdClick={() => {
-                if (!mapRef.current) return;
-                if (!myHousehold) return;
-                mapRef.current.flyTo({
-                  center: [myHousehold.longitude, myHousehold.latitude],
-                  zoom: 15,
-                  animate: true,
-                  duration: 1000,
-                });
-              }}
-              loading={eventsIsFetching || mapObjectsIsFetching || mapObjectTypesIsFetching}
-              onPositionClick={() => {
-                if (!mapRef.current) return;
+                  },
+                );
+              });
+            }}
+            canGoToHousehold={!!myHousehold}
+            onHouseholdClick={() => {
+              if (!mapRef.current) return;
+              if (!myHousehold) return;
+              mapRef.current.flyTo({
+                center: [myHousehold.longitude, myHousehold.latitude],
+                zoom: 15,
+                animate: true,
+                duration: 1000,
+              });
+            }}
+            loading={eventsIsFetching || mapObjectsIsFetching || mapObjectTypesIsFetching}
+            onPositionClick={() => {
+              if (!mapRef.current) return;
 
-                const position = positionRef.current?.getPosition();
+              const position = positionRef.current?.getPosition();
 
-                if (!position) {
-                  return;
-                }
+              if (!position) {
+                return;
+              }
 
-                mapRef.current.flyTo({
-                  center: [position.coords.longitude, position.coords.latitude],
-                  zoom: 15,
-                  animate: true,
-                  duration: 1000,
-                });
-              }}
-            />
-          </div>
+              mapRef.current.flyTo({
+                center: [position.coords.longitude, position.coords.latitude],
+                zoom: 15,
+                animate: true,
+                duration: 1000,
+              });
+            }}
+          />
         </div>
       </div>
     </div>

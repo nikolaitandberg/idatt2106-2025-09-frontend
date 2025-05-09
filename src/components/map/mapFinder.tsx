@@ -19,14 +19,16 @@ export default function MapFinder({ onFindObject }: Readonly<MapFinderProps>) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" className="flex flex-row gap-1 items-center">
+        <Button
+          variant="ghost"
+          className="flex flex-row gap-1 px-2 justify-start md:justify-center items-center w-full">
           <ListFilter size={20} className="text-gray-500" />
           <span className="text-gray-500">Finn i kart</span>
         </Button>
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent className="bg-white w-full h-full" side="right" align="start">
         <div className="flex flex-col gap-2">
-          <h2 className="text-lg font-medium text-gray-800">Finn nærmeste kartobjekt</h2>
+          <h2 className="text-sm md:text-lg font-medium text-gray-800">Finn nærmeste kartobjekt</h2>
           {isPending && <LoadingSpinner />}
           {isError && (
             <div className="text-red-500">
