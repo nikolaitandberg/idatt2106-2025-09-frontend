@@ -21,9 +21,11 @@ export default async function UserGroupsPage() {
   return (
     <div className="flex flex-1 md:flex-row flex-col bg-background text-foreground">
       <main className="md:flex-1 px-4 py-8 sm:p-8 space-y-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between sm:gap-0 gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:gap-0 gap-4">
           <h1 className="text-2xl font-semibold">Dine beredskapsgrupper</h1>
-          <CreateGroupDialogOpenWrapper />
+          <div className="sm:ml-auto">
+            <CreateGroupDialogOpenWrapper />
+          </div>
         </div>
 
         <UserGroupList />
