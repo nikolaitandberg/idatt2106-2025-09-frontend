@@ -1,6 +1,7 @@
 import { useDeleteExtraResident, useExtraResidents, useHouseholdUsers } from "@/actions/household";
 import MemberCard, { MemberCardSkeleton } from "../ui/memberCard";
 import { AddMemberDialog } from "./addMemberDialog";
+import { showToast } from "../ui/toaster";
 
 export default function HouseholdUsers({ householdId }: { householdId: number }) {
   const {
@@ -19,8 +20,19 @@ export default function HouseholdUsers({ householdId }: { householdId: number })
 
   const handleRemoveExtraResident = (id: number) => {
     deleteExtraResidentMutation(id, {
-      onError: (error) => {
-        console.error("Error removing extra resident:", error);
+      onSuccess: () => {
+        showToast({
+          variant: "success",
+          title: "Ekstern deltaker fjernet",
+          description: "Deltaker ble fjernet fra husholdningen.",
+        });
+      },
+      onError: () => {
+        showToast({
+          variant: "error",
+          title: "Feil",
+          description: "Kunne ikke fjerne deltaker. Prøv igjen senere.",
+        });
       },
     });
   };
