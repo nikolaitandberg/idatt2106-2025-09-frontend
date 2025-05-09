@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Krisefikser (frontend)
+Krisefikser er en applikasjon for lære om og holde seg beredt dersom en krisesituasjon skulle inntreffe. 
+Den lar brukere:
+- opprette og administrere husholdninger og grupper av husholdninger.
+- administrere beredskapslager for sin husholdning og sine husholdningsgrupper.
+- se beredskapsgrad utifra husholdningens og husholdningsgruppens beredskapslager.
+- se læremidler og ressurser for krisehåndtering.
+- se kriser som skjer i deres område.
+- og mer!
 
-## Getting Started
+## Kildekode (frontend)
+- nextjs 15.3.1 med react og typescript
+- nextauth og cloudflare turnstile for sikkerhet
+- tailwindcss for styling
+- Lucide for ikoner
+- framer motion for animasjoner
 
-First, run the development server:
+### kodekonvensjoner
+- eslint med prettier for kodeformatering
+- typescript for type-sjekking
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Oppsett
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### for å starte utviklingsserveren
+1. Klon repoet
+2. Sett inn .env-filen i rotmappen av prosjektet
+3. Installer avhengigheter med `npm install`
+4. Start utviklingsserver med `npm run dev`
+5. Åpne nettleseren og gå til `http://localhost:3000`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### for å bygge produksjonsversjon
+1. Klon repoet
+2. Sett inn .env-filen i rotmappen av prosjektet
+3. Installer avhengigheter med `npm install`
+4. Bygg produksjonsversjon med `npm run build`
+5. Start produksjonsserver med `npm start`
+6. Åpne nettleseren og gå til `http://localhost:3000`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### for å starte utviklingsserveren
+1. Klon repoet
+2. Installer avhengigheter med `npm install`
+3. Start utviklingsserver med `npm run dev`
+4. Åpne nettleseren og gå til `http://localhost:3000`
 
-## Learn More
+### for å bygge produksjonsversjon
+1. Klon repoet
+2. Installer avhengigheter med `npm install`
+3. Bygg produksjonsversjon med `npm run build`
+4. Start produksjonsserver med `npm start`
+5. Åpne nettleseren og gå til `http://localhost:3000`
 
-To learn more about Next.js, take a look at the following resources:
+## Mer
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For informasjon om backend til prosjektet sjekk ut [backend-repoet](https://github.com/aTrueYety/idatt2106-2025-09-backend/)
+For mer informasjon om prosjektet sjekk ut [wiki](https://github.com/aTrueYety/idatt2106-2025-09-backend/wiki).
