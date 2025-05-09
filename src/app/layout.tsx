@@ -22,6 +22,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Topbar />
           {children}
           <Toaster />
+          <footer className="text-sm w-full flex justify-center items-center bg-gray-100 text-gray-700 p-4 gap-10">
+            <span>© {new Date().getFullYear()} Krisefikser™.</span>
+            <a href="/privacy-policy" className="text-blue-700 hover:underline">
+              Personvernerklæring
+            </a>
+          </footer>
         </Providers>
       </body>
     </html>
