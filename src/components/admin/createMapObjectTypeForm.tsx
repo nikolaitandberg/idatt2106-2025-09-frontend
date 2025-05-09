@@ -3,6 +3,7 @@ import { mapIcons } from "@/util/icons";
 import { z } from "zod";
 import useAppForm from "@/util/formContext";
 import FormError from "../ui/form/formError";
+import { showToast } from "@/components/ui/toaster";
 
 interface EditMapObjectTypeFormProps {
   onClose?: () => void;
@@ -35,7 +36,14 @@ export default function CreateMapObjectTypeForm({ onClose }: EditMapObjectTypeFo
             icon: value.icon,
           },
           {
-            onSuccess: onClose,
+            onSuccess: () => {
+              showToast({
+                title: "Ny karttype opprettet",
+                description: `"${value.name}" ble lagt til.`,
+                variant: "success",
+              });
+              onClose?.();
+            },
             onSettled: resolve,
           },
         );

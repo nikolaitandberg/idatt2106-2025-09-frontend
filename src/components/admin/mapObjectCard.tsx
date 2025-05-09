@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import ConfirmationDialog from "../ui/confirmationDialog";
 import { useDeleteMapObject } from "@/actions/map";
 import { useState } from "react";
+import { showToast } from "../ui/toaster";
 
 export default function MapObjectCard({
   mapObject,
@@ -76,6 +77,11 @@ export default function MapObjectCard({
             onConfirm={() => {
               deleteMapObject(mapObject.id, {
                 onSuccess: () => {
+                  showToast({
+                    title: "Kartobjekt slettet",
+                    description: `"${mapObject.description}" ble slettet.`,
+                    variant: "success",
+                  });
                   onDelete();
                 },
               });

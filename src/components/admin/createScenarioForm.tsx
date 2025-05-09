@@ -43,7 +43,7 @@ export default function CreateScenarioForm({ onCreated }: CreateScenarioFormProp
           onSettled: resolve,
         });
       });
-    },    
+    },
   });
 
   return (

@@ -4,6 +4,7 @@ import useAppForm from "@/util/formContext";
 import { z } from "zod";
 import { mapIcons } from "@/util/icons";
 import FormError from "../ui/form/formError";
+import { showToast } from "@/components/ui/toaster";
 
 interface EditMapObjectTypeFormProps {
   mapObjectType: MapObjectType;
@@ -40,7 +41,14 @@ export default function EditMapObjectTypeForm({ mapObjectType, onClose }: EditMa
             icon: value.icon,
           },
           {
-            onSuccess: onClose,
+            onSuccess: () => {
+              showToast({
+                title: "Karttype oppdatert",
+                description: `"${value.name}" ble oppdatert.`,
+                variant: "success",
+              });
+              onClose?.();
+            },
             onSettled: resolve,
           },
         );

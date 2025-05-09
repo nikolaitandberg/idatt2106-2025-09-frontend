@@ -53,7 +53,7 @@ export default function EditScenarioForm({ scenario, onClose }: EditScenarioForm
           },
         );
       });
-    },    
+    },
   });
 
   return (

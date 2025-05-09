@@ -5,6 +5,7 @@ import useAppForm from "@/util/formContext";
 import { Time } from "@/types/time";
 import FormError from "../ui/form/formError";
 import { z } from "zod";
+import { showToast } from "@/components/ui/toaster";
 
 interface EditMapObjectFormProps {
   mapObject: MapObject;
@@ -96,9 +97,12 @@ export default function EditMapObjectForm({ mapObject, mapObjectType, onClose }:
           },
           {
             onSuccess: () => {
-              if (onClose) {
-                onClose();
-              }
+              showToast({
+                title: "Kartobjekt oppdatert",
+                description: `"${value.description}" ble lagret.`,
+                variant: "success",
+              });
+              onClose();
             },
             onSettled: resolve,
           },

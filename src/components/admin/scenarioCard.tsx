@@ -41,7 +41,6 @@ export default function ScenarioCard({ scenario, onDeleted }: ScenarioCardProps)
       },
     });
   };
-  
 
   return (
     <li className="border p-4 rounded shadow-sm flex justify-between items-star bg-white">
