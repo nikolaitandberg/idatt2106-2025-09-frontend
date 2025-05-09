@@ -1,5 +1,5 @@
 "use client";
-import { useProfile, useUpdateUserPositionSharing } from "@/actions/user";
+import { useProfile, useUpdateUserPositionSharing, useSendEmailVerification } from "@/actions/user";
 import { useMyHousehold } from "@/actions/household";
 import { Button } from "@/components/ui/button";
 import LoadingSpinner from "@/components/ui/loadingSpinner";
@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 import { useState } from "react";
 import { EditUserProfileForm } from "@/components/profile/editUserProfileForm";
 import { UserAvatarFromUserId } from "@/components/ui/UserAvatar";
-import { useSendEmailVerification } from "@/actions/user";
+import { showToast } from "@/components/ui/toaster";
 
 export default function ProfilePageWrapper() {
   const session = useSession();
@@ -113,19 +113,33 @@ function ProfilePage({ userId }: { userId: number }) {
               <div className="flex justify-between items-center">
                 <p className="text-sm text-gray-500">E-post</p>
                 {profile.emailConfirmed ? (
-                  <Button disabled className="h-6 pointer-events-none">
+                  <Button disabled className="h-6 pointer-events-none ml-2">
                     Verifisert
                   </Button>
                 ) : (
                   <Button
-                    className="h-6"
+                    className="h-6 ml-2 min-w-[120px]"
                     disabled={isSendingEmail || verificationSent}
                     onClick={() => {
                       sendEmailVerification(undefined, {
-                        onSuccess: () => setVerificationSent(true),
+                        onSuccess: () => {
+                          setVerificationSent(true);
+                          showToast({
+                            variant: "success",
+                            title: "E-post sendt",
+                            description: `Verifiseringslenken er sendt til ${profile.email}.`,
+                          });
+                        },
+                        onError: () => {
+                          showToast({
+                            variant: "error",
+                            title: "Feil",
+                            description: "Kunne ikke sende verifiserings-e-posten.",
+                          });
+                        },
                       });
                     }}>
-                    {verificationSent ? "Verifisering sendt" : isSendingEmail ? "Sender..." : "Verifiser e-post"}
+                    {verificationSent ? "Sendt" : isSendingEmail ? "Sender..." : "Verifiser e-post"}
                   </Button>
                 )}
               </div>
