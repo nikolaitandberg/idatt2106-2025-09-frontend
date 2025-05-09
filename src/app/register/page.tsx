@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { signIn } from "next-auth/react";
 import { useMutation } from "@tanstack/react-query";
 import { sendRegisterRequest } from "@/actions/auth";
@@ -33,6 +34,7 @@ type RegisterRequest = {
   password: string;
   email: string;
   captchaToken: string;
+  acceptPrivacyPolicy: boolean;
 };
 
 export default function Register() {
@@ -40,10 +42,16 @@ export default function Register() {
   const router = useRouter();
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
 
+  // cloudflare turnstile implementasjon
+  // https://www.cloudflare.com/application-services/products/turnstile/
   useEffect(() => {
+    const existingScript = document.querySelector('script[src*="turnstile"]');
+    if (existingScript) return;
+
     const script = document.createElement("script");
     script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback";
     script.defer = true;
+    script.id = "turnstile-script";
     document.body.appendChild(script);
 
     window.onloadTurnstileCallback = function () {
@@ -52,23 +60,25 @@ export default function Register() {
         return;
       }
 
-      turnstile.render("#captcha-container", {
-        sitekey: sitekey,
-        callback: function (token: string) {
-          setCaptchaToken(token);
-          form.setFieldValue("captchaToken", token || "");
-
-          // tvinge form-validering når captchatoken er satt
-          // vet ikke hvorfor denne ikke kan gjøres uten setTimeout, men sånn er det iaf - Nikolai
-          setTimeout(() => form.validate("change"), 0);
-        },
-      });
+      const container = document.getElementById("captcha-container");
+      if (container && !container.hasChildNodes()) {
+        turnstile.render("#captcha-container", {
+          sitekey: sitekey,
+          callback: function (token: string) {
+            setCaptchaToken(token);
+            form.setFieldValue("captchaToken", token || "");
+            setTimeout(() => form.validate("change"), 0);
+          },
+        });
+      }
     };
 
     return () => {
-      document.body.removeChild(script);
+      const scriptToRemove = document.getElementById("turnstile-script");
+      if (scriptToRemove && scriptToRemove.parentNode) {
+        scriptToRemove.parentNode.removeChild(scriptToRemove);
+      }
     };
-    // ikke fjern denne tomme arrayen, den er nødvendig for at cloudflare-scriptet skal fungere
   }, []);
 
   const registerSchema = z
@@ -86,6 +96,9 @@ export default function Register() {
       email: z.string().email({ message: "Ugyldig e-postadresse" }),
       repeatPassword: z.string(),
       captchaToken: z.string().optional(),
+      acceptPrivacyPolicy: z.boolean().refine((val) => val, {
+        message: "Du må godta personvernserklæringen",
+      }),
     })
     .refine((data) => data.password === data.repeatPassword, {
       message: "Passordene er ikke like",
@@ -121,6 +134,7 @@ export default function Register() {
     email: "",
     captchaToken: captchaToken || undefined,
     repeatPassword: "",
+    acceptPrivacyPolicy: false,
   };
 
   const form = useAppForm({
@@ -166,6 +180,23 @@ export default function Register() {
         <form.AppField name="repeatPassword">
           {(field) => (
             <field.TextInput label="Gjenta passord" type="password" placeholder="Skriv inn passordet på nytt" />
+          )}
+        </form.AppField>
+        <form.AppField name="acceptPrivacyPolicy">
+          {(field) => (
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="privacyPolicy"
+                checked={field.state.value}
+                onCheckedChange={(checked) => field.handleChange(!!checked)}
+              />
+              <label htmlFor="privacyPolicy" className="text-sm text-gray-700">
+                Jeg godtar{" "}
+                <Link href="/privacy-policy" className="text-blue-700 hover:underline">
+                  personvernserklæringen
+                </Link>
+              </label>
+            </div>
           )}
         </form.AppField>
         <form.AppField name="captchaToken">

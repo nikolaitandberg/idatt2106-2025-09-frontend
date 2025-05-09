@@ -79,7 +79,7 @@ function ProfilePage({ userId }: { userId: number }) {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 min-h-[calc(100vh-7rem)]">
+    <div className="max-w-2xl mx-auto px-4 py-8">
       <div className="bg-white rounded-2xl shadow p-8">
         <div className="flex flex-col md:flex-row items-center gap-6">
           <UserAvatarFromUserId

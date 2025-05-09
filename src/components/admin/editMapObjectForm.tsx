@@ -44,7 +44,6 @@ export default function EditMapObjectForm({ mapObject, mapObjectType, onClose }:
     .refine(
       (data) => {
         if (!data.opening || !data.closing) return true;
-        console.log();
         const openingTime = data.opening.toDate();
         const closingTime = data.closing.toDate();
         return openingTime.getTime() < closingTime.getTime();

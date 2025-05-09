@@ -112,21 +112,21 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
 
             <div className="flex gap-2">
               <button
-                className="p-1 rounded hover:bg-muted transition"
+                className="p-1 rounded hover:bg-muted transition border border-muted"
                 onClick={(open) => setEditingFoodId(open ? entry.id : null)}>
                 <Pencil className="w-4 h-4 text-muted-foreground" />
               </button>
 
               <button
                 onClick={() => setShowDeleteConfirmation(entry.id)}
-                className="p-1 rounded bg-red-100 hover:bg-red-200 transition"
+                className="p-1 rounded bg-red-500 hover:bg-red-400 transition"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
                     setShowDeleteConfirmation(entry.id);
                   }
                 }}>
-                <Trash className="w-4 h-4 text-red-500" />
+                <Trash className="w-4 h-4 text-white" />
               </button>
 
               {showDeleteConfirmation === entry.id && (
@@ -161,16 +161,12 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
                     <ArrowRightLeft className="w-4 h-4 text-blue-500" />
                   </button>
                 </DialogTrigger>
-                <DialogContent>
-                  <DialogTitle>Flytt til gruppe</DialogTitle>
-                  <MoveToGroupDialog
-                    open={moveDialogUnitId === entry.id}
-                    onOpenChange={(open) => setMoveDialogUnitId(open ? entry.id : null)}
-                    foodId={entry.id}
-                    maxAmount={entry.amount}
-                    unit={unit}
-                  />
-                </DialogContent>
+                <MoveToGroupDialog
+                  onClose={() => setMoveDialogUnitId(0)}
+                  foodId={entry.id}
+                  maxAmount={entry.amount}
+                  unit={unit}
+                />
               </Dialog>
 
               <Dialog

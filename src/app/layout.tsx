@@ -18,17 +18,19 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col md:pb-0 pb-14`}>
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col md:pb-0 pb-13`}>
         <Providers>
           <Topbar />
           {children}
           <Toaster />
-          <footer className="text-sm w-full flex justify-center items-center bg-gray-100 text-gray-700 p-4 gap-10">
-            <span>© {new Date().getFullYear()} Krisefikser™.</span>
-            <Link href="/privacy-policy" className="text-blue-700 hover:underline">
-              Personvernerklæring
-            </Link>
-          </footer>
+          <div className="flex-1 min-h-10 relative w-full">
+            <footer className="absolute bottom-0 justify-center flex items-center bg-gray-100 text-gray-700 p-4 gap-10 w-full">
+              <span>© {new Date().getFullYear()} Krisefikser™</span>
+              <Link href="/privacy-policy" className="text-blue-700 hover:underline">
+                Personvernerklæring
+              </Link>
+            </footer>
+          </div>
         </Providers>
       </body>
     </html>
