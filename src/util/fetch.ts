@@ -3,6 +3,7 @@ import { signOut, useSession } from "next-auth/react";
 import { auth } from "./auth";
 import { Token } from "@/types";
 import { verifyToken } from "@/actions/auth";
+import { redirect } from "next/navigation";
 
 /**
  * A function that can be used to fetch data with the token in the Authorization header.
@@ -47,11 +48,15 @@ export async function FetchParse<T>(
   const res = await FetchWithoutParse(input, init, session);
 
   if (!res.ok) {
-    if (res.status === 401) {
+    if (res.status === 401 || res.status === 403) {
       // check if the token is valid
       if (!(await verifyToken(session?.token ?? ""))) {
         // if the token is not valid, sign out the user
-        signOut({ redirect: false });
+        if (typeof window !== "undefined") {
+          signOut({ redirect: false });
+        } else {
+          redirect("/login");
+        }
       }
 
       throw new ApiError("Unauthorized", res.status);
