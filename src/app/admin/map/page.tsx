@@ -152,7 +152,7 @@ export default function AdminMap() {
                     <AccordionTrigger className="flex justify-between px-4">
                       <div className="flex items-center gap-4">
                         {severity && (
-                          <div className="w-4 h-4 rounded-full" style={{ backgroundColor: severity.colour }} />
+                          <div className="w-4 h-4 rounded-full" style={{ backgroundColor: `rgb(${severity.colour})` }} />
                         )}
                         <span>{event.name || "#" + event.id}</span>
                         <span
