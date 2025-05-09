@@ -51,7 +51,7 @@ export default function AddNewFoodForm({ onSubmit, onSuccess }: AddNewFoodFormPr
         {(field) => <field.NumberInput label="Antall" placeholder="Antall" />}
       </form.AppField>
       <form.AppForm>
-        <form.SubmitButton>Legg til</form.SubmitButton>
+        <form.SubmitButton id="add-food-btn">Legg til</form.SubmitButton>
       </form.AppForm>
     </>
   );

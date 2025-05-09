@@ -44,10 +44,10 @@ export default function AddFoodForm({ onSubmit, onSuccess }: AddFoodFormProps) {
 
   return (
     <div className="flex flex-col gap-2">
-      <form.AppField name="expirationDate">{(field) => <field.DatePicker label="Utløpsdato" />}</form.AppField>
+      <form.AppField name="expirationDate">{(field) => <field.DatePicker label="Utløpsdato"/>}</form.AppField>
       <form.AppField name="amount">{(field) => <field.NumberInput label="Antall" />}</form.AppField>
       <form.AppForm>
-        <form.SubmitButton>Legg til matvare</form.SubmitButton>
+        <form.SubmitButton id="add-food-btn">Legg til matvare</form.SubmitButton>
       </form.AppForm>
     </div>
   );
