@@ -19,8 +19,8 @@ import {
   Shirt,
   Shrub,
   Unplug,
-  Volleyball,
-  WashingMachine,
+  Hospital,
+  Shield,
 } from "lucide-react";
 
 export const mapIcons = {
@@ -41,9 +41,9 @@ export const mapIcons = {
   bed: Bed,
   mountainSnow: MountainSnow,
   shrub: Shrub,
-  volleyball: Volleyball,
   shirt: Shirt,
-  washingMachine: WashingMachine,
   car: Car,
   house: House,
+  hospital: Hospital,
+  shield: Shield,
 };
