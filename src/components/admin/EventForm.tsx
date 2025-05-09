@@ -7,6 +7,7 @@ import FormError from "../ui/form/formError";
 import { useCreateEvent, useUpdateEvent, useSeverities } from "@/actions/event";
 import { useInfoPages } from "@/actions/learning";
 import { Event, Severity } from "@/types/event";
+import { showToast } from "@/components/ui/toaster";
 
 interface EventFormProps {
   onClose?: () => void;
@@ -100,6 +101,11 @@ export default function EventForm({ onClose, event, isEdit = false }: EventFormP
           { id: event.id, ...eventData },
           {
             onSuccess: () => {
+              showToast({
+                title: "Hendelse oppdatert",
+                description: `"${value.name}" er lagret.`,
+                variant: "success",
+              });
               queryClient.invalidateQueries({ queryKey: ["event"] });
               if (onClose) onClose();
             },
@@ -108,6 +114,11 @@ export default function EventForm({ onClose, event, isEdit = false }: EventFormP
       } else {
         createEvent(eventData, {
           onSuccess: () => {
+            showToast({
+              title: "Hendelse opprettet",
+              description: `"${value.name}" er registrert.`,
+              variant: "success",
+            });
             queryClient.invalidateQueries({ queryKey: ["event"] });
             if (onClose) onClose();
           },

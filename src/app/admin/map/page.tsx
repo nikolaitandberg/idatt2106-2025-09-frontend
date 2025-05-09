@@ -14,6 +14,7 @@ import { useDeleteEvent, useEvents, useSeverities } from "@/actions/event";
 import EventForm from "@/components/admin/EventForm";
 import { Event as AppEvent } from "@/types/event";
 import ConfirmationDialog from "@/components/ui/confirmationDialog";
+import { showToast } from "@/components/ui/toaster";
 
 export default function AdminMap() {
   const mapObjects = useMapObjects(MAP_BOUNDS_MAX);
@@ -54,7 +55,19 @@ export default function AdminMap() {
   const handleDeleteEvent = (eventId: number) => {
     deleteEvent.mutate(eventId, {
       onSuccess: () => {
+        showToast({
+          title: "Hendelse slettet",
+          description: "Hendelsen ble slettet.",
+          variant: "success",
+        });
         queryClient.invalidateQueries({ queryKey: ["event"] });
+      },
+      onError: () => {
+        showToast({
+          title: "Feil",
+          description: "Kunne ikke slette hendelsen.",
+          variant: "error",
+        });
       },
     });
   };

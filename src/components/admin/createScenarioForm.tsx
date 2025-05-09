@@ -5,6 +5,7 @@ import FormSection from "../ui/form/formSection";
 import FormError from "../ui/form/formError";
 import useAppForm from "@/util/formContext";
 import { z } from "zod";
+import { showToast } from "@/components/ui/toaster";
 
 interface CreateScenarioFormProps {
   onCreated: () => void;
@@ -32,6 +33,11 @@ export default function CreateScenarioForm({ onCreated }: CreateScenarioFormProp
       await new Promise((resolve) => {
         createScenario(value, {
           onSuccess: () => {
+            showToast({
+              title: "Scenario opprettet",
+              description: `"${value.title}" ble opprettet.`,
+              variant: "success",
+            });
             onCreated();
           },
           onSettled: resolve,

@@ -12,6 +12,7 @@ import ConfirmationDialog from "../ui/confirmationDialog";
 import { useDeleteMapObjectType } from "@/actions/map";
 import CreateMapObjectForm from "./createMapObjectForm";
 import EditMapObjectForm from "./editMapObjectForm";
+import { showToast } from "@/components/ui/toaster";
 
 interface MapObjectTypeAccordionItemProps {
   type: MapObjectType & { objects: MapObject[] };
@@ -73,6 +74,11 @@ export default function MapObjectTypeAccordionItem({ type }: MapObjectTypeAccord
               onConfirm={() => {
                 deleteMapObjectType(type.id, {
                   onSuccess: () => {
+                    showToast({
+                      title: "Kartkategori slettet",
+                      description: `"${type.name}" ble slettet.`,
+                      variant: "success",
+                    });
                     queryClient.invalidateQueries({
                       queryKey: ["map", "mapObjectTypes"],
                     });

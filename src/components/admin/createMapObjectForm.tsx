@@ -5,6 +5,7 @@ import useAppForm from "@/util/formContext";
 import { z } from "zod";
 import { Time } from "@/types/time";
 import FormError from "../ui/form/formError";
+import { showToast } from "@/components/ui/toaster";
 
 interface CreateMapObjectFormProps {
   mapObjectType: MapObjectType;
@@ -86,9 +87,12 @@ export default function CreateMapObjectForm({ mapObjectType, onClose }: CreateMa
           },
           {
             onSuccess: () => {
-              if (onClose) {
-                onClose();
-              }
+              showToast({
+                title: "Kartobjekt opprettet",
+                description: `"${value.description}" ble lagt til.`,
+                variant: "success",
+              });
+              onClose?.();
             },
             onSettled: () => resolve,
           },
