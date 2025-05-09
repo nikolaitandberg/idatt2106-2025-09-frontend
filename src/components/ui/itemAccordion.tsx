@@ -84,6 +84,7 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
                   );
                 });
               }}
+              onSuccess={() => setAddFoodDialogOpen(false)}
             />
           </DialogContent>
         </Dialog>
