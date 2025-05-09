@@ -42,13 +42,14 @@ export async function sendRegisterRequest(
   email: string,
   username: string,
   password: string,
+  captchaToken: string,
 ): Promise<RegisterSuccessRespnse> {
   const res = await fetch(`${API_BASE_URL}/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ email, username, password }),
+    body: JSON.stringify({ email, username, password, captchaToken }),
   });
 
   if (!res.ok) {

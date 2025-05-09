@@ -10,15 +10,67 @@ import LoadingSpinner from "@/components/ui/loadingSpinner";
 import { ApiError } from "@/types/apiResponses";
 import useAppForm from "@/util/formContext";
 import { z } from "zod";
+import { useEffect, useState } from "react";
+
+declare global {
+  interface Window {
+    onloadTurnstileCallback: () => void;
+  }
+
+  const turnstile: {
+    render: (
+      containerId: string,
+      options: {
+        sitekey: string;
+        callback: (token: string) => void;
+      },
+    ) => void;
+  };
+}
 
 type RegisterRequest = {
   username: string;
   password: string;
   email: string;
+  captchaToken: string;
 };
 
 export default function Register() {
+  const sitekey = process.env.NEXT_PUBLIC_TURNSTILE_SITEKEY;
   const router = useRouter();
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback";
+    script.defer = true;
+    document.body.appendChild(script);
+
+    window.onloadTurnstileCallback = function () {
+      if (!sitekey) {
+        console.warn("Turnstile site key is not defined, please check your environment variables.");
+        return;
+      }
+
+      turnstile.render("#captcha-container", {
+        sitekey: sitekey,
+        callback: function (token: string) {
+          setCaptchaToken(token);
+          form.setFieldValue("captchaToken", token || "");
+
+          // tvinge form-validering når captchatoken er satt
+          // vet ikke hvorfor denne ikke kan gjøres uten setTimeout, men sånn er det iaf - Nikolai
+          setTimeout(() => form.validate("change"), 0);
+        },
+      });
+    };
+
+    return () => {
+      document.body.removeChild(script);
+    };
+    // ikke fjern denne tomme arrayen, den er nødvendig for at cloudflare-scriptet skal fungere
+  }, []);
+
   const registerSchema = z
     .object({
       username: z.string().min(3, { message: "Brukernavn må være minst 3 tegn" }),
@@ -33,26 +85,41 @@ export default function Register() {
         }),
       email: z.string().email({ message: "Ugyldig e-postadresse" }),
       repeatPassword: z.string(),
+      captchaToken: z.string().optional(),
     })
     .refine((data) => data.password === data.repeatPassword, {
       message: "Passordene er ikke like",
       path: ["repeatPassword"],
-    });
+    })
+    .refine(
+      (data) => {
+        if (!sitekey) {
+          return true;
+        }
+
+        return !!data.captchaToken;
+      },
+      {
+        message: "Captcha er påkrevd",
+        path: ["captchaToken"],
+      },
+    );
 
   const {
     isError,
     error,
     mutate: register,
   } = useMutation({
-    mutationFn: async ({ username, password, email }: RegisterRequest) => {
-      return await sendRegisterRequest(email, username, password);
+    mutationFn: async ({ username, password, email, captchaToken }: RegisterRequest) => {
+      return await sendRegisterRequest(email, username, password, captchaToken);
     },
   });
 
-  const defaultRegister: RegisterRequest & { repeatPassword: string } = {
+  const defaultRegister: Omit<RegisterRequest, "captchaToken"> & { repeatPassword: string; captchaToken?: string } = {
     username: "",
     password: "",
     email: "",
+    captchaToken: captchaToken || undefined,
     repeatPassword: "",
   };
 
@@ -62,7 +129,10 @@ export default function Register() {
     },
     defaultValues: defaultRegister,
     onSubmit: async ({ value }) => {
-      await handleRegister(value);
+      await handleRegister({
+        captchaToken: value.captchaToken!,
+        ...value,
+      });
     },
   });
 
@@ -80,7 +150,6 @@ export default function Register() {
       });
     });
   };
-
   return (
     <div className="flex items-center justify-center bg-background px-4 mt-8">
       <div className="w-full max-w-md rounded-2xl p-8 space-y-6">
@@ -98,6 +167,9 @@ export default function Register() {
           {(field) => (
             <field.TextInput label="Gjenta passord" type="password" placeholder="Skriv inn passordet på nytt" />
           )}
+        </form.AppField>
+        <form.AppField name="captchaToken">
+          {() => <div id="captcha-container" className="flex justify-center"></div>}
         </form.AppField>
         <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
           {([canSubmit, isSubmitting]) => (
