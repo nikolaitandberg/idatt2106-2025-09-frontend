@@ -75,7 +75,6 @@ export async function sendRegisterRequest(
  * @returns true if the token is valid, false otherwise
  */
 export const verifyToken = async (token: string) => {
-  console.log("Verifying token");
   try {
     const res = await fetch(`${API_BASE_URL}/auth/test`, {
       method: "POST",
