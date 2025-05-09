@@ -51,7 +51,7 @@ export default function HouseholdKits({ householdId }: HouseholdKitsProps) {
               title: "Utstyr lagt til",
               description: "Utstyret ble lagt til husholdningen.",
               variant: "success",
-            })
+            });
           }}
           onRemove={() => {
             removeHouseholdKit({
@@ -62,7 +62,7 @@ export default function HouseholdKits({ householdId }: HouseholdKitsProps) {
               title: "Utstyr fjernet",
               description: "Utstyret ble fjernet fra husholdningen.",
               variant: "success",
-            })
+            });
           }}
         />
       ))}

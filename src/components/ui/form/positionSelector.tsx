@@ -77,8 +77,7 @@ export default function PositionSelector({ initialMapViewState, className, icon 
               if (e.key === "Enter") {
                 placeMarkerWithKeyboard();
               }
-            }}
-          >
+            }}>
             <Marker
               longitude={field.state.value?.longitude ?? 0}
               latitude={field.state.value?.latitude ?? 0}
@@ -87,9 +86,7 @@ export default function PositionSelector({ initialMapViewState, className, icon 
             </Marker>
           </MapComponent>
         </div>
-        <p className="text-sm text-neutral-500 mb-2">
-            Klikk på kartet eller trykk Enter for å plassere markøren.
-        </p>
+        <p className="text-sm text-neutral-500 mb-2">Klikk på kartet eller trykk Enter for å plassere markøren.</p>
         <div className="flex flex-row justify-between gap-2">
           <DialogClose asChild>
             <Button size="fullWidth">Velg</Button>

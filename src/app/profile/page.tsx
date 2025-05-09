@@ -140,7 +140,9 @@ function ProfilePage({ userId }: { userId: number }) {
                   </Button>
                 )}
               </div>
-              <p className="font-medium mt-1" data-testid="profile-email">{profile.email}</p>
+              <p className="font-medium mt-1" data-testid="profile-email">
+                {profile.email}
+              </p>
             </div>
 
             <div className="bg-gray-50 p-4 rounded-lg">

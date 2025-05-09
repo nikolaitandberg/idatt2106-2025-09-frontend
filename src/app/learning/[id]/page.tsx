@@ -16,7 +16,7 @@ export default async function ScenarioPage({ params }: { params: Promise<{ id: s
   return (
     <div className="min-h-screen bg-background text-foreground px-4 py-10 flex justify-center">
       <div className="w-full max-w-5xl">
-          <h1 className="flex items-center mb-4 text-3xl font-bold text-left">{infoPage.title}</h1>
+        <h1 className="flex items-center mb-4 text-3xl font-bold text-left">{infoPage.title}</h1>
 
         <hr className="border-border mb-6" />
 
