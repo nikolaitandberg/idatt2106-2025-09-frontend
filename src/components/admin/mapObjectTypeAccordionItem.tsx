@@ -59,10 +59,7 @@ export default function MapObjectTypeAccordionItem({ type }: MapObjectTypeAccord
                 />
               </DialogContent>
             </Dialog>
-            <Button 
-              variant={"ghost"} 
-              onClick={() => setDeleteDialogOpen(true)}
-              aria-label="Slett kartkategori">
+            <Button variant={"ghost"} onClick={() => setDeleteDialogOpen(true)} aria-label="Slett kartkategori">
               <Trash className="text-destructive" />
             </Button>
             <ConfirmationDialog

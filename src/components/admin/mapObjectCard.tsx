@@ -22,9 +22,8 @@ export default function MapObjectCard({
 
   return (
     <button
-      onClick={onClick} 
-      className="bg-white p-4 rounded-md shadow-md cursor-pointer w-full flex flex-col relative"
-    >
+      onClick={onClick}
+      className="bg-white p-4 rounded-md shadow-md cursor-pointer w-full flex flex-col relative">
       <div className="flex flex-col">
         <div className="text-black text-base text-left">{mapObject.description}</div>
         <div className="flex items-center gap-1">
@@ -61,12 +60,11 @@ export default function MapObjectCard({
       </div>
       {onDelete && (
         <div onClick={(e) => e.stopPropagation()}>
-          <Button 
-              variant="ghost" 
-              className="absolute top-2 right-2" 
-              onClick={() => setDeleteDialogOpen(true)}
-              aria-label="Slett kartobjekt"
-            >
+          <Button
+            variant="ghost"
+            className="absolute top-2 right-2"
+            onClick={() => setDeleteDialogOpen(true)}
+            aria-label="Slett kartobjekt">
             <Trash size={16} className="text-destructive" />
           </Button>
           <ConfirmationDialog

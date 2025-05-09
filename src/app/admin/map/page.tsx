@@ -141,9 +141,7 @@ export default function AdminMap() {
                         {severity && (
                           <div className="w-4 h-4 rounded-full" style={{ backgroundColor: severity.colour }} />
                         )}
-                        <span>
-                          {event.name || "#" + event.id}
-                        </span>
+                        <span>{event.name || "#" + event.id}</span>
                         <span
                           className="px-2 py-1 text-xs font-medium rounded-md"
                           style={{

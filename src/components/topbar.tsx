@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import { TopbarCard } from "@/components/ui/topbarCard";
-import { GraduationCap, House, Users } from "lucide-react";
+import { GraduationCap, House, MapPin, Users } from "lucide-react";
 import { AdminMenuPopover } from "@/components/adminMenuPopover";
 import { UserAvatarFromUserId } from "./ui/UserAvatar";
 import { usePathname } from "next/navigation";
@@ -20,7 +20,7 @@ export default function Topbar() {
           <Image src="/logo.svg" alt="Logo" width={50} height={50} priority />
         </Link>
 
-        <div className="grid grid-cols-4 md:flex md:relative md:gap-6 [&>*]:justify-self-center px-4 md:px-0 overflow-hidden bg-white w-full fixed bottom-0 left-0 items-center justify-center md:justify-end">
+        <div className="grid grid-flow-col auto-cols-fr md:flex md:relative md:gap-6 [&>*]:justify-self-center [&>*]:flex-1 md:[&>*]:flex-none px-0 sm:px-8 md:px-0 overflow-hidden bg-white w-full fixed bottom-0 left-0 items-center md:justify-end">
           {session?.data?.user?.isAdmin && <AdminMenuPopover isSelected={pathname.startsWith("/admin")} />}
           {session?.status === "authenticated" && (
             <>
@@ -39,6 +39,7 @@ export default function Topbar() {
             href="/learning"
             isSelected={pathname.startsWith("/learning")}
           />
+          <TopbarCard icon={MapPin} text="Kart" href="/map" isSelected={pathname.startsWith("/map")} />
         </div>
         <Link href="/profile" className="flex flex-row items-center ml-4">
           <UserAvatarFromUserId

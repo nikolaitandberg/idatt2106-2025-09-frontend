@@ -54,19 +54,17 @@ function LoginContent() {
 
   return (
     <div className="w-full max-w-md rounded-2xl p-8 space-y-6">
-      <h1 className="text-2xl font-bold text-center">Logg inn</h1>
+      <h1 className="text-2xl font-bold text-center" data-testid="login-title">
+        Logg inn
+      </h1>
       <loginForm.AppField name="username">
-        {(field) => <field.TextInput label="Brukernavn" placeholder="Ditt brukernavn" />}
+        {(field) => <field.TextInput data-testid="input-username" label="Brukernavn" placeholder="Brukernavnet ditt" />}
       </loginForm.AppField>
-      <loginForm.AppField name="password">
-        {(field) => <field.TextInput 
-          label="Passord" 
-          type="password" 
-          placeholder="••••••••"
-        />}
+      <loginForm.AppField data-testid="input-password" name="password">
+        {(field) => <field.TextInput label="Passord" type="password" placeholder="Passordet ditt" />}
       </loginForm.AppField>
       <loginForm.AppForm>
-        <loginForm.SubmitButton>Logg inn</loginForm.SubmitButton>
+        <loginForm.SubmitButton data-testid="submit-login">Logg inn</loginForm.SubmitButton>
       </loginForm.AppForm>
       <div className="text-red-700 text-sm text-center">{loginError && <p>{loginError}</p>}</div>
       <div className="flex justify-center flex-col">
@@ -87,7 +85,12 @@ function LoginContent() {
 export default function LoginPage() {
   return (
     <div className="flex items-center justify-center bg-background px-4 mt-8">
-      <Suspense fallback={<div><LoadingSpinner /></div>}>
+      <Suspense
+        fallback={
+          <div>
+            <LoadingSpinner />
+          </div>
+        }>
         <LoginContent />
       </Suspense>
     </div>

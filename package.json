@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test:e2e:ci": "start-server-and-test \"npm run start\" http-get://localhost:3000 \"cypress run --e2e\"",
     "test:e2e": "start-server-and-test \"npm run dev -- --port 3000\" http-get://localhost:3000 \"cypress run --e2e\"",
     "test:e2e:dev": "start-server-and-test \"npm run dev -- --port 3000\" http://localhost:3000 \"cypress open --e2e\""
   },
@@ -35,6 +36,7 @@
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
     "sonner": "^2.0.3",
+    "start-server-and-test": "^2.0.11",
     "tailwind-merge": "^3.2.0",
     "use-debounce": "^10.0.4",
     "zod": "^3.24.3"

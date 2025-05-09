@@ -307,8 +307,7 @@ export const useMoveFoodToGroup = () => {
   const queryClient = useQueryClient();
 
   return useMutation<void, Error, MoveFoodArgs>({
-    mutationFn: ({ foodId, groupId, amount }) =>
-      moveFoodToGroup(foodId, groupId, amount, fetcher),
+    mutationFn: ({ foodId, groupId, amount }) => moveFoodToGroup(foodId, groupId, amount, fetcher),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["shared-food"] });
       queryClient.invalidateQueries({ queryKey: ["household", "food"] });

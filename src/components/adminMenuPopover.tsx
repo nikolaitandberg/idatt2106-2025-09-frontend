@@ -79,7 +79,7 @@ export function AdminMenuPopover({ isSelected }: { isSelected?: boolean }) {
         setOpen(open);
       }}>
       <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-        <PopoverTrigger className="flex items-center hover:underline hover:cursor-pointer group pl-4 py-2">
+        <PopoverTrigger className="flex items-center hover:underline hover:cursor-pointer">
           <div className="flex flex-col md:flex-row items-center gap-1">
             <ShieldUser className="md:w-7 md:h-7" />
             <span className={cn("transition-all duration-200", { "font-bold": isSelected })}>Admin</span>

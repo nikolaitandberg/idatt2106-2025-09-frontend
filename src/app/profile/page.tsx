@@ -37,11 +37,6 @@ function ProfilePage({ userId }: { userId: number }) {
   const { mutate: sendEmailVerification, isPending: isSendingEmail } = useSendEmailVerification();
   const [verificationSent, setVerificationSent] = useState(false);
 
-  if (profile) {
-    console.log("Brukerprofil:", profile);
-    console.log("E-post bekreftet:", profile.emailConfirmed);
-  }
-
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
@@ -92,10 +87,12 @@ function ProfilePage({ userId }: { userId: number }) {
             className="w-24 h-24 md:w-32 md:h-32 text-3xl stroke-1 md:stroke-[0.5]"
           />
           <div className="text-center md:text-left">
-            <h1 className="text-3xl font-bold">
+            <h1 className="text-3xl font-bold" data-testid="profile-name">
               {profile.firstName} {profile.lastName}
             </h1>
-            <p className="text-gray-500 mt-1">@{profile.username}</p>
+            <p className="text-gray-500 mt-1" data-testid="profile-username">
+              @{profile.username}
+            </p>
             {profile.admin && (
               <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mt-2 mr-2">Admin</span>
             )}
@@ -143,12 +140,14 @@ function ProfilePage({ userId }: { userId: number }) {
                   </Button>
                 )}
               </div>
-              <p className="font-medium mt-1">{profile.email}</p>
+              <p className="font-medium mt-1" data-testid="profile-email">{profile.email}</p>
             </div>
 
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-sm text-gray-500">Husholdning</p>
-              <p className="font-medium">{household?.address || "Ingen"}</p>
+              <p className="font-medium" data-testid="profile-household-address">
+                {household?.address || "Ingen"}
+              </p>
             </div>
           </div>
 
@@ -160,6 +159,7 @@ function ProfilePage({ userId }: { userId: number }) {
                   aria-label="Del posisjon med husholdning"
                   id="sharePositionHousehold"
                   name="sharePositionHousehold"
+                  data-testid="profile-share-position-household"
                   checked={profile.sharePositionHousehold}
                   onCheckedChange={(checked) => {
                     handlePositionSharingChange({
@@ -187,6 +187,7 @@ function ProfilePage({ userId }: { userId: number }) {
                   aria-label="Del posisjon med gruppe"
                   id="sharePositionGroup"
                   name="sharePositionGroup"
+                  data-testid="profile-share-position-group"
                   checked={profile.sharePositionGroup}
                   onCheckedChange={(checked) => {
                     handlePositionSharingChange({
@@ -214,7 +215,7 @@ function ProfilePage({ userId }: { userId: number }) {
         </div>
 
         <div className="mt-8 flex justify-end gap-4">
-          <Button onClick={() => setEditDialogOpen(true)} variant="outline">
+          <Button onClick={() => setEditDialogOpen(true)} variant="outline" data-testid="profile-edit-button">
             Rediger profil
           </Button>
           <Button
