@@ -6,6 +6,7 @@ import { Marker, Layer, Source } from "react-map-gl/maplibre";
 
 import type { Feature } from "geojson";
 import { point, circle } from "@turf/turf";
+import { cn } from "@/util/cn";
 
 export default function MapEvent({ event }: { event: Event }) {
   const [open, setOpen] = useState(false);
@@ -105,12 +106,18 @@ export default function MapEvent({ event }: { event: Event }) {
       </Source>
 
       {/* Event marker */}
-      <Marker longitude={event.longitude} latitude={event.latitude} anchor="center" onClick={() => setOpen(true)}>
+      <Marker
+        className={cn("hover:z-10", open ? "z-10" : "z-0")}
+        longitude={event.longitude}
+        latitude={event.latitude}
+        anchor="center"
+        onClick={() => setOpen(true)}>
         {open ? (
           <div className="bg-white pl-4 pr-2 py-2 rounded-md shadow-md relative cursor-auto w-64 z-10" ref={innerRef}>
             <div className="flex justify-between flex-row items-center">
               <div className="text-black text-base font-bold flex items-center">
-                <AlertTriangle size={16} className={`mr-2 ${colors.textColor}`} />#{event.id} {event.name}
+                <AlertTriangle size={16} className={`mr-2 ${colors.textColor}`} />
+                {event.name}
               </div>
               <X onClick={() => setOpen(false)} className="cursor-pointer" />
             </div>
@@ -125,7 +132,7 @@ export default function MapEvent({ event }: { event: Event }) {
                   Slutt: {formatDate(event.endTime)}
                 </div>
               )}
-              <div className="text-gray-700 text-sm">Affected radius: {event.radius} km</div>
+              <div className="text-gray-700 text-sm">Radius: {event.radius} km</div>
               {event.recommendation && (
                 <div className="text-gray-700 text-sm mt-2 p-2 bg-accent rounded-md">
                   <strong>Anbefalning:</strong> {event.recommendation}

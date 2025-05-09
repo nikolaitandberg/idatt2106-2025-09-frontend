@@ -35,13 +35,13 @@ export default function MapToolBar({
 
   useEffect(() => {
     if (!isSmallScreen) {
-      animate(scope.current, { height: "85%", visibility: "visible" }, { duration: 0 });
+      animate(scope.current, { height: "100%", visibility: "visible" }, { duration: 0 });
       animateScope("div:not(.no-stagger)", { opacity: 1 }, { duration: 0 });
       return;
     }
 
     if (isOpen) {
-      animate(scope.current, { height: "85%", visibility: "visible" }, { duration: 0.2 });
+      animate(scope.current, { height: "100%", visibility: "visible" }, { duration: 0.2 });
       animateScope("div:not(.no-stagger)", { opacity: 1 }, { duration: 0.2, delay: stagger(0.1) });
       return;
     }

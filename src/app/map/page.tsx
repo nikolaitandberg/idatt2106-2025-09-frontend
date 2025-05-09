@@ -175,6 +175,7 @@ export default function Home() {
         key={object.id}
         object={object}
         icon={mapObjectTypes?.find((type) => type.id === object.typeId)?.icon ?? "house"}
+        typeName={mapObjectTypes?.find((type) => type.id === object.typeId)?.name}
       />
     ));
   }, [filteredMapObjects]);
