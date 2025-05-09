@@ -1,37 +1,54 @@
 import { Food } from "@/types/household";
-import { useState } from "react";
-import TextInput from "../ui/textinput";
-import { DatePicker } from "../ui/datePicker";
-import { Button } from "../ui/button";
+import useAppForm from "@/util/formContext";
+import { z } from "zod";
+import { showToast } from "@/components/ui/toaster";
+
+type AddFoodFormData = Omit<Food, "id" | "householdId" | "typeId">;
 
 interface AddFoodFormProps {
-  onSubmit?: (data: Omit<Food, "id" | "householdId" | "typeId">) => void;
+  onSubmit: (data: AddFoodFormData) => void;
+  onSuccess?: () => void;
 }
 
-export default function AddFoodForm({ onSubmit }: AddFoodFormProps) {
-  const [expieryDate, setExpieryDate] = useState<Date | undefined>(undefined);
-  const [amount, setAmount] = useState<number | undefined>(undefined);
-
-  const handleSubmit = () => {
-    if (!expieryDate || !amount) {
-      return;
-    }
-
-    const data: Omit<Food, "id" | "householdId" | "typeId"> = {
-      expirationDate: expieryDate.toISOString(),
-      amount,
-    };
-
-    onSubmit?.(data);
+export default function AddFoodForm({ onSubmit, onSuccess }: AddFoodFormProps) {
+  const defaultValues = {
+    expirationDate: new Date(),
+    amount: 0,
   };
+
+  const schema = z.object({
+    expirationDate: z.date(),
+    amount: z.number().min(1, { message: "Antall må være større enn 0" }),
+  });
+
+  const form = useAppForm({
+    defaultValues,
+    validators: {
+      onChange: schema,
+    },
+    onSubmit: ({ value }) => {
+      onSubmit?.({
+        ...value,
+        expirationDate: value.expirationDate.toISOString(),
+      });
+
+      showToast({
+        title: "Matvare lagt til",
+        description: "Matvaren ble lagt til i husholdningen.",
+        variant: "success",
+      });
+
+      onSuccess?.();
+    },
+  });
 
   return (
     <div className="flex flex-col gap-2">
-      <DatePicker onDateChange={setExpieryDate} label="Utløpsdato" />
-      <TextInput type="number" label="Antall" name="amount" onChange={(e) => setAmount(Number(e))} />
-      <Button size="fullWidth" onClick={handleSubmit}>
-        Legg til matvare
-      </Button>
+      <form.AppField name="expirationDate">{(field) => <field.DatePicker label="Utløpsdato"/>}</form.AppField>
+      <form.AppField name="amount">{(field) => <field.NumberInput label="Antall" />}</form.AppField>
+      <form.AppForm>
+        <form.SubmitButton id="add-food-btn">Legg til matvare</form.SubmitButton>
+      </form.AppForm>
     </div>
   );
 }

@@ -1,85 +1,62 @@
 "use client";
 
-import Map, { MapRef } from "react-map-gl/maplibre";
-import "maplibre-gl/dist/maplibre-gl.css";
-import { useMapObjects, useMapObjectTypes } from "@/actions/map";
-import { useEvents } from "@/actions/event";
-import MapObject from "@/components/map/mapObject";
-import MapEvent from "@/components/map/mapEvent";
-import { useDebounce } from "use-debounce";
-import { useMemo, useRef, useState } from "react";
-import { MapBounds } from "@/types/map";
+import { MapPin, Users, BookOpen } from "lucide-react";
+import Image from "next/image";
+import FeatureCard from "@/components/ui/featureCard";
 
-export default function Home() {
-  const [bounds, setBounds] = useState<MapBounds>({} as MapBounds);
-  const [debouncedBounds] = useDebounce(bounds, 100);
-
-  const { data: events } = useEvents(debouncedBounds);
-  const { data: mapObjects } = useMapObjects(debouncedBounds);
-  const { data: mapObjectTypes } = useMapObjectTypes();
-  const mapRef = useRef<MapRef>(null);
-
-  const renderedMapObjects = useMemo(() => {
-    return mapObjects?.map((object) => (
-      <MapObject
-        key={object.id}
-        object={object}
-        icon={mapObjectTypes?.find((type) => type.id === object.typeId)?.icon ?? "house"}
-      />
-    ));
-  }, [JSON.stringify(mapObjects)]);
-
-  const renderedEvents = useMemo(() => {
-    return events?.map((event) => <MapEvent key={event.id} event={event} />);
-  }, [JSON.stringify(events)]);
-
-  const handleMove = () => {
-    if (mapRef.current) {
-      const bounds = mapRef.current.getBounds();
-      setBounds({
-        minLat: bounds.getSouth(),
-        maxLat: bounds.getNorth(),
-        minLong: bounds.getWest(),
-        maxLong: bounds.getEast(),
-      });
-    }
-  };
-
+export default function HomePage() {
   return (
-    <div className="flex items-center justify-center bg-background px-4 h-[80vh]">
-      <Map
-        initialViewState={{
-          longitude: 9.726463,
-          latitude: 60.931636,
-          zoom: 5,
-        }}
-        ref={mapRef}
-        style={{ width: "100%", height: "100%" }}
-        onMove={handleMove}
-        onLoad={handleMove}
-        mapStyle={{
-          version: 8,
-          sources: {
-            "raster-tiles": {
-              type: "raster",
-              tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-              tileSize: 256,
-              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            },
-          },
-          layers: [
-            {
-              id: "simple-tiles",
-              type: "raster",
-              source: "raster-tiles",
-              minzoom: 0,
-              maxzoom: 22,
-            },
-          ],
-        }}>
-        {renderedMapObjects}
-        {renderedEvents}
-      </Map>
-    </div>
+    <main className="overflow-hidden flex flex-col lg:flex-row">
+      <section className="flex-1 p-10 space-y-12">
+        <div className="space-y-4">
+          <h1 className="text-4xl font-bold" data-testid="page-title">
+            Krisefikser
+          </h1>
+          <p className="text-muted-foreground text-m max-w-prose">
+            I en hverdag der mange nordmenn opplever at terskelen for å bli krisesikre er for høy, gjør Krisefikser det
+            enkelt å planlegge, organisere og vedlikeholde ditt eget beredskapslager – alt samlet på ett sted. I stedet
+            for å grave deg gjennom lange DSB-lister, får du med et par tastetrykk full kontroll på husstandens behov.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <FeatureCard
+            icon={<Users className="w-6 h-6 text-primary" />}
+            title="Husholdning"
+            description="Administrer mat, utstyr og medlemmer i din egen husholdning."
+            href="/household"
+          />
+          <FeatureCard
+            icon={<MapPin className="w-6 h-6 text-primary" />}
+            title="Gruppe"
+            description="Samarbeid med andre husholdninger for deling av ressurser og bedre beredskap."
+            href="/group"
+          />
+          <FeatureCard
+            icon={<BookOpen className="w-6 h-6 text-primary" />}
+            title="Læring"
+            description="Få tips og ressurser for å øke din beredskapskunnskap før, under og etter en krise."
+            href="/learning"
+          />
+          <FeatureCard
+            icon={<MapPin className="w-6 h-6 text-primary" />}
+            title="Kart"
+            description="Se husholdningens posisjoner, sikre steder og steder hvor det har skjedd en krise."
+            href="/map"
+          />
+        </div>
+      </section>
+
+      <aside className="lg:w-1/2 w-full p-10">
+        <a href="/map" className="block relative h-full min-h-[400px] rounded-xl shadow-sm overflow-hidden group">
+          <Image src="/kart-hjem.png" alt="Kart" fill className="object-cover" priority />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors duration-300 flex items-center justify-center">
+            <span className="text-white text-xl font-bold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              Klikk for å se kart
+            </span>
+          </div>
+        </a>
+      </aside>
+    </main>
   );
 }

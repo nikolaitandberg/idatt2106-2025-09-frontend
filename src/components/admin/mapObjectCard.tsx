@@ -1,17 +1,18 @@
 import { MapObject } from "@/types/map";
-import { Clock, Mail, Phone, Trash, User } from "lucide-react";
+import { Clock, Mail, Phone, Trash, User, Pencil } from "lucide-react";
 import { Button } from "../ui/button";
 import ConfirmationDialog from "../ui/confirmationDialog";
 import { useDeleteMapObject } from "@/actions/map";
 import { useState } from "react";
+import { showToast } from "../ui/toaster";
 
 export default function MapObjectCard({
   mapObject,
-  onClick,
+  onEdit,
   onDelete,
 }: {
   mapObject: MapObject;
-  onClick?: () => void;
+  onEdit?: () => void;
   onDelete?: () => void;
 }) {
   const { mutate: deleteMapObject, isPending: deleteMapObjectIsPending } = useDeleteMapObject();
@@ -21,9 +22,9 @@ export default function MapObjectCard({
   const closeDate = new Date(mapObject.closing ?? 0);
 
   return (
-    <div onClick={onClick} className="bg-white p-4 rounded-md shadow-md cursor-pointer w-full flex flex-col relative">
+    <div className="bg-white p-4 rounded-md shadow-md w-full flex flex-col relative">
       <div className="flex flex-col">
-        <div className="text-black text-base ">{mapObject.description}</div>
+        <div className="text-black text-base text-left">{mapObject.description}</div>
         <div className="flex items-center gap-1">
           <User size={10} />
           <div className="text-gray-500 text-sm">{mapObject.contactName}</div>
@@ -56,9 +57,20 @@ export default function MapObjectCard({
           </>
         )}
       </div>
+
+      {onEdit && (
+        <Button variant="ghost" className="absolute top-2 right-14" onClick={onEdit} aria-label="Rediger kartobjekt">
+          <Pencil size={16} className="text-primary" />
+        </Button>
+      )}
+
       {onDelete && (
         <div onClick={(e) => e.stopPropagation()}>
-          <Button variant="ghost" className="absolute top-2 right-2" onClick={() => setDeleteDialogOpen(true)}>
+          <Button
+            variant="ghost"
+            className="absolute top-2 right-2"
+            onClick={() => setDeleteDialogOpen(true)}
+            aria-label="Slett kartobjekt">
             <Trash size={16} className="text-destructive" />
           </Button>
           <ConfirmationDialog
@@ -70,6 +82,11 @@ export default function MapObjectCard({
             onConfirm={() => {
               deleteMapObject(mapObject.id, {
                 onSuccess: () => {
+                  showToast({
+                    title: "Kartobjekt slettet",
+                    description: `"${mapObject.description}" ble slettet.`,
+                    variant: "success",
+                  });
                   onDelete();
                 },
               });

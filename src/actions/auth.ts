@@ -42,13 +42,14 @@ export async function sendRegisterRequest(
   email: string,
   username: string,
   password: string,
+  captchaToken: string,
 ): Promise<RegisterSuccessRespnse> {
   const res = await fetch(`${API_BASE_URL}/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ email, username, password }),
+    body: JSON.stringify({ email, username, password, captchaToken }),
   });
 
   if (!res.ok) {
@@ -66,3 +67,30 @@ export async function sendRegisterRequest(
     token: data.token,
   };
 }
+
+/**
+ * Verifies a token by sending a request to the backend
+ *
+ * @param token The token to verify
+ * @returns true if the token is valid, false otherwise
+ */
+export const verifyToken = async (token: string) => {
+  try {
+    const res = await fetch(`${API_BASE_URL}/auth/test`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      return false;
+    }
+
+    return true;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+};

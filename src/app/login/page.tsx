@@ -1,64 +1,98 @@
 "use client";
 
-import TextInput from "@/components/ui/textinput";
-import { Button } from "@/components/ui/button";
-import LoadingSpinner from "@/components/ui/loadingSpinner";
-import { useState } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
+import PasswordResetDialog from "@/components/login/PasswordResetDialog";
+import useAppForm from "@/util/formContext";
+import { z } from "zod";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, Suspense } from "react";
+import LoadingSpinner from "@/components/ui/loadingSpinner";
 
-export default function LoginPage() {
-  const [isSigningIn, setIsSigningIn] = useState(false);
+function LoginContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnUrl = searchParams.get("returnUrl") || "/";
+  const [loginError, setLoginError] = useState<string | null>(null);
 
-  const handleLogin = async (event: React.FormEvent) => {
-    event.preventDefault();
-    setIsSigningIn(true);
-    const formData = new FormData(event.currentTarget as HTMLFormElement);
-    const username = formData.get("username") as string;
-    const password = formData.get("password") as string;
-    signIn("credentials", {
+  const loginSchema = z.object({
+    username: z.string().min(1, "Brukernavn er påkrevd"),
+    password: z.string().min(1, "Passord er påkrevd"),
+  });
+
+  const handleLogin = async ({ username, password }: { username: string; password: string }) => {
+    setLoginError(null);
+    const loginResponse = await signIn("credentials", {
       username,
       password,
-      redirect: true,
-      callbackUrl: "/",
+      redirect: false,
+      callbackUrl: returnUrl,
     });
+
+    if (loginResponse?.ok) {
+      router.replace(returnUrl);
+      return;
+    }
+
+    if (loginResponse?.status === 401) {
+      setLoginError("Ugyldig brukernavn eller passord");
+      return;
+    }
+    setLoginError("Noe gikk galt. Vennligst prøv igjen senere.");
   };
 
+  const loginForm = useAppForm({
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+    validators: {
+      onChange: loginSchema,
+      onSubmitAsync: async ({ value }) => handleLogin(value),
+    },
+  });
+
   return (
-    <div className="flex items-center justify-center bg-background px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl p-8 space-y-6">
-        <h1 className="text-2xl font-bold text-center">Logg inn</h1>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <TextInput
-            label="Brukernavn"
-            name="username"
-            type="text"
-            placeholder="brukernavn"
-            validate={(value) => value.length > 0}
-          />
-
-          <TextInput
-            label="Passord"
-            name="password"
-            type="password"
-            placeholder="passord"
-            validationErrorMessage="Passordet må være minst 6 tegn langt."
-            validate={(value) => value.length >= 6}
-          />
-
-          <Button className="size-full" type="submit">
-            {isSigningIn ? <LoadingSpinner /> : "Logg inn"}
-          </Button>
-        </form>
-        <div className="flex justify-center">
-          <p className="text-sm text-gray-500">
-            Har du ikke en konto?{" "}
-            <Link href="/register" className="text-blue-500 hover:underline">
-              Registrer deg
-            </Link>
-          </p>
-        </div>
+    <div className="w-full max-w-md rounded-2xl p-8 space-y-6">
+      <h1 className="text-2xl font-bold text-center" data-testid="login-title">
+        Logg inn
+      </h1>
+      <loginForm.AppField name="username">
+        {(field) => <field.TextInput data-testid="input-username" label="Brukernavn" placeholder="Brukernavnet ditt" />}
+      </loginForm.AppField>
+      <loginForm.AppField data-testid="input-password" name="password">
+        {(field) => <field.TextInput label="Passord" type="password" placeholder="Passordet ditt" />}
+      </loginForm.AppField>
+      <loginForm.AppForm>
+        <loginForm.SubmitButton data-testid="submit-login">Logg inn</loginForm.SubmitButton>
+      </loginForm.AppForm>
+      <div className="text-red-700 text-sm text-center">{loginError && <p>{loginError}</p>}</div>
+      <div className="flex justify-center flex-col">
+        <p className="text-sm text-gray-500">
+          Har du ikke en konto?{" "}
+          <Link href="/register" className="text-blue-700 hover:underline">
+            Registrer deg
+          </Link>
+        </p>
+        <p className="text-sm text-gray-500">
+          Glemt passord? <PasswordResetDialog />
+        </p>
       </div>
+    </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <div className="flex items-center justify-center bg-background px-4 mt-8">
+      <Suspense
+        fallback={
+          <div>
+            <LoadingSpinner />
+          </div>
+        }>
+        <LoginContent />
+      </Suspense>
     </div>
   );
 }

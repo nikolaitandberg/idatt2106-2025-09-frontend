@@ -1,12 +1,11 @@
 import { useEditMapObject } from "@/actions/map";
 import { EditMapObjectRequest, MapObject, MapObjectType } from "@/types";
-import { useState } from "react";
-import FormSection from "../ui/formSection";
-import TextInput from "../ui/textinput";
-import PositionSelector from "../ui/positionSelector";
-import { Button } from "../ui/button";
-import LoadingSpinner from "../ui/loadingSpinner";
-import TimeSelector from "../ui/timeSelector";
+import FormSection from "../ui/form/formSection";
+import useAppForm from "@/util/formContext";
+import { Time } from "@/types/time";
+import FormError from "../ui/form/formError";
+import { z } from "zod";
+import { showToast } from "@/components/ui/toaster";
 
 interface EditMapObjectFormProps {
   mapObject: MapObject;
@@ -15,94 +14,141 @@ interface EditMapObjectFormProps {
 }
 
 export default function EditMapObjectForm({ mapObject, mapObjectType, onClose }: EditMapObjectFormProps) {
-  const { mutate: createMapObject, isPending } = useEditMapObject();
-  const [position, setPosition] = useState({ latitude: 0, longitude: 0 });
-  const [opening, setOpening] = useState<Date | null>(new Date(mapObject.opening ?? 0));
-  const [closing, setClosing] = useState<Date | null>(new Date(mapObject.closing ?? 0));
+  const { mutate: createMapObject, error } = useEditMapObject();
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget as HTMLFormElement);
-    const description = formData.get("description") as string;
-    const contactName = formData.get("name") as string;
-    const contactEmail = formData.get("email") as string;
-    const contactPhone = formData.get("phone") as string;
-    const latitude = position.latitude;
-    const longitude = position.longitude;
-    const data: EditMapObjectRequest = {
-      description,
-      contactName,
-      contactEmail,
-      contactPhone,
-      latitude,
-      longitude,
-      typeId: mapObject.typeId,
-      id: mapObject.id,
-      opening: opening && opening.getTime() > 0 ? opening.getTime().toString() : undefined,
-      closing: closing && closing.getTime() > 0 ? closing.getTime().toString() : undefined,
+  const schema = z
+    .object({
+      description: z.string().min(1, { message: "Du må skrive inn en beskrivelse" }),
+      contanctName: z.string().optional(),
+      contactEmail: z.union([z.string().email({ message: "Ugyldig e-postadresse" }), z.literal("")]),
+      contactPhone: z.string().optional(),
+      position: z.object({
+        latitude: z.number().min(-90).max(90),
+        longitude: z.number().min(-180).max(180),
+      }),
+      opening: z
+        .object({
+          hours: z.number().min(0).max(23),
+          minutes: z.number().min(0).max(59),
+          toDate: z.function().returns(z.date()),
+        })
+        .optional(),
+      closing: z
+        .object({
+          hours: z.number().min(0).max(23),
+          minutes: z.number().min(0).max(59),
+          toDate: z.function().args().returns(z.date()),
+        })
+        .optional(),
+    })
+    .refine(
+      (data) => {
+        if (!data.opening || !data.closing) return true;
+        const openingTime = data.opening.toDate();
+        const closingTime = data.closing.toDate();
+        return openingTime.getTime() < closingTime.getTime();
+      },
+      {
+        message: "Åpningstiden må være før stengingstiden",
+        path: ["opening"],
+      },
+    );
+
+  const defaultValues: Omit<
+    EditMapObjectRequest,
+    "id" | "typeId" | "closing" | "opening" | "latitude" | "longitude"
+  > & {
+    opening?: Time;
+    closing?: Time;
+    position?: {
+      latitude: number;
+      longitude: number;
     };
-
-    createMapObject(data, {
-      onSuccess: () => {
-        if (onClose) {
-          onClose();
-        }
-      },
-      onError: (error) => {
-        console.error("Error creating map object:", error);
-      },
-    });
+  } = {
+    description: mapObject.description,
+    contactName: mapObject.contactName,
+    contactEmail: mapObject.contactEmail,
+    contactPhone: mapObject.contactPhone,
+    position: {
+      latitude: mapObject.latitude,
+      longitude: mapObject.longitude,
+    },
+    opening: mapObject.opening ? new Time(new Date(mapObject.opening)) : undefined,
+    closing: mapObject.closing ? new Time(new Date(mapObject.closing)) : undefined,
   };
 
+  const form = useAppForm({
+    defaultValues: defaultValues,
+    validators: {
+      onChange: schema,
+    },
+    onSubmit: async ({ value }) => {
+      await new Promise((resolve) => {
+        createMapObject(
+          {
+            ...value,
+            id: mapObject.id,
+            typeId: mapObjectType.id,
+            opening: value.opening ? value.opening.toDate().getTime().toString() : undefined,
+            closing: value.closing ? value.closing.toDate().getTime().toString() : undefined,
+            latitude: value.position?.latitude ?? 0,
+            longitude: value.position?.longitude ?? 0,
+          },
+          {
+            onSuccess: () => {
+              showToast({
+                title: "Kartobjekt oppdatert",
+                description: `"${value.description}" ble lagret.`,
+                variant: "success",
+              });
+              onClose();
+            },
+            onSettled: resolve,
+          },
+        );
+      });
+    },
+  });
+
   return (
-    <form className="flex flex-col gap-4 border-t-1 border-foreground-muted pt-2" onSubmit={handleSubmit}>
+    <div className="flex flex-col gap-4 border-t-1 border-foreground-muted pt-2">
       <FormSection title="Generell informasjon">
-        <TextInput label="Beskrivelse" type="text" name="description" initialValue={mapObject.description} />
-        <PositionSelector
-          onChange={setPosition}
-          icon={mapObjectType.icon}
-          initialPosition={{
-            latitude: mapObject.latitude,
-            longitude: mapObject.longitude,
-          }}
-        />
+        <form.AppField name="description">{(field) => <field.TextInput label="Beskrivelse" />}</form.AppField>
+        <form.AppField name="position">
+          {(field) => (
+            <field.PositionSelector
+              initialMapViewState={{
+                latitude: field.state?.value?.latitude ?? mapObject.latitude,
+                longitude: field.state?.value?.longitude ?? mapObject.longitude,
+                zoom: 12,
+              }}
+              icon={mapObjectType.icon}
+            />
+          )}
+        </form.AppField>
       </FormSection>
       <FormSection title="Kontaktinformasjon" dividerTop>
-        <TextInput label="Navn" type="text" name="name" initialValue={mapObject.contactName} />
-        <TextInput label="E-post" type="email" name="email" initialValue={mapObject.contactEmail} />
-        <TextInput label="Telefonnummer" name="phone" type="text" initialValue={mapObject.contactPhone} />
+        <form.AppField name="contactName">{(field) => <field.TextInput label="Navn" />}</form.AppField>
+        <form.AppField name="contactEmail">{(field) => <field.TextInput label="E-post" type="email" />}</form.AppField>
+        <form.AppField name="contactPhone">{(field) => <field.TextInput label="Telefonnummer" />}</form.AppField>
       </FormSection>
       <FormSection title="Åpningstider" dividerTop>
         <div className="flex flex-row gap-8">
-          <TimeSelector
-            initialValue={{
-              hours: new Date(opening ?? 0).getUTCHours(),
-              minutes: new Date(opening ?? 0).getUTCMinutes(),
-            }}
-            label="Åpner"
-            onChange={(time) => {
-              const newDate = new Date(opening ?? 0);
-              newDate.setUTCHours(time.hours, time.minutes);
-              setOpening(newDate);
-            }}
-          />
-          <TimeSelector
-            initialValue={{
-              hours: new Date(closing ?? 0).getUTCHours(),
-              minutes: new Date(closing ?? 0).getUTCMinutes(),
-            }}
-            label="Stenger"
-            onChange={(time) => {
-              const newDate = new Date(closing ?? 0);
-              newDate.setUTCHours(time.hours, time.minutes);
-              setClosing(newDate);
-            }}
-          />
+          <form.AppField name="opening">
+            {(field) => (
+              <div>
+                <field.TimeSelector />
+                {field.state.meta.errors && <FormError error={field.state.meta.errors[0]?.message} />}
+              </div>
+            )}
+          </form.AppField>
+          <form.AppField name="closing">{(field) => <field.TimeSelector />}</form.AppField>
         </div>
       </FormSection>
-      <Button type="submit" className="mt-4" size="fullWidth">
-        {isPending ? <LoadingSpinner /> : "Lagre endringer"}
-      </Button>
-    </form>
+      <form.AppForm>
+        <form.SubmitButton>Lagre</form.SubmitButton>
+      </form.AppForm>
+      <FormError error={error?.message} />
+    </div>
   );
 }

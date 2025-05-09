@@ -1,4 +1,4 @@
-import { FoodWithType, Household } from "./household";
+import { FoodSummary, Household } from "./household";
 import { MapObject, MapObjectType } from "./map";
 
 /**
@@ -26,5 +26,5 @@ export type MapObjectsResponse = MapObject[];
  */
 export type MapObjectsTypesResponse = MapObjectType[];
 
-export type GetHouseholdFoodResponse = FoodWithType[];
+export type GetHouseholdFoodResponse = FoodSummary[];
 export type GetHouseholdResonse = Household;

@@ -25,7 +25,7 @@ export default function IconPicker({ initialValue, onSelect }: IconPickerProps) 
       <div className="block text-m font-medium mb-1">Velg ikon</div>
       <ComboBox
         options={iconList}
-        initialValue={initialValue ? iconList.find((icon) => icon.name === initialValue) : null}
+        initialValue={initialValue ? iconList.find((icon) => icon.name === initialValue) : undefined}
         placeholder="velg ikon"
         renderOption={RenderIcon}
         renderSelected={RenderIcon}

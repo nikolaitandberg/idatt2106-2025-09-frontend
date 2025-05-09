@@ -6,6 +6,7 @@ import { Marker, Layer, Source } from "react-map-gl/maplibre";
 
 import type { Feature } from "geojson";
 import { point, circle } from "@turf/turf";
+import { cn } from "@/util/cn";
 
 export default function MapEvent({ event }: { event: Event }) {
   const [open, setOpen] = useState(false);
@@ -17,66 +18,23 @@ export default function MapEvent({ event }: { event: Event }) {
   useClickOutside(innerRef, () => {
     setOpen(false);
   });
-  // Memoize colors based on severity to prevent recalculation
+
   const colors = useMemo(() => {
-    const getSeverityColor = (severityId: number) => {
-      switch (severityId) {
-        case 2:
-          return "bg-yellow-500"; // Low
-        case 3:
-          return "bg-orange-500"; // Medium
-        case 4:
-          return "bg-red-500"; // High
-        case 5:
-          return "bg-purple-500"; // Extreme
-        default:
-          return "bg-gray-900"; // Unknown
-      }
-    };
-
-    const fillColor = (() => {
-      switch (event.severityId) {
-        case 2:
-          return "rgba(245, 158, 11, 0.2)"; // Yellow with transparency
-        case 3:
-          return "rgba(249, 115, 22, 0.2)"; // Orange with transparency
-        case 4:
-          return "rgba(239, 68, 68, 0.2)"; // Red with transparency
-        case 5:
-          return "rgba(168, 85, 247, 0.2)"; // Purple with transparency
-        default:
-          return "rgba(107, 114, 128, 0.2)"; // Gray with transparency
-      }
-    })();
-
-    const borderColor = (() => {
-      switch (event.severityId) {
-        case 2:
-          return "rgba(245, 158, 11, 0.8)"; // Yellow border
-        case 3:
-          return "rgba(249, 115, 22, 0.8)"; // Orange border
-        case 4:
-          return "rgba(239, 68, 68, 0.8)"; // Red border
-        case 5:
-          return "rgba(168, 85, 247, 0.8)"; // Purple border
-        default:
-          return "rgba(107, 114, 128, 0.8)"; // Gray border
-      }
-    })();
+    const rgbColor = `rgb(${event.colour})`;
+    const rgbaColor = (opacity: number) => `rgba(${event.colour}, ${opacity})`;
 
     return {
-      bgColor: getSeverityColor(event.severityId),
-      textColor: getSeverityColor(event.severityId).replace("bg-", "text-"),
-      fillColor,
-      borderColor,
+      bgColor: rgbColor,
+      textColor: rgbColor,
+      fillColor: rgbaColor(0.2), // Transparent fill
+      borderColor: rgbaColor(0.8), // Border with opacity
     };
   }, [event]);
 
   const formatDate = (timestamp: string) => {
-    return new Date(timestamp).toLocaleString();
+    return new Date(timestamp).toLocaleDateString();
   };
 
-  // Memoize the circle GeoJSON to prevent regeneration on every render
   const circleGeoJSON = useMemo(() => {
     const center = point([event.longitude, event.latitude]);
     return circle(center, event.radius, { units: "kilometers" });
@@ -106,37 +64,47 @@ export default function MapEvent({ event }: { event: Event }) {
       </Source>
 
       {/* Event marker */}
-      <Marker longitude={event.longitude} latitude={event.latitude} anchor="center" onClick={() => setOpen(true)}>
+      <Marker
+        className={cn("hover:z-10", open ? "z-10" : "z-0")}
+        longitude={event.longitude}
+        latitude={event.latitude}
+        anchor="center"
+        onClick={() => setOpen(true)}>
         {open ? (
-          <div className="bg-white pl-4 pr-2 py-2 rounded-md shadow-md relative cursor-auto w-64 z-10" ref={innerRef}>
+          <div
+            style={{ backgroundColor: "#FFFFFF", width: "16rem", zIndex: 10 }}
+            className="pl-4 pr-2 py-2 rounded-md shadow-md relative cursor-auto"
+            ref={innerRef}>
             <div className="flex justify-between flex-row items-center">
-              <div className="text-black text-base font-bold flex items-center">
-                <AlertTriangle size={16} className={`mr-2 ${colors.textColor}`} />
-                Event #{event.id}
+              <div
+                style={{ color: colors.textColor }}
+                className="text-black text-base font-bold flex items-center">
+                <AlertTriangle size={16} className="mr-2" />
+                {event.name}
               </div>
               <X onClick={() => setOpen(false)} className="cursor-pointer" />
             </div>
             <div className="flex flex-col gap-2 mt-2">
               <div className="flex items-center text-gray-700 text-sm">
                 <Clock size={14} className="mr-1" />
-                Start: {formatDate(event.start_time)}
+                Start: {formatDate(event.startTime)}
               </div>
-              {event.end_time && (
+              {event.endTime && (
                 <div className="flex items-center text-gray-700 text-sm">
                   <Clock size={14} className="mr-1" />
-                  End: {formatDate(event.end_time)}
+                  Slutt: {formatDate(event.endTime)}
                 </div>
               )}
-              <div className="text-gray-700 text-sm">Affected radius: {event.radius} km</div>
-              {event.recomendation && (
+              <div className="text-gray-700 text-sm">Radius: {event.radius} km</div>
+              {event.recommendation && (
                 <div className="text-gray-700 text-sm mt-2 p-2 bg-accent rounded-md">
-                  <strong>Recommendation:</strong> {event.recomendation}
+                  <strong>Anbefalning:</strong> {event.recommendation}
                 </div>
               )}
-              {event.info_page_id && (
+              {event.infoPageId && (
                 <div className="mt-2">
-                  <a href={`/info/${event.info_page_id}`} className="text-primary text-sm underline">
-                    View Information Page
+                  <a href={`/learning/${event.infoPageId}`} className="text-primary text-sm underline">
+                    Se læringsside
                   </a>
                 </div>
               )}
@@ -144,8 +112,13 @@ export default function MapEvent({ event }: { event: Event }) {
           </div>
         ) : (
           <div
-            className={`${colors.bgColor} p-2 rounded-full shadow-md border-2 border-white flex items-center justify-center z-10`}>
-            <AlertTriangle size={18} className="text-white" />
+            style={{
+              backgroundColor: colors.bgColor,
+              borderColor: "#FFFFFF",
+              borderWidth: "2px",
+            }}
+            className="p-2 rounded-full shadow-md flex items-center justify-center z-10">
+            <AlertTriangle size={18} style={{ color: "#FFFFFF" }} />
           </div>
         )}
       </Marker>

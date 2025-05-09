@@ -12,6 +12,7 @@ import ConfirmationDialog from "../ui/confirmationDialog";
 import { useDeleteMapObjectType } from "@/actions/map";
 import CreateMapObjectForm from "./createMapObjectForm";
 import EditMapObjectForm from "./editMapObjectForm";
+import { showToast } from "@/components/ui/toaster";
 
 interface MapObjectTypeAccordionItemProps {
   type: MapObjectType & { objects: MapObject[] };
@@ -42,7 +43,7 @@ export default function MapObjectTypeAccordionItem({ type }: MapObjectTypeAccord
           <div className="flex items-center absolute right-8 top-0 h-full">
             <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
               <DialogTrigger asChild>
-                <Button variant={"ghost"}>
+                <Button variant={"ghost"} aria-label="Rediger kartkategori">
                   <Pencil className="text-primary" />
                 </Button>
               </DialogTrigger>
@@ -59,8 +60,8 @@ export default function MapObjectTypeAccordionItem({ type }: MapObjectTypeAccord
                 />
               </DialogContent>
             </Dialog>
-            <Button variant={"ghost"} onClick={() => setDeleteDialogOpen(true)}>
-              <Trash className="text-destructive" />
+            <Button variant={"destructive"} onClick={() => setDeleteDialogOpen(true)} aria-label="Slett kartkategori">
+              <Trash className="text-white" />
             </Button>
             <ConfirmationDialog
               open={deleteDialogOpen}
@@ -73,6 +74,11 @@ export default function MapObjectTypeAccordionItem({ type }: MapObjectTypeAccord
               onConfirm={() => {
                 deleteMapObjectType(type.id, {
                   onSuccess: () => {
+                    showToast({
+                      title: "Kartkategori slettet",
+                      description: `"${type.name}" ble slettet.`,
+                      variant: "success",
+                    });
                     queryClient.invalidateQueries({
                       queryKey: ["map", "mapObjectTypes"],
                     });
@@ -119,7 +125,7 @@ export default function MapObjectTypeAccordionItem({ type }: MapObjectTypeAccord
               }}
               mapObject={object}
               key={object.id}
-              onClick={() => {
+              onEdit={() => {
                 setEditMapObjectDialogOpen(true);
                 setSelectedMapObject(object);
               }}

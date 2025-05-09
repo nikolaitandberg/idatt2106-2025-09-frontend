@@ -3,15 +3,26 @@ export interface UserResponse {
   firstName: string;
   lastName: string;
   email?: string;
+  username: string;
+  picture: string;
 }
 
 export type Household = {
   id: number;
   address: string;
+  name: string;
   longitude: number;
   latitude: number;
   waterAmountLiters: number;
   lastWaterChangeDate: string;
+  nextWaterChangeDate: string;
+  levelOfPreparedness: {
+    levelOfPreparedness: number;
+    levelOfPreparednessFood: number;
+    levelOfPreparednessKit: number;
+    levelOfPreparednessWater: number;
+    timePrepared: number;
+  };
 };
 
 export type FoodType = {
@@ -30,6 +41,23 @@ export type Food = {
   amount: number;
 };
 
-export type FoodWithType = FoodType & {
-  food: Food[];
+export type FoodSummary = Omit<FoodType, "id" | "name"> & {
+  typeId: number;
+  typeName: string;
+  totalAmount: number;
+  totalCalories: number;
+  batches: Omit<Food, "typeId" | "householdId">[];
+};
+
+export interface HouseholdGroupMember {
+  id: number;
+  name: string;
+  address: string;
+  peopleCount: number;
+  isHome?: boolean;
+}
+
+export type HouseholdInvite = {
+  householdId: number;
+  userId: number;
 };
