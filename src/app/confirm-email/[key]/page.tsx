@@ -36,9 +36,7 @@ export default function ConfirmEmailPage() {
   return (
     <div className="min-h-screen flex justify-center items-center text-center px-4">
       <div className="bg-white shadow rounded-2xl p-8 max-w-md">
-        <h1 className="text-2xl font-bold mb-4">
-          {success ? "E-post bekreftet!" : "Bekreftelse feilet"}
-        </h1>
+        <h1 className="text-2xl font-bold mb-4">{success ? "E-post bekreftet!" : "Bekreftelse feilet"}</h1>
         <p className="text-gray-600">
           {success
             ? "Din e-postadresse er nå bekreftet. Du kan lukke denne siden."

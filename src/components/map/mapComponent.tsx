@@ -39,8 +39,7 @@ export default function MapComponent({
   return (
     <div
       onKeyDown={onKeyDown} // Handle keyboard events here
-      style={{ width: "100%", height: "100%", position: "relative" }}
-    >
+      style={{ width: "100%", height: "100%", position: "relative" }}>
       <Map
         onLoad={onLoad}
         onMove={onMove}
@@ -55,8 +54,7 @@ export default function MapComponent({
         attributionControl={false}
         ref={ref}
         style={{ width: "100%", height: "100%" }}
-        mapStyle={MAP_STYLE_CONFIG}
-      >
+        mapStyle={MAP_STYLE_CONFIG}>
         <AttributionControl compact={true} position="top-left" />
         {children}
       </Map>
@@ -73,8 +71,7 @@ export default function MapComponent({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-          }}
-        >
+          }}>
           <Plus size={16} />
         </button>
         <button
@@ -88,8 +85,7 @@ export default function MapComponent({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-          }}
-        >
+          }}>
           <Minus size={16} />
         </button>
       </div>

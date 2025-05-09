@@ -80,7 +80,8 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
                       onSuccess: () => {
                         queryClient.invalidateQueries({ queryKey: ["household", "food"] });
                         queryClient.invalidateQueries({ queryKey: ["household", "my-household"] });
-                      },                    },
+                      },
+                    },
                   );
                 });
               }}
@@ -145,7 +146,6 @@ export default function FoodAccordionItem({ id, name, totalAmount, unit, househo
                           variant: "success",
                         });
                       },
-
                     });
                     setShowDeleteConfirmation(null);
                   }}
