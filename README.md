@@ -1,5 +1,5 @@
 # Krisefikser (frontend)
-Krisefikser er en web applikation som hjælper med å øke beredskapen og forståelsen for kriser og katastrofer. Den lar brukere:
+Krisefikser er en webapplikasjon som lar brukere:
 - opprette og administrere husholdninger og grupper av husholdninger.
 - administrere beredskapslager for sin husholdning og sine husholdningsgrupper.
 - se beredskapsgrad utifra husholdningens og husholdningsgruppens beredskapslager.
@@ -10,7 +10,7 @@ Krisefikser er en web applikation som hjælper med å øke beredskapen og forst�
 ## Kildekode (frontend)
 
 ### Avhengigheter
-- nextjs 15.3.1 med react og typescript
+- nextjs med react og typescript
 - nextauth og cloudflare turnstile for sikkerhet
 - tailwindcss for styling
 - Lucide for ikoner
@@ -36,6 +36,8 @@ Krisefikser er en web applikation som hjælper med å øke beredskapen og forst�
 4. Bygg produksjonsversjon med `npm run build`
 5. Start produksjonsserver med `npm start`
 6. Åpne nettleseren og gå til `http://localhost:3000`
+
+for mer informasjon om kjøring og bygging av prosjektet sjekk ut 'installasjon' på [wiki](https://github.com/aTrueYety/idatt2106-2025-09-backend/wiki/Installasjon)
 
 ## Mer
 
